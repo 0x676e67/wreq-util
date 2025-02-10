@@ -121,8 +121,12 @@ pub enum Impersonate {
     #[serde(rename = "chrome_130")]
     Chrome130,
     #[serde(rename = "chrome_131")]
-    #[default]
     Chrome131,
+    #[serde(rename = "chrome_132")]
+    Chrome132,
+    #[serde(rename = "chrome_133")]
+    #[default]
+    Chrome133,
 
     #[serde(rename = "safari_ios_17.2")]
     SafariIos17_2,
