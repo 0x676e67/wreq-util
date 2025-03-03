@@ -26,6 +26,25 @@ rquest = { version = "3.0.1-rc1", default-features = false }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
+hyper = { version = "1.1.0", default-features = false, features = [
+    "http1",
+    "http2",
+    "client",
+    "server",
+] }
+hyper-util = { version = "0.1.10", features = [
+    "http1",
+    "http2",
+    "client",
+    "client-legacy",
+    "server-auto",
+    "tokio",
+] }
+futures-util = { version = "0.3.0" }
+tower = { version = "0.5.2", default-features = false, features = ["limit"] }
+pin-project-lite = "0.2.0"
+tracing = "0.1"
+tracing-subscriber = "0.3.19"
 
 [lib]
 doctest = false
