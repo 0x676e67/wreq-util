@@ -19,11 +19,7 @@ macro_rules! conditional_headers {
 #[macro_export]
 macro_rules! conditional_http2 {
     ($skip_http2:expr, $http2:expr) => {
-        if $skip_http2 {
-            None
-        } else {
-            Some($http2)
-        }
+        if $skip_http2 { None } else { Some($http2) }
     };
 }
 

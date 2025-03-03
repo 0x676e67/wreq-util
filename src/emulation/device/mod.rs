@@ -21,8 +21,8 @@ use safari::*;
 mod emulation_imports {
     pub use super::{EmulationOS, EmulationOption};
     pub use http::{
-        header::{ACCEPT, ACCEPT_LANGUAGE, UPGRADE_INSECURE_REQUESTS, USER_AGENT},
         HeaderMap, HeaderName, HeaderValue,
+        header::{ACCEPT, ACCEPT_LANGUAGE, UPGRADE_INSECURE_REQUESTS, USER_AGENT},
     };
     pub use rquest::{EmulationProvider, Http2Config};
 

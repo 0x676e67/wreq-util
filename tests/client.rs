@@ -10,7 +10,10 @@ async fn test_client_emulation_device() {
     let server = server::http(move |req| async move {
         for (name, value) in req.headers() {
             if name == "user-agent" {
-                assert_eq!(value, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36");
+                assert_eq!(
+                    value,
+                    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+                );
             }
             if name == "sec-ch-ua" {
                 assert_eq!(

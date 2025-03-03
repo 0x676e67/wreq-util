@@ -7,8 +7,8 @@ authors = ["0x676e67 <gngppz@gmail.com>"]
 version = "0.2.0-rc1"
 readme = "README.md"
 license = "GPL-3.0"
-edition = "2021"
-rust-version = "1.80"
+edition = "2024"
+rust-version = "1.85"
 
 [features]
 default = ["emulation", "gzip", "brotli", "deflate", "zstd"]
