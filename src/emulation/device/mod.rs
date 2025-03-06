@@ -23,14 +23,14 @@ use safari::*;
 
 mod emulation_imports {
     pub use super::{EmulationOS, EmulationOption};
-    pub use http::{
-        HeaderMap, HeaderName, HeaderValue,
-        header::{ACCEPT, ACCEPT_LANGUAGE, UPGRADE_INSECURE_REQUESTS, USER_AGENT},
+    pub use rquest::header::{
+        ACCEPT, ACCEPT_LANGUAGE, HeaderMap, HeaderName, HeaderValue, UPGRADE_INSECURE_REQUESTS,
+        USER_AGENT,
     };
     pub use rquest::{EmulationProvider, Http2Config};
 
     #[cfg(all(feature = "gzip", feature = "deflate", feature = "brotli"))]
-    pub use http::header::ACCEPT_ENCODING;
+    pub use rquest::header::ACCEPT_ENCODING;
 }
 
 mod tls_imports {
