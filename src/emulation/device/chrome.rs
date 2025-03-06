@@ -1,4 +1,5 @@
 use super::emulation_imports::*;
+use super::*;
 use http2::*;
 use tls::*;
 
@@ -188,7 +189,7 @@ fn header_initializer_with_zstd_priority(
 }
 
 mod tls {
-    use super::super::tls_imports::*;
+    use super::tls_imports::*;
 
     pub const CURVES_1: &[SslCurve] = &[SslCurve::X25519, SslCurve::SECP256R1, SslCurve::SECP384R1];
 
@@ -290,7 +291,7 @@ mod tls {
 }
 
 mod http2 {
-    use super::super::http2_imports::*;
+    use super::http2_imports::*;
 
     pub const HEADER_PRIORITY: (u32, u8, bool) = (0, 255, true);
 
