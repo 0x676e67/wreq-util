@@ -434,3 +434,11 @@ mod_generator!(
     header_initializer_for_18,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.2 Safari/605.1.15"
 );
+
+mod_generator!(
+    safari18_3,
+    tls_config!(2, CIPHER_LIST_2, NEW_SIGALGS_LIST),
+    http2_config!(3),
+    header_initializer_for_18,
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Safari/605.1.15"
+);
