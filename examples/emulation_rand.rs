@@ -5,7 +5,7 @@ use rquest_util::Emulation;
 async fn main() -> Result<(), rquest::Error> {
     // Build a client to emulation Firefox135
     let client = Client::builder()
-        .emulation(Emulation::Firefox133)
+        .emulation(Emulation::random())
         .danger_accept_invalid_certs(true)
         .build()?;
 

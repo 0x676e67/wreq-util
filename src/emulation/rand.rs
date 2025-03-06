@@ -1,0 +1,86 @@
+use super::Emulation;
+use std::cell::Cell;
+use std::collections::hash_map::RandomState;
+use std::hash::{BuildHasher, Hasher};
+use std::num::Wrapping;
+use strum::VariantArray;
+
+// from: https://github.com/seanmonstar/reqwest/blob/44ac897f1ab35ba24a195927043d185d5cbb6912/src/util.rs#L27
+pub(crate) fn fast_random() -> u64 {
+    thread_local! {
+        static RNG: Cell<Wrapping<u64>> = Cell::new(Wrapping(seed()));
+    }
+
+    #[inline]
+    fn seed() -> u64 {
+        let seed = RandomState::new();
+
+        let mut out = 0;
+        let mut cnt = 0;
+        while out == 0 {
+            cnt += 1;
+            let mut hasher = seed.build_hasher();
+            hasher.write_usize(cnt);
+            out = hasher.finish();
+        }
+        out
+    }
+
+    RNG.with(|rng| {
+        let mut n = rng.get();
+        debug_assert_ne!(n.0, 0);
+        n ^= n >> 12;
+        n ^= n << 25;
+        n ^= n >> 27;
+        rng.set(n);
+        n.0.wrapping_mul(0x2545_f491_4f6c_dd1d)
+    })
+}
+
+impl Emulation {
+    #[inline]
+    pub fn random() -> Emulation {
+        let variants = Emulation::VARIANTS;
+        let index = fast_random() as usize % variants.len();
+        variants[index]
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::{Arc, Mutex};
+    use std::thread;
+
+    #[test]
+    fn test_concurrent_get_random_emulation() {
+        const THREAD_COUNT: usize = 10;
+        const ITERATIONS: usize = 100;
+
+        let results = Arc::new(Mutex::new(Vec::new()));
+
+        let mut handles = vec![];
+
+        for _ in 0..THREAD_COUNT {
+            let results = Arc::clone(&results);
+            let handle = thread::spawn(move || {
+                for _ in 0..ITERATIONS {
+                    let emulation = Emulation::random();
+                    let mut results = results.lock().unwrap();
+                    results.push(emulation);
+                }
+            });
+            handles.push(handle);
+        }
+
+        for handle in handles {
+            handle.join().unwrap();
+        }
+
+        let results = results.lock().unwrap();
+        println!("Total results: {}", results.len());
+        for emulation in results.iter() {
+            println!("{:?}", emulation);
+        }
+    }
+}

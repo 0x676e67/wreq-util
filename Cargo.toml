@@ -12,17 +12,26 @@ rust-version = "1.85"
 
 [features]
 default = ["emulation", "gzip", "brotli", "deflate", "zstd"]
+
+# Emulation devices
 emulation = ["dep:http", "dep:serde", "dep:typed-builder"]
+
+# Emulation devices with random data
+emulation-rand = ["emulation", "dep:strum_macros", "dep:strum"]
+
+# Compression algorithms
 gzip = ["rquest/gzip"]
 brotli = ["rquest/brotli"]
 deflate = ["rquest/deflate"]
 zstd = ["rquest/zstd"]
 
 [dependencies]
+rquest = { version = "3.0.1", default-features = false }
 http = { version = "1", optional = true }
 serde = { version = "1.0", features = ["derive"], optional = true }
 typed-builder = { version = "0.20.0", optional = true }
-rquest = { version = "3.0.1", default-features = false }
+strum = { version = "0.27.1", optional = true }
+strum_macros = { version = "0.27.1", optional = true }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
@@ -52,4 +61,15 @@ doctest = false
 [[example]]
 name = "emulation"
 path = "examples/emulation.rs"
+required-features = ["emulation", "gzip", "brotli", "deflate", "zstd", "rquest/full"]
+
+
+[[example]]
+name = "emulation_rand"
+path = "examples/emulation_rand.rs"
+required-features = ["emulation", "gzip", "brotli", "deflate", "zstd", "rquest/full", "emulation-rand"]
+
+[[example]]
+name = "emulation_option"
+path = "examples/emulation_option.rs"
 required-features = ["emulation", "gzip", "brotli", "deflate", "zstd", "rquest/full"]

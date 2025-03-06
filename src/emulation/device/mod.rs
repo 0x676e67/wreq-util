@@ -13,6 +13,9 @@ use rquest::{EmulationProvider, EmulationProviderFactory};
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
+#[cfg(feature = "emulation-rand")]
+use strum_macros::VariantArray;
+
 use chrome::*;
 use firefox::*;
 use okhttp::*;
@@ -45,157 +48,132 @@ mod http2_imports {
     pub use std::sync::LazyLock;
 }
 
-/// Represents different browser versions for impersonation.
-///
-/// The `Emulation` enum provides variants for different browser versions that can be used
-/// to emulation HTTP requests. Each variant corresponds to a specific browser version.
-///
-/// # Naming Convention
-///
-/// The naming convention for the variants follows the pattern `browser_version`, where
-/// `browser` is the name of the browser (e.g., `chrome`, `firefox`, `safari`) and `version`
-/// is the version number. For example, `Chrome100` represents Chrome version 100.
-///
-/// The serialized names of the variants use underscores to separate the browser name and
-/// version number, following the pattern `browser_version`. For example, `Chrome100` is
-/// serialized as `"chrome_100"`.
-///
-/// # Examples
-///
-/// ```rust
-/// use rquest_util::Emulation;
-///
-/// let emulation = Emulation::Chrome100;
-/// let serialized = serde_json::to_string(&emulation).unwrap();
-/// assert_eq!(serialized, "\"chrome_100\"");
-///
-/// let deserialized: Emulation = serde_json::from_str(&serialized).unwrap();
-/// assert_eq!(deserialized, Emulation::Chrome100);
-/// ```
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
-pub enum Emulation {
-    #[serde(rename = "chrome_100")]
-    Chrome100,
-    #[serde(rename = "chrome_101")]
-    Chrome101,
-    #[serde(rename = "chrome_104")]
-    Chrome104,
-    #[serde(rename = "chrome_105")]
-    Chrome105,
-    #[serde(rename = "chrome_106")]
-    Chrome106,
-    #[serde(rename = "chrome_107")]
-    Chrome107,
-    #[serde(rename = "chrome_108")]
-    Chrome108,
-    #[serde(rename = "chrome_109")]
-    Chrome109,
-    #[serde(rename = "chrome_114")]
-    Chrome114,
-    #[serde(rename = "chrome_116")]
-    Chrome116,
-    #[serde(rename = "chrome_117")]
-    Chrome117,
-    #[serde(rename = "chrome_118")]
-    Chrome118,
-    #[serde(rename = "chrome_119")]
-    Chrome119,
-    #[serde(rename = "chrome_120")]
-    Chrome120,
-    #[serde(rename = "chrome_123")]
-    Chrome123,
-    #[serde(rename = "chrome_124")]
-    Chrome124,
-    #[serde(rename = "chrome_126")]
-    Chrome126,
-    #[serde(rename = "chrome_127")]
-    Chrome127,
-    #[serde(rename = "chrome_128")]
-    Chrome128,
-    #[serde(rename = "chrome_129")]
-    Chrome129,
-    #[serde(rename = "chrome_130")]
-    Chrome130,
-    #[serde(rename = "chrome_131")]
-    Chrome131,
-    #[serde(rename = "chrome_132")]
-    Chrome132,
-    #[serde(rename = "chrome_133")]
-    #[default]
-    Chrome133,
+macro_rules! define_emulation_enum {
+    ($(#[$meta:meta])* $name:ident, $default_variant:ident, $($variant:ident => $rename:expr),*) => {
+        $(#[$meta])*
+        #[cfg(not(feature = "emulation-rand"))]
+        #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+        pub enum $name {
+            $(
+                #[serde(rename = $rename)]
+                $variant,
+            )*
+        }
 
-    #[serde(rename = "safari_ios_17.2")]
-    SafariIos17_2,
-    #[serde(rename = "safari_ios_17.4.1")]
-    SafariIos17_4_1,
-    #[serde(rename = "safari_ios_16.5")]
-    SafariIos16_5,
-    #[serde(rename = "safari_15.3")]
-    Safari15_3,
-    #[serde(rename = "safari_15.5")]
-    Safari15_5,
-    #[serde(rename = "safari_15.6.1")]
-    Safari15_6_1,
-    #[serde(rename = "safari_16")]
-    Safari16,
-    #[serde(rename = "safari_16.5")]
-    Safari16_5,
-    #[serde(rename = "safari_17.0")]
-    Safari17_0,
-    #[serde(rename = "safari_17.2.1")]
-    Safari17_2_1,
-    #[serde(rename = "safari_17.4.1")]
-    Safari17_4_1,
-    #[serde(rename = "safari_17.5")]
-    Safari17_5,
-    #[serde(rename = "safari_18")]
-    Safari18,
-    #[serde(rename = "safari_ipad_18")]
-    SafariIPad18,
-    #[serde(rename = "safari_18.2")]
-    Safari18_2,
-    #[serde(rename = "safari_ios_18.1.1")]
-    SafariIos18_1_1,
+        #[cfg(not(feature = "emulation-rand"))]
+        impl Default for $name {
+            fn default() -> Self {
+                $name::$default_variant
+            }
+        }
 
-    #[serde(rename = "okhttp_3.9")]
-    OkHttp3_9,
-    #[serde(rename = "okhttp_3.11")]
-    OkHttp3_11,
-    #[serde(rename = "okhttp_3.13")]
-    OkHttp3_13,
-    #[serde(rename = "okhttp_3.14")]
-    OkHttp3_14,
-    #[serde(rename = "okhttp_4.9")]
-    OkHttp4_9,
-    #[serde(rename = "okhttp_4.10")]
-    OkHttp4_10,
-    #[serde(rename = "okhttp_5")]
-    OkHttp5,
+        $(#[$meta])*
+        #[cfg(feature = "emulation-rand")]
+        #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize, VariantArray)]
+        pub enum $name {
+            $(
+                #[serde(rename = $rename)]
+                $variant,
+            )*
+        }
 
-    #[serde(rename = "edge_101")]
-    Edge101,
-    #[serde(rename = "edge_122")]
-    Edge122,
-    #[serde(rename = "edge_127")]
-    Edge127,
-    #[serde(rename = "edge_131")]
-    Edge131,
-
-    #[serde(rename = "firefox_109")]
-    Firefox109,
-    #[serde(rename = "firefox_117")]
-    Firefox117,
-    #[serde(rename = "firefox_128")]
-    Firefox128,
-    #[serde(rename = "firefox_133")]
-    Firefox133,
-    #[serde(rename = "firefox_135")]
-    Firefox135,
-    #[serde(rename = "firefox_private_135")]
-    FirefoxPrivate135,
-    #[serde(rename = "firefox_android_135")]
-    FirefoxAndroid135,
+        #[cfg(feature = "emulation-rand")]
+        impl Default for $name {
+            fn default() -> Self {
+                $name::$default_variant
+            }
+        }
+    };
 }
+
+define_emulation_enum!(
+    /// Represents different browser versions for impersonation.
+    ///
+    /// The `Emulation` enum provides variants for different browser versions that can be used
+    /// to emulation HTTP requests. Each variant corresponds to a specific browser version.
+    ///
+    /// # Naming Convention
+    ///
+    /// The naming convention for the variants follows the pattern `browser_version`, where
+    /// `browser` is the name of the browser (e.g., `chrome`, `firefox`, `safari`) and `version`
+    /// is the version number. For example, `Chrome100` represents Chrome version 100.
+    ///
+    /// The serialized names of the variants use underscores to separate the browser name and
+    /// version number, following the pattern `browser_version`. For example, `Chrome100` is
+    /// serialized as `"chrome_100"`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use rquest_util::Emulation;
+    ///
+    /// let emulation = Emulation::Chrome100;
+    /// let serialized = serde_json::to_string(&emulation).unwrap();
+    /// assert_eq!(serialized, "\"chrome_100\"");
+    ///
+    /// let deserialized: Emulation = serde_json::from_str(&serialized).unwrap();
+    /// assert_eq!(deserialized, Emulation::Chrome100);
+    /// ```
+    Emulation, Chrome133,
+    Chrome100 => "chrome_100",
+    Chrome101 => "chrome_101",
+    Chrome104 => "chrome_104",
+    Chrome105 => "chrome_105",
+    Chrome106 => "chrome_106",
+    Chrome107 => "chrome_107",
+    Chrome108 => "chrome_108",
+    Chrome109 => "chrome_109",
+    Chrome114 => "chrome_114",
+    Chrome116 => "chrome_116",
+    Chrome117 => "chrome_117",
+    Chrome118 => "chrome_118",
+    Chrome119 => "chrome_119",
+    Chrome120 => "chrome_120",
+    Chrome123 => "chrome_123",
+    Chrome124 => "chrome_124",
+    Chrome126 => "chrome_126",
+    Chrome127 => "chrome_127",
+    Chrome128 => "chrome_128",
+    Chrome129 => "chrome_129",
+    Chrome130 => "chrome_130",
+    Chrome131 => "chrome_131",
+    Chrome132 => "chrome_132",
+    Chrome133 => "chrome_133",
+    SafariIos17_2 => "safari_ios_17.2",
+    SafariIos17_4_1 => "safari_ios_17.4.1",
+    SafariIos16_5 => "safari_ios_16.5",
+    Safari15_3 => "safari_15.3",
+    Safari15_5 => "safari_15.5",
+    Safari15_6_1 => "safari_15.6.1",
+    Safari16 => "safari_16",
+    Safari16_5 => "safari_16.5",
+    Safari17_0 => "safari_17.0",
+    Safari17_2_1 => "safari_17.2.1",
+    Safari17_4_1 => "safari_17.4.1",
+    Safari17_5 => "safari_17.5",
+    Safari18 => "safari_18",
+    SafariIPad18 => "safari_ipad_18",
+    Safari18_2 => "safari_18.2",
+    SafariIos18_1_1 => "safari_ios_18.1.1",
+    OkHttp3_9 => "okhttp_3.9",
+    OkHttp3_11 => "okhttp_3.11",
+    OkHttp3_13 => "okhttp_3.13",
+    OkHttp3_14 => "okhttp_3.14",
+    OkHttp4_9 => "okhttp_4.9",
+    OkHttp4_10 => "okhttp_4.10",
+    OkHttp5 => "okhttp_5",
+    Edge101 => "edge_101",
+    Edge122 => "edge_122",
+    Edge127 => "edge_127",
+    Edge131 => "edge_131",
+    Firefox109 => "firefox_109",
+    Firefox117 => "firefox_117",
+    Firefox128 => "firefox_128",
+    Firefox133 => "firefox_133",
+    Firefox135 => "firefox_135",
+    FirefoxPrivate135 => "firefox_private_135",
+    FirefoxAndroid135 => "firefox_android_135"
+);
 
 /// ======== Emulation impls ========
 impl EmulationProviderFactory for Emulation {
