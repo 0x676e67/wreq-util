@@ -22,12 +22,11 @@ use okhttp::*;
 use safari::*;
 
 mod emulation_imports {
-    pub use super::{EmulationOS, EmulationOption};
+    pub use rquest::Http2Config;
     pub use rquest::header::{
         ACCEPT, ACCEPT_LANGUAGE, HeaderMap, HeaderName, HeaderValue, UPGRADE_INSECURE_REQUESTS,
         USER_AGENT,
     };
-    pub use rquest::{EmulationProvider, Http2Config};
 
     #[cfg(all(feature = "gzip", feature = "deflate", feature = "brotli"))]
     pub use rquest::header::ACCEPT_ENCODING;
