@@ -24,6 +24,10 @@ jobs:
         with:
           toolchain: stable
           override: true
+      - name: Install macros expand
+        run: |
+          cargo install cargo-expand
+          cargo expand --all-features        
       - name: Style check
         run: cargo fmt --all -- --check
       - name: Clippy check
