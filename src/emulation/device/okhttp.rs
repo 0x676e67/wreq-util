@@ -10,14 +10,16 @@ macro_rules! mod_generator {
 
             #[inline(always)]
             pub fn emulation(option: EmulationOption) -> EmulationProvider {
+                let default_headers = if !option.skip_headers {
+                    Some(super::header_initializer($ua))
+                } else {
+                    None
+                };
+
                 EmulationProvider::builder()
                     .tls_config(tls_config!($cipher_list))
                     .http2_config(conditional_http2!(option.skip_http2, http2_config!()))
-                    .default_headers(conditional_headers!(
-                        option.skip_headers,
-                        super::header_initializer,
-                        $ua
-                    ))
+                    .default_headers(default_headers)
                     .build()
             }
         }

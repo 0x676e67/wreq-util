@@ -16,7 +16,7 @@ macro_rules! mod_generator {
 
             #[inline(always)]
             pub fn emulation(option: EmulationOption) -> EmulationProvider {
-                let default_headers = if option.skip_headers {
+                let default_headers = if !option.skip_headers {
                     #[allow(unreachable_patterns)]
                     let default_headers = match option.emulation_os {
                         $(

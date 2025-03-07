@@ -1,22 +1,4 @@
 #[macro_export]
-macro_rules! conditional_headers {
-    ($skip_headers:expr, $initializer:expr) => {
-        if $skip_headers {
-            None
-        } else {
-            Some($initializer())
-        }
-    };
-    ($skip_headers:expr, $initializer:expr, $ua:expr) => {
-        if $skip_headers {
-            None
-        } else {
-            Some($initializer($ua))
-        }
-    };
-}
-
-#[macro_export]
 macro_rules! conditional_http2 {
     ($skip_http2:expr, $http2:expr) => {
         if $skip_http2 { None } else { Some($http2) }
