@@ -123,13 +123,3 @@ macro_rules! join {
         concat!($first $(, $sep, $rest)*)
     };
 }
-
-macro_rules! emulation_match {
-    ($ver:expr, $opt:expr, $($variant:pat => $path:expr),+) => {
-        match $ver {
-            $(
-                $variant => $path($opt),
-            )+
-        }
-    }
-}
