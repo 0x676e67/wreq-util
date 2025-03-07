@@ -16,25 +16,29 @@ macro_rules! mod_generator {
 
             #[inline(always)]
             pub fn emulation(option: EmulationOption) -> EmulationProvider {
-                #[allow(unreachable_patterns)]
-                match option.emulation_os {
-                    $(
-                        EmulationOS::$other_os => {
-                            EmulationProvider::builder()
-                                .tls_config($tls_config)
-                                .http2_config(conditional_http2!(option.skip_http2, $http2_config))
-                                .default_headers(conditional_headers!(option.skip_headers, $header_initializer, $other_ua))
-                                .build()
+                let default_headers = if option.skip_headers {
+                    #[allow(unreachable_patterns)]
+                    let default_headers = match option.emulation_os {
+                        $(
+                            EmulationOS::$other_os => {
+                                $header_initializer($other_ua)
+                            }
+                        ),*
+                        _ => {
+                            $header_initializer($default_ua)
                         }
-                    ),*
-                    _ => {
-                        EmulationProvider::builder()
-                            .tls_config($tls_config)
-                            .http2_config(conditional_http2!(option.skip_http2, $http2_config))
-                            .default_headers(conditional_headers!(option.skip_headers, $header_initializer, $default_ua))
-                            .build()
-                    }
-                }
+                    };
+
+                    Some(default_headers)
+                } else {
+                    None
+                };
+
+                EmulationProvider::builder()
+                    .tls_config($tls_config)
+                    .http2_config(conditional_http2!(option.skip_http2, $http2_config))
+                    .default_headers(default_headers)
+                    .build()
             }
         }
     };
