@@ -23,15 +23,19 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          override: true
-      - name: Install macros expand
-        run: |
-          cargo install cargo-expand
-          cargo expand --all-features        
+          override: true    
       - name: Style check
         run: cargo fmt --all -- --check
       - name: Clippy check
         run: cargo clippy --all-targets --all-features
+      - name: Install macros expand
+        run: |
+          cargo install cargo-expand
+          cargo expand emulation --all-features
+          cargo expand emulation::device::chrome --all-features
+          cargo expand emulation::device::firefox --all-features
+          cargo expand emulation::device::safari --all-features
+          cargo expand emulation::device::okhttp --all-features
 
   docs:
     name: Docs
