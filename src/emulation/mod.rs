@@ -133,6 +133,7 @@ define_emulation_enum!(
     OkHttp3_14 => "okhttp_3.14",
     OkHttp4_9 => "okhttp_4.9",
     OkHttp4_10 => "okhttp_4.10",
+    OkHttp4_12 => "okhttp_4.12",
     OkHttp5 => "okhttp_5",
     Edge101 => "edge_101",
     Edge122 => "edge_122",
@@ -291,6 +292,7 @@ impl EmulationProviderFactory for EmulationOption {
             Emulation::OkHttp3_14 => okhttp3_14::emulation,
             Emulation::OkHttp4_9 => okhttp4_9::emulation,
             Emulation::OkHttp4_10 => okhttp4_10::emulation,
+            Emulation::OkHttp4_12 => okhttp4_12::emulation,
             Emulation::OkHttp5 => okhttp5::emulation,
 
             Emulation::Edge101 => edge101::emulation,
