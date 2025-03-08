@@ -3,29 +3,6 @@ use super::*;
 use http2::*;
 use tls::*;
 
-macro_rules! mod_generator {
-    ($mod_name:ident, $tls_config:expr, $http2_config:expr, $header_initializer:ident, $ua:expr) => {
-        pub(crate) mod $mod_name {
-            use super::*;
-
-            #[inline(always)]
-            pub fn emulation(option: EmulationOption) -> EmulationProvider {
-                let default_headers = if !option.skip_headers {
-                    Some($header_initializer($ua))
-                } else {
-                    None
-                };
-
-                EmulationProvider::builder()
-                    .tls_config($tls_config)
-                    .http2_config(conditional_http2!(option.skip_http2, $http2_config))
-                    .default_headers(default_headers)
-                    .build()
-            }
-        }
-    };
-}
-
 macro_rules! tls_config {
     (1, $cipher_list:expr) => {
         SafariTlsConfig::builder().cipher_list($cipher_list).build()
@@ -309,6 +286,54 @@ mod http2 {
     ];
 }
 
+macro_rules! mod_generator {
+    ($mod_name:ident, $tls_config:expr, $http2_config:expr, $header_initializer:ident, $ua:expr) => {
+        pub(crate) mod $mod_name {
+            use super::*;
+
+            #[inline(always)]
+            pub fn emulation(option: EmulationOption) -> EmulationProvider {
+                let default_headers = if !option.skip_headers {
+                    Some($header_initializer($ua))
+                } else {
+                    None
+                };
+
+                build_emulation(option, default_headers)
+            }
+
+            #[inline(always)]
+            pub fn build_emulation(
+                option: EmulationOption,
+                default_headers: Option<HeaderMap>,
+            ) -> EmulationProvider {
+                EmulationProvider::builder()
+                    .tls_config($tls_config)
+                    .http2_config(conditional_http2!(option.skip_http2, $http2_config))
+                    .default_headers(default_headers)
+                    .build()
+            }
+        }
+    };
+
+    ($mod_name:ident, $build_emulation:expr, $header_initializer:ident, $ua:expr) => {
+        pub(crate) mod $mod_name {
+            use super::*;
+
+            #[inline(always)]
+            pub fn emulation(option: EmulationOption) -> EmulationProvider {
+                let default_headers = if !option.skip_headers {
+                    Some($header_initializer($ua))
+                } else {
+                    None
+                };
+
+                $build_emulation(option, default_headers)
+            }
+        }
+    };
+}
+
 mod_generator!(
     safari15_3,
     tls_config!(1, CIPHER_LIST_1),
@@ -319,8 +344,7 @@ mod_generator!(
 
 mod_generator!(
     safari15_5,
-    tls_config!(1, CIPHER_LIST_1),
-    http2_config!(4),
+    safari15_3::build_emulation,
     header_initializer_for_15,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.5 Safari/605.1.15"
 );
@@ -335,18 +359,23 @@ mod_generator!(
 
 mod_generator!(
     safari16,
-    tls_config!(1, CIPHER_LIST_2),
-    http2_config!(4),
+    safari15_6_1::build_emulation,
     header_initializer_for_16_17,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15"
 );
 
 mod_generator!(
     safari16_5,
-    tls_config!(1, CIPHER_LIST_2),
-    http2_config!(4),
+    safari15_6_1::build_emulation,
     header_initializer_for_16_17,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15"
+);
+
+mod_generator!(
+    safari17_4_1,
+    safari15_6_1::build_emulation,
+    header_initializer_for_16_17,
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15"
 );
 
 mod_generator!(
@@ -367,24 +396,14 @@ mod_generator!(
 
 mod_generator!(
     safari17_2_1,
-    tls_config!(1, CIPHER_LIST_2),
-    http2_config!(5),
+    safari17_0::build_emulation,
     header_initializer_for_16_17,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15"
 );
 
 mod_generator!(
-    safari17_4_1,
-    tls_config!(1, CIPHER_LIST_2),
-    http2_config!(4),
-    header_initializer_for_16_17,
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15"
-);
-
-mod_generator!(
     safari17_5,
-    tls_config!(1, CIPHER_LIST_2),
-    http2_config!(5),
+    safari17_0::build_emulation,
     header_initializer_for_16_17,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
 );
@@ -399,18 +418,9 @@ mod_generator!(
 
 mod_generator!(
     safari_ios_17_4_1,
-    tls_config!(1, CIPHER_LIST_2),
-    http2_config!(2),
+    safari_ios_17_2::build_emulation,
     header_initializer_for_16_17,
     "Mozilla/5.0 (iPad; CPU OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1"
-);
-
-mod_generator!(
-    safari_ipad_18,
-    tls_config!(1, CIPHER_LIST_2),
-    http2_config!(3),
-    header_initializer_for_18,
-    "Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1"
 );
 
 mod_generator!(
@@ -422,9 +432,15 @@ mod_generator!(
 );
 
 mod_generator!(
+    safari_ipad_18,
+    safari18::build_emulation,
+    header_initializer_for_18,
+    "Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1"
+);
+
+mod_generator!(
     safari_ios_18_1_1,
-    tls_config!(1, CIPHER_LIST_2),
-    http2_config!(3),
+    safari18::build_emulation,
     header_initializer_for_18,
     "Mozilla/5.0 (iPhone; CPU iPhone OS 18_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1.1 Mobile/15E148 Safari/604.1"
 );
@@ -439,8 +455,7 @@ mod_generator!(
 
 mod_generator!(
     safari18_3,
-    tls_config!(2, CIPHER_LIST_2, NEW_SIGALGS_LIST),
-    http2_config!(3),
+    safari18_2::build_emulation,
     header_initializer_for_18,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Safari/605.1.15"
 );

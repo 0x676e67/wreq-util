@@ -3,47 +3,6 @@ use super::*;
 use http2::*;
 use tls::*;
 
-macro_rules! mod_generator {
-    (
-        $mod_name:ident,
-        $tls_config:expr,
-        $http2_config:expr,
-        $header_initializer:ident,
-        [($default_os:ident, $default_ua:tt) $(, ($other_os:ident, $other_ua:tt))*]
-    ) => {
-        pub(crate) mod $mod_name {
-            use super::*;
-
-            #[inline(always)]
-            pub fn emulation(option: EmulationOption) -> EmulationProvider {
-                let default_headers = if !option.skip_headers {
-                    #[allow(unreachable_patterns)]
-                    let default_headers = match option.emulation_os {
-                        $(
-                            EmulationOS::$other_os => {
-                                $header_initializer($other_ua)
-                            }
-                        ),*
-                        _ => {
-                            $header_initializer($default_ua)
-                        }
-                    };
-
-                    Some(default_headers)
-                } else {
-                    None
-                };
-
-                EmulationProvider::builder()
-                    .tls_config($tls_config)
-                    .http2_config(conditional_http2!(option.skip_http2, $http2_config))
-                    .default_headers(default_headers)
-                    .build()
-            }
-        }
-    };
-}
-
 macro_rules! tls_config {
     (1, $cipher_list:expr, $curves:expr) => {
         FirefoxTlsConfig::builder()
@@ -434,6 +393,88 @@ mod http2 {
     });
 }
 
+macro_rules! mod_generator {
+    (
+        $mod_name:ident,
+        $tls_config:expr,
+        $http2_config:expr,
+        $header_initializer:ident,
+        [($default_os:ident, $default_ua:tt) $(, ($other_os:ident, $other_ua:tt))*]
+    ) => {
+        pub(crate) mod $mod_name {
+            use super::*;
+
+            #[inline(always)]
+            pub fn emulation(option: EmulationOption) -> EmulationProvider {
+                let default_headers = if !option.skip_headers {
+                    #[allow(unreachable_patterns)]
+                    let default_headers = match option.emulation_os {
+                        $(
+                            EmulationOS::$other_os => {
+                                $header_initializer($other_ua)
+                            }
+                        ),*
+                        _ => {
+                            $header_initializer($default_ua)
+                        }
+                    };
+
+                    Some(default_headers)
+                } else {
+                    None
+                };
+
+                build_emulation(option, default_headers)
+            }
+
+            #[inline(always)]
+            pub fn build_emulation(
+                option: EmulationOption,
+                default_headers: Option<HeaderMap>
+            ) -> EmulationProvider {
+                EmulationProvider::builder()
+                     .tls_config($tls_config)
+                    .http2_config(conditional_http2!(option.skip_http2, $http2_config))
+                    .default_headers(default_headers)
+                    .build()
+            }
+        }
+    };
+    (
+        $mod_name:ident,
+        $build_emulation:expr,
+        $header_initializer:ident,
+        [($default_os:ident, $default_ua:tt) $(, ($other_os:ident, $other_ua:tt))*]
+    ) => {
+        pub(crate) mod $mod_name {
+            use super::*;
+
+            #[inline(always)]
+            pub fn emulation(option: EmulationOption) -> EmulationProvider {
+                let default_headers = if !option.skip_headers {
+                    #[allow(unreachable_patterns)]
+                    let default_headers = match option.emulation_os {
+                        $(
+                            EmulationOS::$other_os => {
+                                $header_initializer($other_ua)
+                            }
+                        ),*
+                        _ => {
+                            $header_initializer($default_ua)
+                        }
+                    };
+
+                    Some(default_headers)
+                } else {
+                    None
+                };
+
+                $build_emulation(option, default_headers)
+            }
+        }
+    };
+}
+
 mod_generator!(
     ff109,
     tls_config!(2, CIPHER_LIST_1, CURVES_1),
@@ -465,8 +506,7 @@ mod_generator!(
 
 mod_generator!(
     ff117,
-    tls_config!(2, CIPHER_LIST_1, CURVES_1),
-    http2_config!(2),
+    ff109::build_emulation,
     header_initializer,
     [
         (

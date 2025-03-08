@@ -3,50 +3,6 @@ use super::*;
 use http2::*;
 use tls::*;
 
-macro_rules! mod_generator {
-    (
-        $mod_name:ident,
-        $tls_config:expr,
-        $http2_config:expr,
-        $header_initializer:ident,
-        [($default_os:ident, $default_sec_ch_ua:tt, $default_ua:tt) $(, ($other_os:ident, $other_sec_ch_ua:tt, $other_ua:tt))*]
-    ) => {
-        pub(crate) mod $mod_name {
-            use super::*;
-
-            #[inline(always)]
-            pub fn emulation(option: EmulationOption) -> EmulationProvider {
-                let default_headers = if !option.skip_headers {
-                    #[allow(unreachable_patterns)]
-                    let default_headers = match option.emulation_os {
-                        $(
-                            EmulationOS::$other_os => $header_initializer(
-                                $other_sec_ch_ua,
-                                $other_ua,
-                                option.emulation_os,
-                            ),
-                        )*
-                        _ => $header_initializer(
-                            $default_sec_ch_ua,
-                            $default_ua,
-                            EmulationOS::$default_os,
-                        ),
-                    };
-                    Some(default_headers)
-                } else {
-                    None
-                };
-
-                EmulationProvider::builder()
-                    .tls_config($tls_config)
-                    .http2_config(conditional_http2!(option.skip_http2, $http2_config))
-                    .default_headers(default_headers)
-                    .build()
-            }
-        }
-    };
-}
-
 macro_rules! tls_config {
     (1) => {
         ChromeTlsConfig::builder().build()
@@ -308,6 +264,94 @@ mod http2 {
     ];
 }
 
+macro_rules! mod_generator {
+    (
+        $mod_name:ident,
+        $tls_config:expr,
+        $http2_config:expr,
+        $header_initializer:ident,
+        [($default_os:ident, $default_sec_ch_ua:tt, $default_ua:tt) $(, ($other_os:ident, $other_sec_ch_ua:tt, $other_ua:tt))*]
+    ) => {
+        pub(crate) mod $mod_name {
+            use super::*;
+
+            #[inline(always)]
+            pub fn emulation(option: EmulationOption) -> EmulationProvider {
+                let default_headers = if !option.skip_headers {
+                    #[allow(unreachable_patterns)]
+                    let default_headers = match option.emulation_os {
+                        $(
+                            EmulationOS::$other_os => $header_initializer(
+                                $other_sec_ch_ua,
+                                $other_ua,
+                                option.emulation_os,
+                            ),
+                        )*
+                        _ => $header_initializer(
+                            $default_sec_ch_ua,
+                            $default_ua,
+                            EmulationOS::$default_os,
+                        ),
+                    };
+                    Some(default_headers)
+                } else {
+                    None
+                };
+
+                build_emulation(option, default_headers)
+            }
+
+            #[inline(always)]
+            pub fn build_emulation(
+                option: EmulationOption,
+                default_headers: Option<HeaderMap>
+            ) -> EmulationProvider {
+                EmulationProvider::builder()
+                     .tls_config($tls_config)
+                    .http2_config(conditional_http2!(option.skip_http2, $http2_config))
+                    .default_headers(default_headers)
+                    .build()
+            }
+        }
+    };
+    (
+        $mod_name:ident,
+        $build_emulation:expr,
+        $header_initializer:ident,
+        [($default_os:ident, $default_sec_ch_ua:tt, $default_ua:tt) $(, ($other_os:ident, $other_sec_ch_ua:tt, $other_ua:tt))*]
+    ) => {
+        pub(crate) mod $mod_name {
+            use super::*;
+
+            #[inline(always)]
+            pub fn emulation(option: EmulationOption) -> EmulationProvider {
+                let default_headers = if !option.skip_headers {
+                    #[allow(unreachable_patterns)]
+                    let default_headers = match option.emulation_os {
+                        $(
+                            EmulationOS::$other_os => $header_initializer(
+                                $other_sec_ch_ua,
+                                $other_ua,
+                                option.emulation_os,
+                            ),
+                        )*
+                        _ => $header_initializer(
+                            $default_sec_ch_ua,
+                            $default_ua,
+                            EmulationOS::$default_os,
+                        ),
+                    };
+                    Some(default_headers)
+                } else {
+                    None
+                };
+
+                $build_emulation(option, default_headers)
+            }
+        }
+    };
+}
+
 mod_generator!(
     v100,
     tls_config!(1),
@@ -344,8 +388,7 @@ mod_generator!(
 
 mod_generator!(
     v101,
-    tls_config!(1),
-    http2_config!(1),
+    v100::build_emulation,
     header_initializer,
     [
         (
@@ -377,9 +420,43 @@ mod_generator!(
 );
 
 mod_generator!(
+    edge101,
+    v100::build_emulation,
+    header_initializer,
+    [
+        (
+            MacOS,
+            r#""Not A;Brand";v="99", "Chromium";v="101", "Microsoft Edge";v="101""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edg/101.0.1210.47"
+        ),
+        (
+            Android,
+            r#""Not A;Brand";v="99", "Chromium";v="101", "Microsoft Edge";v="101""#,
+            "Mozilla/5.0 (Linux; Android 10; ONEPLUS A6003) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.41 Safari/537.36 Edg/101.0.1210.31"
+        ),
+        (
+            Windows,
+            r#""Not A;Brand";v="99", "Chromium";v="101", "Microsoft Edge";v="101""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edg/101.0.1210.53"
+        ),
+        // This shouldn't exist, edge was never meant to be on linux,
+        // but I found some UAs in myip.ms (same for 122, 127 and 131)
+        (
+            Linux,
+            r#""Not A;Brand";v="99", "Chromium";v="101", "Microsoft Edge";v="101""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edg/101.0.1210.53"
+        ),
+        (
+            IOS,
+            r#""Not A;Brand";v="99", "Chromium";v="101", "Microsoft Edge";v="101""#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/101.0.4951.64 Mobile Safari/537.36 Edg/101.0.1210.53"
+        )
+    ]
+);
+
+mod_generator!(
     v104,
-    tls_config!(1),
-    http2_config!(1),
+    v100::build_emulation,
     header_initializer,
     [
         (
@@ -480,8 +557,7 @@ mod_generator!(
 
 mod_generator!(
     v107,
-    tls_config!(3),
-    http2_config!(2),
+    v106::build_emulation,
     header_initializer,
     [
         (
@@ -514,8 +590,7 @@ mod_generator!(
 
 mod_generator!(
     v108,
-    tls_config!(3),
-    http2_config!(2),
+    v106::build_emulation,
     header_initializer,
     [
         (
@@ -548,8 +623,7 @@ mod_generator!(
 
 mod_generator!(
     v109,
-    tls_config!(3),
-    http2_config!(2),
+    v106::build_emulation,
     header_initializer,
     [
         (
@@ -582,8 +656,7 @@ mod_generator!(
 
 mod_generator!(
     v114,
-    tls_config!(3),
-    http2_config!(2),
+    v106::build_emulation,
     header_initializer,
     [
         (
@@ -678,6 +751,101 @@ mod_generator!(
 );
 
 mod_generator!(
+    v120,
+    v117::build_emulation,
+    header_initializer,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        ),
+        (
+            Linux,
+            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        ),
+        (
+            Android,
+            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
+            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/120.0.6099.119 Mobile/15E148 Safari/604.1"
+        )
+    ]
+);
+
+mod_generator!(
+    edge122,
+    v117::build_emulation,
+    header_initializer,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="122", "Not(A:Brand";v="24", "Microsoft Edge";v="122""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
+        ),
+        (
+            Android,
+            r#""Chromium";v="122", "Not(A:Brand";v="24", "Microsoft Edge";v="122""#,
+            "Mozilla/5.0 (Linux; Android 10; Pixel 3 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6268.219 Safari/537.36 Edg/122.0.2238.82"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="122", "Not(A:Brand";v="24", "Microsoft Edge";v="122""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
+        ),
+        // This shouldn't exist, edge was never meant to be on linux
+        (
+            Linux,
+            r#""Chromium";v="122", "Not(A:Brand";v="24", "Microsoft Edge";v="122""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="122", "Not(A:Brand";v="24", "Microsoft Edge";v="122""#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
+        )
+    ]
+);
+
+mod_generator!(
+    v123,
+    v117::build_emulation,
+    header_initializer_with_zstd,
+    [
+        (
+            MacOS,
+            r#""Google Chrome";v="123", "Not;A=Brand";v="8", "Chromium";v="123""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+        ),
+        (
+            Linux,
+            r#""Google Chrome";v="123", "Not;A=Brand";v="8", "Chromium";v="123""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+        ),
+        (
+            Android,
+            r#""Google Chrome";v="123", "Not;A=Brand";v="8", "Chromium";v="123""#,
+            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+        ),
+        (
+            Windows,
+            r#""Google Chrome";v="123", "Not;A=Brand";v="8", "Chromium";v="123""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+        )
+    ]
+);
+
+mod_generator!(
     v118,
     tls_config!(4),
     http2_config!(3),
@@ -713,8 +881,7 @@ mod_generator!(
 
 mod_generator!(
     v119,
-    tls_config!(4),
-    http2_config!(3),
+    v118::build_emulation,
     header_initializer,
     [
         (
@@ -741,69 +908,6 @@ mod_generator!(
             IOS,
             r#""Chromium";v="119", "Google Chrome";v="119", "Not=A?Brand";v="99""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/119.0.6045.109 Mobile/15E148 Safari/604.1"
-        )
-    ]
-);
-
-mod_generator!(
-    v120,
-    tls_config!(5),
-    http2_config!(3),
-    header_initializer,
-    [
-        (
-            MacOS,
-            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        ),
-        (
-            Linux,
-            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        ),
-        (
-            Android,
-            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        ),
-        (
-            Windows,
-            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        ),
-        (
-            IOS,
-            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
-            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/120.0.6099.119 Mobile/15E148 Safari/604.1"
-        )
-    ]
-);
-
-mod_generator!(
-    v123,
-    tls_config!(5),
-    http2_config!(3),
-    header_initializer_with_zstd,
-    [
-        (
-            MacOS,
-            r#""Google Chrome";v="123", "Not;A=Brand";v="8", "Chromium";v="123""#,
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-        ),
-        (
-            Linux,
-            r#""Google Chrome";v="123", "Not;A=Brand";v="8", "Chromium";v="123""#,
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-        ),
-        (
-            Android,
-            r#""Google Chrome";v="123", "Not;A=Brand";v="8", "Chromium";v="123""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-        ),
-        (
-            Windows,
-            r#""Google Chrome";v="123", "Not;A=Brand";v="8", "Chromium";v="123""#,
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
         )
     ]
 );
@@ -844,8 +948,7 @@ mod_generator!(
 
 mod_generator!(
     v126,
-    tls_config!(6, CURVES_2),
-    http2_config!(3),
+    v124::build_emulation,
     header_initializer_with_zstd,
     [
         (
@@ -878,8 +981,7 @@ mod_generator!(
 
 mod_generator!(
     v127,
-    tls_config!(6, CURVES_2),
-    http2_config!(3),
+    v124::build_emulation,
     header_initializer_with_zstd,
     [
         (
@@ -911,9 +1013,42 @@ mod_generator!(
 );
 
 mod_generator!(
+    edge127,
+    v124::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Not)A;Brand";v="99", "Microsoft Edge";v="127", "Chromium";v="127""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+        ),
+        (
+            Android,
+            r#""Not)A;Brand";v="99", "Microsoft Edge";v="127", "Chromium";v="127""#,
+            "Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.6332.205 Safari/537.36 Edg/127.0.2322.67"
+        ),
+        (
+            Windows,
+            r#""Not)A;Brand";v="99", "Microsoft Edge";v="127", "Chromium";v="127""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+        ),
+        // This shouldn't exist, edge was never meant to be on linux
+        (
+            Linux,
+            r#""Not)A;Brand";v="99", "Microsoft Edge";v="127", "Chromium";v="127""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+        ),
+        (
+            IOS,
+            r#""Not)A;Brand";v="99", "Microsoft Edge";v="127", "Chromium";v="127""#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+        )
+    ]
+);
+
+mod_generator!(
     v128,
-    tls_config!(6, CURVES_2),
-    http2_config!(3),
+    v124::build_emulation,
     header_initializer,
     [
         (
@@ -946,8 +1081,7 @@ mod_generator!(
 
 mod_generator!(
     v129,
-    tls_config!(6, CURVES_2),
-    http2_config!(3),
+    v124::build_emulation,
     header_initializer_with_zstd_priority,
     [
         (
@@ -980,8 +1114,7 @@ mod_generator!(
 
 mod_generator!(
     v130,
-    tls_config!(6, CURVES_2),
-    http2_config!(3),
+    v124::build_emulation,
     header_initializer_with_zstd_priority,
     [
         (
@@ -1047,6 +1180,40 @@ mod_generator!(
 );
 
 mod_generator!(
+    edge131,
+    v131::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
+        ),
+        (
+            Android,
+            r#""Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24""#,
+            "Mozilla/5.0 (Linux; Android 10; HD1913) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.200 Mobile Safari/537.36 EdgA/131.0.2903.87"
+        ),
+        (
+            Windows,
+            r#""Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
+        ),
+        // This shouldn't exist, edge was never meant to be on linux
+        (
+            Linux,
+            r#""Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
+        ),
+        (
+            IOS,
+            r#""Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24""#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
+        )
+    ]
+);
+
+mod_generator!(
     v132,
     tls_config!(7, CURVES_3),
     http2_config!(3),
@@ -1082,8 +1249,7 @@ mod_generator!(
 
 mod_generator!(
     v133,
-    tls_config!(7, CURVES_3),
-    http2_config!(3),
+    v132::build_emulation,
     header_initializer_with_zstd_priority,
     [
         (
@@ -1110,147 +1276,6 @@ mod_generator!(
             IOS,
             r#""Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/133.0.6943.33 Mobile/15E148 Safari/604.1"
-        )
-    ]
-);
-
-mod_generator!(
-    edge101,
-    tls_config!(1),
-    http2_config!(1),
-    header_initializer,
-    [
-        (
-            MacOS,
-            r#""Not A;Brand";v="99", "Chromium";v="101", "Microsoft Edge";v="101""#,
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edg/101.0.1210.47"
-        ),
-        (
-            Android,
-            r#""Not A;Brand";v="99", "Chromium";v="101", "Microsoft Edge";v="101""#,
-            "Mozilla/5.0 (Linux; Android 10; ONEPLUS A6003) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.41 Safari/537.36 Edg/101.0.1210.31"
-        ),
-        (
-            Windows,
-            r#""Not A;Brand";v="99", "Chromium";v="101", "Microsoft Edge";v="101""#,
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edg/101.0.1210.53"
-        ),
-        // This shouldn't exist, edge was never meant to be on linux,
-        // but I found some UAs in myip.ms (same for 122, 127 and 131)
-        (
-            Linux,
-            r#""Not A;Brand";v="99", "Chromium";v="101", "Microsoft Edge";v="101""#,
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edg/101.0.1210.53"
-        ),
-        (
-            IOS,
-            r#""Not A;Brand";v="99", "Chromium";v="101", "Microsoft Edge";v="101""#,
-            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/101.0.4951.64 Mobile Safari/537.36 Edg/101.0.1210.53"
-        )
-    ]
-);
-
-mod_generator!(
-    edge122,
-    tls_config!(5),
-    http2_config!(3),
-    header_initializer,
-    [
-        (
-            MacOS,
-            r#""Chromium";v="122", "Not(A:Brand";v="24", "Microsoft Edge";v="122""#,
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
-        ),
-        (
-            Android,
-            r#""Chromium";v="122", "Not(A:Brand";v="24", "Microsoft Edge";v="122""#,
-            "Mozilla/5.0 (Linux; Android 10; Pixel 3 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6268.219 Safari/537.36 Edg/122.0.2238.82"
-        ),
-        (
-            Windows,
-            r#""Chromium";v="122", "Not(A:Brand";v="24", "Microsoft Edge";v="122""#,
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
-        ),
-        // This shouldn't exist, edge was never meant to be on linux
-        (
-            Linux,
-            r#""Chromium";v="122", "Not(A:Brand";v="24", "Microsoft Edge";v="122""#,
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
-        ),
-        (
-            IOS,
-            r#""Chromium";v="122", "Not(A:Brand";v="24", "Microsoft Edge";v="122""#,
-            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
-        )
-    ]
-);
-
-mod_generator!(
-    edge127,
-    tls_config!(6, CURVES_2),
-    http2_config!(3),
-    header_initializer_with_zstd_priority,
-    [
-        (
-            MacOS,
-            r#""Not)A;Brand";v="99", "Microsoft Edge";v="127", "Chromium";v="127""#,
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
-        ),
-        (
-            Android,
-            r#""Not)A;Brand";v="99", "Microsoft Edge";v="127", "Chromium";v="127""#,
-            "Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.6332.205 Safari/537.36 Edg/127.0.2322.67"
-        ),
-        (
-            Windows,
-            r#""Not)A;Brand";v="99", "Microsoft Edge";v="127", "Chromium";v="127""#,
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
-        ),
-        // This shouldn't exist, edge was never meant to be on linux
-        (
-            Linux,
-            r#""Not)A;Brand";v="99", "Microsoft Edge";v="127", "Chromium";v="127""#,
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
-        ),
-        (
-            IOS,
-            r#""Not)A;Brand";v="99", "Microsoft Edge";v="127", "Chromium";v="127""#,
-            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
-        )
-    ]
-);
-
-mod_generator!(
-    edge131,
-    tls_config!(6, CURVES_3),
-    http2_config!(3),
-    header_initializer_with_zstd_priority,
-    [
-        (
-            MacOS,
-            r#""Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24""#,
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
-        ),
-        (
-            Android,
-            r#""Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24""#,
-            "Mozilla/5.0 (Linux; Android 10; HD1913) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.200 Mobile Safari/537.36 EdgA/131.0.2903.87"
-        ),
-        (
-            Windows,
-            r#""Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24""#,
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
-        ),
-        // This shouldn't exist, edge was never meant to be on linux
-        (
-            Linux,
-            r#""Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24""#,
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
-        ),
-        (
-            IOS,
-            r#""Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24""#,
-            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
         )
     ]
 );

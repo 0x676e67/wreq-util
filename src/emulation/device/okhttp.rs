@@ -3,48 +3,29 @@ use super::*;
 use http2::*;
 use tls::*;
 
-macro_rules! mod_generator {
-    ($mod_name:ident, $cipher_list:expr, $ua:expr) => {
-        pub(crate) mod $mod_name {
-            use super::*;
-
-            #[inline(always)]
-            pub fn emulation(option: EmulationOption) -> EmulationProvider {
-                let default_headers = if !option.skip_headers {
-                    Some(super::header_initializer($ua))
-                } else {
-                    None
-                };
-
-                EmulationProvider::builder()
-                    .tls_config(tls_config!($cipher_list))
-                    .http2_config(conditional_http2!(option.skip_http2, http2_config!()))
-                    .default_headers(default_headers)
-                    .build()
-            }
-        }
-    };
-}
-
-macro_rules! tls_config {
-    ($cipher_list:expr) => {
-        OkHttpTlsConfig::builder().cipher_list($cipher_list).build()
-    };
-}
-
-macro_rules! http2_config {
-    () => {
-        Http2Config::builder()
-            .initial_stream_window_size(6291456)
-            .initial_connection_window_size(15728640)
-            .max_concurrent_streams(1000)
-            .max_header_list_size(262144)
-            .header_table_size(65536)
-            .headers_priority(HEADER_PRIORITY)
-            .headers_pseudo_order(HEADERS_PSEUDO_ORDER)
-            .settings_order(SETTINGS_ORDER)
-            .build()
-    };
+#[inline]
+pub fn build_emulation(
+    option: EmulationOption,
+    cipher_list: &'static str,
+    default_headers: Option<HeaderMap>,
+) -> EmulationProvider {
+    EmulationProvider::builder()
+        .tls_config(OkHttpTlsConfig::builder().cipher_list(cipher_list).build())
+        .http2_config(conditional_http2!(
+            option.skip_http2,
+            Http2Config::builder()
+                .initial_stream_window_size(6291456)
+                .initial_connection_window_size(15728640)
+                .max_concurrent_streams(1000)
+                .max_header_list_size(262144)
+                .header_table_size(65536)
+                .headers_priority(HEADER_PRIORITY)
+                .headers_pseudo_order(HEADERS_PSEUDO_ORDER)
+                .settings_order(SETTINGS_ORDER)
+                .build()
+        ))
+        .default_headers(default_headers)
+        .build()
 }
 
 #[inline]
@@ -141,6 +122,25 @@ mod http2 {
         UnknownSetting8,
         UnknownSetting9,
     ];
+}
+
+macro_rules! mod_generator {
+    ($mod_name:ident, $cipher_list:expr, $ua:expr) => {
+        pub(crate) mod $mod_name {
+            use super::*;
+
+            #[inline(always)]
+            pub fn emulation(option: EmulationOption) -> EmulationProvider {
+                let default_headers = if !option.skip_headers {
+                    Some(header_initializer($ua))
+                } else {
+                    None
+                };
+
+                build_emulation(option, $cipher_list, default_headers)
+            }
+        }
+    };
 }
 
 mod_generator!(
