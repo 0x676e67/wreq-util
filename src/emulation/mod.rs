@@ -139,6 +139,7 @@ define_emulation_enum!(
     Edge122 => "edge_122",
     Edge127 => "edge_127",
     Edge131 => "edge_131",
+    Edge134 => "edge_134",
     Firefox109 => "firefox_109",
     Firefox117 => "firefox_117",
     Firefox128 => "firefox_128",
@@ -301,6 +302,7 @@ impl EmulationProviderFactory for EmulationOption {
             Emulation::Edge122 => edge122::emulation,
             Emulation::Edge127 => edge127::emulation,
             Emulation::Edge131 => edge131::emulation,
+            Emulation::Edge134 => edge134::emulation,
 
             Emulation::Firefox109 => ff109::emulation,
             Emulation::Firefox117 => ff117::emulation,
