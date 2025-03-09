@@ -34,7 +34,7 @@ deflate = ["rquest/deflate"]
 zstd = ["rquest/zstd"]
 
 [dependencies]
-rquest = { version = "3.0.2", default-features = false }
+rquest = { version = "3.0.5", default-features = false }
 serde = { version = "1.0", features = ["derive"], optional = true }
 typed-builder = { version = "0.20.0", optional = true }
 strum = { version = "0.27.1", optional = true }

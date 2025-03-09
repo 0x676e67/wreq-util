@@ -340,6 +340,8 @@ mod tls {
                 .psk_dhe_ke(val.psk_dhe_ke)
                 .cert_compression_algorithm(val.cert_compression_algorithm)
                 .extension_permutation_indices(val.extension_permutation_indices)
+                .aes_hw_override(true)
+                .random_aes_hw_override(true)
                 .build()
         }
     }
