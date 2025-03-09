@@ -60,7 +60,6 @@ test_emulation!(
     "959a7e813b79b909a1a0b00a38e8bba3"
 );
 
-
 test_emulation!(
     test_safari_17_4_1,
     Emulation::Safari17_4_1,
