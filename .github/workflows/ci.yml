@@ -62,8 +62,13 @@ jobs:
         with:
           toolchain: stable
           override: true
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest
       - name: Tests
-        run: cargo test --all-features
+        run: | 
+          set -euxo pipefail
+          cargo nextest run --locked --workspace --all-features
 
   windows:
     name: Windows
