@@ -68,7 +68,7 @@ jobs:
       - name: Tests
         run: | 
           set -euxo pipefail
-          cargo nextest run --locked --workspace --all-features
+          cargo nextest run --workspace --all-features
 
   windows:
     name: Windows
