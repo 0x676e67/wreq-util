@@ -52,3 +52,17 @@ test_emulation!(
     ["t13d1716h2_5b57614c22b0_eeeea6562960"],
     "41a06cadb1c6385e6d08c8d0dbbea818"
 );
+
+test_emulation!(
+    test_firefox_136,
+    Emulation::Firefox136,
+    ["t13d1717h2_5b57614c22b0_3cbfd9057e0d"],
+    "6ea73faa8fc5aac76bded7bd238f6433"
+);
+
+test_emulation!(
+    test_firefox_private_136,
+    Emulation::FirefoxPrivate136,
+    ["t13d1715h2_5b57614c22b0_a54fffd0eb61"],
+    "6ea73faa8fc5aac76bded7bd238f6433"
+);

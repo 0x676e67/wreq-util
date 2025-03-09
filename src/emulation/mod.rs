@@ -145,7 +145,9 @@ define_emulation_enum!(
     Firefox133 => "firefox_133",
     Firefox135 => "firefox_135",
     FirefoxPrivate135 => "firefox_private_135",
-    FirefoxAndroid135 => "firefox_android_135"
+    FirefoxAndroid135 => "firefox_android_135",
+    Firefox136 => "firefox_136",
+    FirefoxPrivate136 => "firefox_private_136"
 );
 
 /// ======== Emulation impls ========
@@ -306,7 +308,9 @@ impl EmulationProviderFactory for EmulationOption {
             Emulation::Firefox133 => ff133::emulation,
             Emulation::Firefox135 => ff135::emulation,
             Emulation::FirefoxPrivate135 => ff_private_135::emulation,
-            Emulation::FirefoxAndroid135 => ff_android_135::emulation
+            Emulation::FirefoxAndroid135 => ff_android_135::emulation,
+            Emulation::Firefox136 => ff136::emulation,
+            Emulation::FirefoxPrivate136 => ff_private_136::emulation
         )
     }
 }

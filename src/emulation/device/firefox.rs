@@ -642,3 +642,43 @@ mod_generator!(
         "Mozilla/5.0 (Android 13; Mobile; rv:135.0) Gecko/135.0 Firefox/135.0"
     )]
 );
+
+mod_generator!(
+    ff136,
+    ff135::build_emulation,
+    header_initializer_with_zstd,
+    [
+        (
+            MacOS,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:136.0) Gecko/20100101 Firefox/136.0"
+        ),
+        (
+            Windows,
+            "Mozilla/5.0 (Windows NT 10.0; rv:136.0) Gecko/20100101 Firefox/136.0"
+        ),
+        (
+            Linux,
+            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0"
+        )
+    ]
+);
+
+mod_generator!(
+    ff_private_136,
+    ff_private_135::build_emulation,
+    header_initializer_with_zstd,
+    [
+        (
+            MacOS,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:136.0) Gecko/20100101 Firefox/136.0"
+        ),
+        (
+            Windows,
+            "Mozilla/5.0 (Windows NT 10.0; rv:136.0) Gecko/20100101 Firefox/136.0"
+        ),
+        (
+            Linux,
+            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0"
+        )
+    ]
+);
