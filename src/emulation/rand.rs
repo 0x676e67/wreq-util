@@ -38,6 +38,25 @@ fn fast_random() -> u64 {
 }
 
 impl Emulation {
+    /// Returns a random variant of the `Emulation` enum.
+    ///
+    /// This method uses a fast random number generator to select a random variant
+    /// from the `Emulation::VARIANTS` array. The random number generator is based
+    /// on the XOR-Shift algorithm, which is efficient and suitable for use in
+    /// multi-threaded environments.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rquest_util::Emulation;
+    ///
+    /// let random_emulation = Emulation::random();
+    /// println!("{:?}", random_emulation);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// This method will panic if the `Emulation::VARIANTS` array is empty.
     #[inline]
     pub fn random() -> Emulation {
         let variants = Emulation::VARIANTS;
