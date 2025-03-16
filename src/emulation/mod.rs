@@ -12,49 +12,21 @@ use typed_builder::TypedBuilder;
 macro_rules! define_emulation_enum {
     ($(#[$meta:meta])* $name:ident, $default_variant:ident, $($variant:ident => $rename:expr),*) => {
         $(#[$meta])*
-        #[cfg(not(feature = "emulation-rand"))]
-        #[derive(Clone, Copy, Hash, Debug, PartialEq, Eq, Deserialize, Serialize)]
+        #[derive(Clone, Copy, Hash, Debug, PartialEq, Eq)]
+        #[cfg_attr(feature = "emulation-rand", derive(Serialize, Deserialize, VariantArray))]
         pub enum $name {
             $(
-                #[serde(rename = $rename)]
+                #[cfg_attr(feature = "emulation-rand", serde(rename = $rename))]
                 $variant,
             )*
         }
 
-        #[cfg(not(feature = "emulation-rand"))]
-        impl Default for $name {
-            fn default() -> Self {
-                $name::$default_variant
-            }
-        }
-
-        $(#[$meta])*
-        #[cfg(feature = "emulation-rand")]
-        #[derive(Clone, Copy, Hash, Debug, PartialEq, Eq, Deserialize, Serialize, VariantArray)]
-        pub enum $name {
-            $(
-                #[serde(rename = $rename)]
-                $variant,
-            )*
-        }
-
-        #[cfg(feature = "emulation-rand")]
         impl Default for $name {
             fn default() -> Self {
                 $name::$default_variant
             }
         }
     };
-}
-
-macro_rules! emulation_match {
-    ($ver:expr, $opt:expr, $($variant:pat => $path:expr),+) => {
-        match $ver {
-            $(
-                $variant => $path($opt),
-            )+
-        }
-    }
 }
 
 define_emulation_enum!(
@@ -240,6 +212,16 @@ pub struct EmulationOption {
 }
 
 /// ======== EmulationOption impls ========
+macro_rules! emulation_match {
+    ($ver:expr, $opt:expr, $($variant:pat => $path:expr),+) => {
+        match $ver {
+            $(
+                $variant => $path($opt),
+            )+
+        }
+    }
+}
+
 impl EmulationProviderFactory for EmulationOption {
     fn emulation(self) -> EmulationProvider {
         emulation_match!(
