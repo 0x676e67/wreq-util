@@ -82,6 +82,7 @@ define_emulation_enum!(
     Chrome131 => "chrome_131",
     Chrome132 => "chrome_132",
     Chrome133 => "chrome_133",
+    Chrome134 => "chrome_134",
     SafariIos17_2 => "safari_ios_17.2",
     SafariIos17_4_1 => "safari_ios_17.4.1",
     SafariIos16_5 => "safari_ios_16.5",
@@ -252,6 +253,7 @@ impl EmulationProviderFactory for EmulationOption {
             Emulation::Chrome131 => v131::emulation,
             Emulation::Chrome132 => v132::emulation,
             Emulation::Chrome133 => v133::emulation,
+            Emulation::Chrome134 => v134::emulation,
 
             Emulation::SafariIos17_2 => safari_ios_17_2::emulation,
             Emulation::SafariIos17_4_1 => safari_ios_17_4_1::emulation,
