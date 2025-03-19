@@ -193,6 +193,37 @@ impl EmulationOS {
     }
 }
 
+/// Represents the configuration options for emulating a browser and operating system.
+///
+/// The `EmulationOption` struct allows you to configure various aspects of browser and OS emulation,
+/// including the browser version, operating system, and whether to skip certain features like HTTP/2
+/// or headers.
+///
+/// This struct is typically used to build an `EmulationProvider` that can be applied to HTTP clients
+/// for making requests that mimic specific browser and OS configurations.
+///
+/// # Fields
+///
+/// - `emulation`: The browser version to emulate. Defaults to `Emulation::default()`.
+/// - `emulation_os`: The operating system to emulate. Defaults to `EmulationOS::default()`.
+/// - `skip_http2`: Whether to skip HTTP/2 support. Defaults to `false`.
+/// - `skip_headers`: Whether to skip adding default headers. Defaults to `false`.
+///
+/// # Examples
+///
+/// ```rust
+/// use rquest_util::{Emulation, EmulationOS, EmulationOption};
+///
+/// let emulation_option = EmulationOption::builder()
+///     .emulation(Emulation::Chrome134)
+///     .emulation_os(EmulationOS::MacOS)
+///     .skip_http2(true)
+///     .skip_headers(false)
+///     .build();
+///
+/// // Use `emulation_option` to create an EmulationProvider
+/// let emulation_provider = emulation_option.emulation();
+/// ```
 #[derive(Default, TypedBuilder)]
 pub struct EmulationOption {
     /// The browser version to emulation.
