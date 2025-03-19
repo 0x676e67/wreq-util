@@ -100,6 +100,7 @@ define_emulation_enum!(
     Safari18_2 => "safari_18.2",
     SafariIos18_1_1 => "safari_ios_18.1.1",
     Safari18_3 => "safari_18.3",
+    Safari18_3_1 => "safari_18.3.1",
     OkHttp3_9 => "okhttp_3.9",
     OkHttp3_11 => "okhttp_3.11",
     OkHttp3_13 => "okhttp_3.13",
@@ -303,6 +304,7 @@ impl EmulationProviderFactory for EmulationOption {
             Emulation::Safari18_2 => safari18_2::emulation,
             Emulation::SafariIos18_1_1 => safari_ios_18_1_1::emulation,
             Emulation::Safari18_3 => safari18_3::emulation,
+            Emulation::Safari18_3_1 => safari18_3_1::emulation,
 
             Emulation::OkHttp3_9 => okhttp3_9::emulation,
             Emulation::OkHttp3_11 => okhttp3_11::emulation,

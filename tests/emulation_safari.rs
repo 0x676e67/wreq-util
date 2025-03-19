@@ -110,6 +110,13 @@ test_emulation!(
 );
 
 test_emulation!(
+    test_safari_18_3_1,
+    Emulation::Safari18_3_1,
+    ["t13d2014h2_a09f3c656075_e42f34c56612"],
+    "d4a2dcbfde511b5040ed5a5190a8d78b"
+);
+
+test_emulation!(
     test_safari_ios_18_1_1,
     Emulation::SafariIos18_1_1,
     ["t13d2014h2_a09f3c656075_14788d8d241b"],
