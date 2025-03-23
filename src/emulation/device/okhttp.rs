@@ -103,6 +103,13 @@ mod tls {
                 .build()
         }
     }
+
+    impl From<OkHttpTlsConfig> for Option<TlsConfig> {
+        #[inline(always)]
+        fn from(val: OkHttpTlsConfig) -> Self {
+            Some(val.into())
+        }
+    }
 }
 
 mod http2 {

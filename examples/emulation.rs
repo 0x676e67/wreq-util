@@ -5,8 +5,8 @@ use rquest_util::Emulation;
 async fn main() -> Result<(), rquest::Error> {
     // Build a client to emulation Firefox135
     let client = Client::builder()
-        .emulation(Emulation::Firefox135)
-        .danger_accept_invalid_certs(true)
+        .emulation(Emulation::Chrome131)
+        .cert_verification(false)
         .build()?;
 
     // Use the API you're already familiar with

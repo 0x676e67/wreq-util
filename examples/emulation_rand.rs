@@ -6,7 +6,7 @@ async fn main() -> Result<(), rquest::Error> {
     // Build a client to emulation Firefox135
     let client = Client::builder()
         .emulation(Emulation::random())
-        .danger_accept_invalid_certs(true)
+        .cert_verification(false)
         .build()?;
 
     // Use the API you're already familiar with

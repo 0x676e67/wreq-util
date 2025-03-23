@@ -253,6 +253,13 @@ mod tls {
                 .build()
         }
     }
+
+    impl From<SafariTlsConfig> for Option<TlsConfig> {
+        #[inline(always)]
+        fn from(val: SafariTlsConfig) -> Self {
+            Some(val.into())
+        }
+    }
 }
 
 mod http2 {

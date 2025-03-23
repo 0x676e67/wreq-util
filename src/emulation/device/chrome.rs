@@ -243,6 +243,13 @@ mod tls {
                 .build()
         }
     }
+
+    impl From<ChromeTlsConfig> for Option<TlsConfig> {
+        #[inline(always)]
+        fn from(val: ChromeTlsConfig) -> Self {
+            Some(val.into())
+        }
+    }
 }
 
 mod http2 {

@@ -18,7 +18,7 @@ async fn main() -> Result<(), rquest::Error> {
     let client = Client::builder()
         .emulation(emulation)
         .http1_only()
-        .danger_accept_invalid_certs(true)
+        .cert_verification(false)
         .build()?;
 
     // Use the API you're already familiar with

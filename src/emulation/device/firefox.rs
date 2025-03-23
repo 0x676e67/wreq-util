@@ -345,6 +345,13 @@ mod tls {
                 .build()
         }
     }
+
+    impl From<FirefoxTlsConfig> for Option<TlsConfig> {
+        #[inline(always)]
+        fn from(val: FirefoxTlsConfig) -> Self {
+            Some(val.into())
+        }
+    }
 }
 
 mod http2 {
@@ -435,7 +442,7 @@ macro_rules! mod_generator {
                 default_headers: Option<HeaderMap>
             ) -> EmulationProvider {
                 EmulationProvider::builder()
-                     .tls_config($tls_config)
+                    .tls_config($tls_config)
                     .http2_config(conditional_http2!(option.skip_http2, $http2_config))
                     .default_headers(default_headers)
                     .build()
