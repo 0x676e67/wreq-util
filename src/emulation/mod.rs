@@ -178,7 +178,7 @@ pub enum EmulationOS {
 /// ======== EmulationOS impls ========
 impl EmulationOS {
     #[inline]
-    fn platform(&self) -> &'static str {
+    const fn platform(&self) -> &'static str {
         match self {
             EmulationOS::MacOS => "\"macOS\"",
             EmulationOS::Linux => "\"Linux\"",
@@ -189,7 +189,7 @@ impl EmulationOS {
     }
 
     #[inline]
-    fn is_mobile(&self) -> bool {
+    const fn is_mobile(&self) -> bool {
         matches!(self, EmulationOS::Android | EmulationOS::IOS)
     }
 }
