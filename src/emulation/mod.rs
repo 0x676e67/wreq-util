@@ -4,6 +4,7 @@ mod rand;
 
 use device::{chrome::*, firefox::*, okhttp::*, safari::*};
 use rquest::{EmulationProvider, EmulationProviderFactory};
+#[cfg(feature = "emulation-serde")]
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "emulation-rand")]
 use strum_macros::VariantArray;
@@ -13,10 +14,11 @@ macro_rules! define_emulation_enum {
     ($(#[$meta:meta])* $name:ident, $default_variant:ident, $($variant:ident => $rename:expr),*) => {
         $(#[$meta])*
         #[derive(Clone, Copy, Hash, Debug, PartialEq, Eq)]
-        #[cfg_attr(feature = "emulation-rand", derive(Serialize, Deserialize, VariantArray))]
+        #[cfg_attr(feature = "emulation-rand", derive(VariantArray))]
+        #[cfg_attr(feature = "emulation-serde", derive(Deserialize, Serialize))]
         pub enum $name {
             $(
-                #[cfg_attr(feature = "emulation-rand", serde(rename = $rename))]
+                #[cfg_attr(feature = "emulation-serde", serde(rename = $rename))]
                 $variant,
             )*
         }
@@ -135,45 +137,39 @@ impl EmulationProviderFactory for Emulation {
     }
 }
 
-/// Represents different operating systems for impersonation.
-///
-/// The `EmulationOS` enum provides variants for different operating systems that can be used
-/// to emulation HTTP requests. Each variant corresponds to a specific operating system.
-///
-/// # Naming Convention
-///
-/// The naming convention for the variants follows the pattern `os_name`, where
-/// `os_name` is the name of the operating system (e.g., `windows`, `macos`, `linux`, `android`, `ios`).
-///
-/// The serialized names of the variants use lowercase letters to represent the operating system names.
-/// For example, `Windows` is serialized as `"windows"`.
-///
-/// # Examples
-///
-/// ```rust
-/// use rquest::EmulationOS;
-///
-/// let emulation_os = EmulationOS::Windows;
-/// let serialized = serde_json::to_string(&emulation_os).unwrap();
-/// assert_eq!(serialized, "\"windows\"");
-///
-/// let deserialized: EmulationOS = serde_json::from_str(&serialized).unwrap();
-/// assert_eq!(deserialized, EmulationOS::Windows);
-/// ```
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
-pub enum EmulationOS {
-    #[serde(rename = "windows")]
-    Windows,
-    #[serde(rename = "macos")]
-    #[default]
-    MacOS,
-    #[serde(rename = "linux")]
-    Linux,
-    #[serde(rename = "android")]
-    Android,
-    #[serde(rename = "ios")]
-    IOS,
-}
+define_emulation_enum!(
+    /// Represents different operating systems for impersonation.
+    ///
+    /// The `EmulationOS` enum provides variants for different operating systems that can be used
+    /// to emulation HTTP requests. Each variant corresponds to a specific operating system.
+    ///
+    /// # Naming Convention
+    ///
+    /// The naming convention for the variants follows the pattern `os_name`, where
+    /// `os_name` is the name of the operating system (e.g., `windows`, `macos`, `linux`, `android`, `ios`).
+    ///
+    /// The serialized names of the variants use lowercase letters to represent the operating system names.
+    /// For example, `Windows` is serialized as `"windows"`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use rquest::EmulationOS;
+    ///
+    /// let emulation_os = EmulationOS::Windows;
+    /// let serialized = serde_json::to_string(&emulation_os).unwrap();
+    /// assert_eq!(serialized, "\"windows\"");
+    ///
+    /// let deserialized: EmulationOS = serde_json::from_str(&serialized).unwrap();
+    /// assert_eq!(deserialized, EmulationOS::Windows);
+    /// ```
+    EmulationOS, MacOS,
+    Windows => "windows",
+    MacOS => "macos",
+    Linux => "linux",
+    Android => "android",
+    IOS => "ios"
+);
 
 /// ======== EmulationOS impls ========
 impl EmulationOS {

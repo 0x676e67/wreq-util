@@ -22,7 +22,10 @@ default = ["emulation", "gzip", "brotli", "deflate", "zstd"]
 full = ["emulation", "emulation-rand", "gzip", "brotli", "deflate", "zstd"]
 
 # Emulation devices
-emulation = ["dep:serde", "dep:typed-builder"]
+emulation = ["dep:typed-builder"]
+
+# Emulation devices with serde
+emulation-serde = ["dep:serde"]
 
 # Emulation devices with random data
 emulation-rand = ["emulation", "dep:strum_macros", "dep:strum"]
