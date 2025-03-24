@@ -74,6 +74,23 @@ macro_rules! http2_config {
 }
 
 #[inline]
+fn header_initializer_for_15(ua: &'static str) -> HeaderMap {
+    let mut headers = HeaderMap::new();
+    headers.insert(USER_AGENT, HeaderValue::from_static(ua));
+    headers.insert(
+        ACCEPT,
+        HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"),
+    );
+    headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
+    #[cfg(all(feature = "gzip", feature = "deflate", feature = "brotli"))]
+    headers.insert(
+        ACCEPT_ENCODING,
+        HeaderValue::from_static("gzip, deflate, br"),
+    );
+    headers
+}
+
+#[inline]
 fn header_initializer_for_16_17(ua: &'static str) -> HeaderMap {
     let mut headers = HeaderMap::new();
     headers.insert(
@@ -90,23 +107,6 @@ fn header_initializer_for_16_17(ua: &'static str) -> HeaderMap {
     headers.insert(USER_AGENT, HeaderValue::from_static(ua));
     headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
     headers.insert("sec-fetch-dest", HeaderValue::from_static("document"));
-    headers
-}
-
-#[inline]
-fn header_initializer_for_15(ua: &'static str) -> HeaderMap {
-    let mut headers = HeaderMap::new();
-    headers.insert(USER_AGENT, HeaderValue::from_static(ua));
-    headers.insert(
-        ACCEPT,
-        HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"),
-    );
-    headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
-    #[cfg(all(feature = "gzip", feature = "deflate", feature = "brotli"))]
-    headers.insert(
-        ACCEPT_ENCODING,
-        HeaderValue::from_static("gzip, deflate, br"),
-    );
     headers
 }
 
