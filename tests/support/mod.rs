@@ -13,7 +13,7 @@ pub static DEFAULT_USER_AGENT: &str =
 
 pub static CLIENT: LazyLock<Client> = LazyLock::new(|| {
     Client::builder()
-        .connect_timeout(Duration::from_secs(10))
+        .connect_timeout(Duration::from_secs(30))
         .build()
         .unwrap()
 });
