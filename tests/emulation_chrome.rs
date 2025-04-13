@@ -73,6 +73,13 @@ test_emulation!(
 );
 
 test_emulation!(
+    test_chrome110,
+    Emulation::Chrome110,
+    ["t13d1516h2_8daaf6152771_e5627efa2ab1"],
+    "a345a694846ad9f6c97bcc3c75adbe26"
+);
+
+test_emulation!(
     test_chrome114,
     Emulation::Chrome114,
     ["t13d1516h2_8daaf6152771_e5627efa2ab1"],

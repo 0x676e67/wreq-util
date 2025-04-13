@@ -665,6 +665,39 @@ mod_generator!(
 );
 
 mod_generator!(
+    v110,
+    v106::build_emulation,
+    header_initializer,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="110", "Google Chrome";v="110", "Not;A=Brand";v="99""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+        ),
+        (
+            Linux,
+            r#""Not?A_Brand";v="110", "Chromium";v="110", "Google Chrome";v="110""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+        ),
+        (
+            Android,
+            r#""Not?A_Brand";v="110", "Chromium";v="110", "Google Chrome";v="110""#,
+            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+        ),
+        (
+            Windows,
+            r#""Not?A_Brand";v="110", "Chromium";v="110", "Google Chrome";v="110""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+        ),
+        (
+            IOS,
+            r#""Not?A_Brand";v="110", "Chromium";v="110", "Google Chrome";v="110""#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/110.0.5481.104 Mobile/15E148 Safari/604.1"
+        )
+    ]
+);
+
+mod_generator!(
     v114,
     v106::build_emulation,
     header_initializer,
