@@ -1,4 +1,5 @@
-use super::Emulation;
+use super::{Emulation, EmulationOS, EmulationOption};
+use rquest::EmulationProviderFactory;
 use std::cell::Cell;
 use std::collections::hash_map::RandomState;
 use std::hash::{BuildHasher, Hasher};
@@ -58,10 +59,14 @@ impl Emulation {
     ///
     /// This method will panic if the `Emulation::VARIANTS` array is empty.
     #[inline]
-    pub fn random() -> Emulation {
-        let variants = Emulation::VARIANTS;
-        let index = fast_random() as usize % variants.len();
-        variants[index]
+    pub fn random() -> impl EmulationProviderFactory {
+        let emulation = Emulation::VARIANTS;
+        let emulation_os = EmulationOS::VARIANTS;
+        let rand = fast_random() as usize;
+        EmulationOption::builder()
+            .emulation(emulation[rand % emulation.len()])
+            .emulation_os(emulation_os[rand % emulation_os.len()])
+            .build()
     }
 }
 
@@ -98,8 +103,5 @@ mod tests {
 
         let results = results.lock().unwrap();
         println!("Total results: {}", results.len());
-        for emulation in results.iter() {
-            println!("{:?}", emulation);
-        }
     }
 }
