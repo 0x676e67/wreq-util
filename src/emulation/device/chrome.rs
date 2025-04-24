@@ -666,7 +666,7 @@ mod_generator!(
 
 mod_generator!(
     v110,
-    v106::build_emulation,
+    v100::build_emulation,
     header_initializer,
     [
         (
