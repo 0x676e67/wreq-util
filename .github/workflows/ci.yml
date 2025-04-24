@@ -69,6 +69,12 @@ jobs:
         run: | 
           set -euxo pipefail
           cargo nextest run --workspace --all-features
+          cargo update -p rquest --precise 3.0.5
+          cargo nextest run --workspace --all-features
+          cargo update -p rquest --precise 4.1.0
+          cargo nextest run --workspace --all-features
+          cargo update -p rquest --precise 5.0.0
+          cargo nextest run --workspace --all-features
 
   windows:
     name: Windows
