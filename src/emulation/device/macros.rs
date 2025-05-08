@@ -1,11 +1,9 @@
-#[macro_export]
 macro_rules! conditional_http2 {
     ($skip_http2:expr, $http2:expr) => {
         if $skip_http2 { None } else { Some($http2) }
     };
 }
 
-#[macro_export]
 macro_rules! header_chrome_sec_ch_ua {
     ($headers:expr, $ua:expr, $platform:expr, $is_mobile:expr) => {
         let mobile = if $is_mobile { "?1" } else { "?0" };
@@ -15,7 +13,6 @@ macro_rules! header_chrome_sec_ch_ua {
     };
 }
 
-#[macro_export]
 macro_rules! header_chrome_sec_fetch {
     ($headers:expr) => {
         $headers.insert("sec-fetch-dest", HeaderValue::from_static("document"));
@@ -24,7 +21,6 @@ macro_rules! header_chrome_sec_fetch {
     };
 }
 
-#[macro_export]
 macro_rules! header_chrome_ua {
     ($headers:expr, $ua:expr) => {
         $headers.insert(UPGRADE_INSECURE_REQUESTS, HeaderValue::from_static("1"));
@@ -32,7 +28,6 @@ macro_rules! header_chrome_ua {
     };
 }
 
-#[macro_export]
 macro_rules! header_chrome_accpet {
     ($headers:expr) => {
         $headers.insert(ACCEPT, HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"));
@@ -59,7 +54,6 @@ macro_rules! header_chrome_accpet {
     }
 }
 
-#[macro_export]
 macro_rules! header_firefox_sec_fetch {
     ($headers:expr) => {
         $headers.insert("sec-fetch-dest", HeaderValue::from_static("document"));
@@ -68,7 +62,6 @@ macro_rules! header_firefox_sec_fetch {
     };
 }
 
-#[macro_export]
 macro_rules! header_firefox_accept {
     ($headers:expr) => {
         $headers.insert(
@@ -105,7 +98,6 @@ macro_rules! header_firefox_accept {
     };
 }
 
-#[macro_export]
 macro_rules! header_firefox_ua {
     ($headers:expr, $ua:expr) => {
         $headers.insert(
@@ -117,7 +109,6 @@ macro_rules! header_firefox_ua {
     };
 }
 
-#[macro_export]
 macro_rules! join {
     ($sep:expr, $first:expr $(, $rest:expr)*) => {
         concat!($first $(, $sep, $rest)*)
