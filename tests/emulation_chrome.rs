@@ -76,7 +76,7 @@ test_emulation!(
     test_chrome110,
     Emulation::Chrome110,
     ["t13d1516h2_8daaf6152771_e5627efa2ab1"],
-    "a345a694846ad9f6c97bcc3c75adbe26"
+    "4f04edce68a7ecbe689edce7bf5f23f3"
 );
 
 test_emulation!(
@@ -250,6 +250,13 @@ test_emulation!(
 test_emulation!(
     test_chrome135,
     Emulation::Chrome135,
+    ["t13d1516h2_8daaf6152771_d8a2da3f94cd"],
+    "52d84b11737d980aef856699f885ca86"
+);
+
+test_emulation!(
+    test_chrome136,
+    Emulation::Chrome136,
     ["t13d1516h2_8daaf6152771_d8a2da3f94cd"],
     "52d84b11737d980aef856699f885ca86"
 );

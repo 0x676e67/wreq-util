@@ -22,7 +22,6 @@ pub static CLIENT: LazyLock<Client> = LazyLock::new(|| {
 macro_rules! test_emulation {
     ($test_name:ident, $emulation:expr, $ja4:expr, $akamai_hash:expr) => {
         #[tokio::test]
-        #[ignore = "The test was ignored because the specified server is down"]
         async fn $test_name() {
             let client = CLIENT.cloned();
             client.update().emulation($emulation).apply().unwrap();

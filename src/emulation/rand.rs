@@ -1,5 +1,4 @@
 use super::{Emulation, EmulationOS, EmulationOption};
-use rquest::EmulationProviderFactory;
 use std::cell::Cell;
 use std::collections::hash_map::RandomState;
 use std::hash::{BuildHasher, Hasher};
@@ -59,7 +58,7 @@ impl Emulation {
     ///
     /// This method will panic if the `Emulation::VARIANTS` array is empty.
     #[inline]
-    pub fn random() -> impl EmulationProviderFactory {
+    pub fn random() -> EmulationOption {
         let emulation = Emulation::VARIANTS;
         let emulation_os = EmulationOS::VARIANTS;
         let rand = fast_random() as usize;
