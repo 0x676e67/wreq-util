@@ -105,26 +105,150 @@ jobs:
         pattern: rquest-*
         merge-multiple: true
 
-    - name: Create Test Matrix
+    - name: Create Test Report
+      shell: bash
       run: |
-        echo "Test Matrix Results" > test_matrix.md
-        echo "===================" >> test_matrix.md
-        echo "" >> test_matrix.md
-        echo "| Platform | Build Status | Test Output |" >> test_matrix.md
-        echo "|----------|--------------|-------------|" >> test_matrix.md
-        
-        for dir in artifacts/rquest-*; do
-          platform=$(basename "$dir" | cut -d'-' -f4)
-          if [ -f "$dir/trace_output.txt" ]; then
-            echo "| $platform | ✅ Success | $(head -n 1 "$dir/trace_output.txt") |" >> test_matrix.md
-          else
-            echo "| $platform | ❌ Failed | No test output |" >> test_matrix.md
-          fi
-        done
+        {
+          echo "# Build Test Report"
+          echo "Generated on: $(date '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "Commit: ${{ github.sha }}"
+          echo ""
+          echo "## Build Status"
+          echo ""
+          echo "| Platform | Status | Test Output |"
+          echo "|----------|--------|-------------|"
+          
+          for dir in artifacts/rquest-*; do
+            platform=$(basename "$dir" | cut -d'-' -f4)
+            if [ -f "$dir/trace_output.txt" ]; then
+              output=$(head -n 1 "$dir/trace_output.txt")
+              echo "| $platform | ✅ Success | \`$output\` |"
+            else
+              echo "| $platform | ❌ Failed | No test output |"
+            fi
+          done
+          
+          echo ""
+          echo "## Detailed Test Output"
+          echo ""
+          for dir in artifacts/rquest-*; do
+            platform=$(basename "$dir" | cut -d'-' -f4)
+            echo "### $platform"
+            echo "\`\`\`"
+            if [ -f "$dir/trace_output.txt" ]; then
+              cat "$dir/trace_output.txt"
+            else
+              echo "No test output available"
+            fi
+            echo "\`\`\`"
+            echo ""
+          done
+        } > test_report.md
 
-    - name: Upload Test Matrix
+    - name: Upload Test Report
       uses: actions/upload-artifact@v4
       with:
-        name: test-matrix-${{ github.sha }}
-        path: test_matrix.md
-        retention-days: 30 
+        name: test-report-${{ github.sha }}
+        path: test_report.md
+        retention-days: 30
+
+  verify-artifacts:
+    needs: [build, test-matrix]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: rquest-*
+          merge-multiple: true
+
+      - name: Setup Test Environment
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $artifactDir = Get-ChildItem -Path "artifacts" -Filter "rquest-*-windows-latest" -Directory | Select-Object -First 1
+          New-Item -ItemType Directory -Path "dist" -Force | Out-Null
+          Copy-Item -Path "$artifactDir\rquest_runner.exe" -Destination "dist\"
+          Set-Location dist
+
+      - name: Setup Test Environment
+        if: matrix.os != 'windows-latest'
+        shell: bash
+        run: |
+          artifact_dir=$(find artifacts -name "rquest-*-ubuntu-latest" -type d | head -n 1)
+          mkdir -p dist
+          cp "$artifact_dir/rquest_runner" dist/
+          cd dist
+
+      - name: Run Verification Tests (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          Write-Host "Running test..."
+          .\rquest_runner.exe -P Chrome136 -m get -u https://cloudflare.com/cdn-cgi/trace > trace_output.txt
+          Add-Content -Path "trace_output.txt" -Value "Test completed at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+          Write-Host "Test Results:"
+          Get-Content trace_output.txt
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+      - name: Run Verification Tests (Unix)
+        if: matrix.os != 'windows-latest'
+        shell: bash
+        run: |
+          echo "Running test..."
+          ./rquest_runner -P Chrome136 -m get -u https://cloudflare.com/cdn-cgi/trace > trace_output.txt
+          echo "Test completed at $(date '+%Y-%m-%d %H:%M:%S')" >> trace_output.txt
+          echo "Test Results:"
+          cat trace_output.txt
+          if [ $? -ne 0 ]; then exit 1; fi
+
+      - name: Upload Verification Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-${{ matrix.os }}-${{ github.sha }}
+          path: dist/trace_output.txt
+          retention-days: 30
+
+  create-release:
+    needs: [build, test-matrix, verify-artifacts]
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: rquest-*
+          merge-multiple: true
+
+      - name: Download Test Report
+        uses: actions/download-artifact@v4
+        with:
+          path: test-report
+          pattern: test-report-*
+
+      - name: Download Verification Results
+        uses: actions/download-artifact@v4
+        with:
+          path: verification
+          pattern: verification-*
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ github.sha }}
+          tag_name: v${{ github.sha }}
+          body_path: test-report/test_report.md
+          draft: false
+          prerelease: false
+          files: |
+            artifacts/rquest-*/rquest_runner*
+            artifacts/rquest-*/trace_output.txt
+            verification/*/trace_output.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
