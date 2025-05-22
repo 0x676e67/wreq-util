@@ -171,35 +171,48 @@ jobs:
         shell: pwsh
         run: |
           $artifactDir = Get-ChildItem -Path "artifacts" -Filter "rquest-*-windows-latest" -Directory | Select-Object -First 1
+          Write-Host "Found artifact directory: $artifactDir"
+          if (-not $artifactDir) {
+            Write-Host "No artifact directory found. Contents of artifacts:"
+            Get-ChildItem -Path "artifacts" -Recurse
+            exit 1
+          }
           New-Item -ItemType Directory -Path "dist" -Force | Out-Null
-          Copy-Item -Path "$artifactDir\rquest_runner.exe" -Destination "dist\"
+          $binaryPath = Join-Path $artifactDir "rquest_runner.exe"
+          if (-not (Test-Path $binaryPath)) {
+            Write-Host "Binary not found at: $binaryPath"
+            Write-Host "Contents of $artifactDir:"
+            Get-ChildItem -Path $artifactDir
+            exit 1
+          }
+          Copy-Item -Path $binaryPath -Destination "dist\"
           Set-Location dist
-
-      - name: Setup Test Environment
-        if: matrix.os != 'windows-latest'
-        shell: bash
-        run: |
-          artifact_dir=$(find artifacts -name "rquest-*-ubuntu-latest" -type d | head -n 1)
-          mkdir -p dist
-          cp "$artifact_dir/rquest_runner" dist/
-          cd dist
 
       - name: Run Verification Tests (Windows)
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
           Write-Host "Running test..."
+          if (-not (Test-Path "rquest_runner.exe")) {
+            Write-Host "Binary not found in dist directory. Contents:"
+            Get-ChildItem
+            exit 1
+          }
           .\rquest_runner.exe -P Chrome136 -m get -u https://cloudflare.com/cdn-cgi/trace > trace_output.txt
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "Test failed with exit code: $LASTEXITCODE"
+            exit 1
+          }
           Add-Content -Path "trace_output.txt" -Value "Test completed at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
           Write-Host "Test Results:"
           Get-Content trace_output.txt
-          if ($LASTEXITCODE -ne 0) { exit 1 }
 
       - name: Run Verification Tests (Unix)
         if: matrix.os != 'windows-latest'
         shell: bash
         run: |
           echo "Running test..."
+          chmod +x rquest_runner
           ./rquest_runner -P Chrome136 -m get -u https://cloudflare.com/cdn-cgi/trace > trace_output.txt
           echo "Test completed at $(date '+%Y-%m-%d %H:%M:%S')" >> trace_output.txt
           echo "Test Results:"
