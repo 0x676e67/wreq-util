@@ -1,5 +1,5 @@
 use clap::{Parser, command};
-use rquest::{Client, header};
+use rquest::{Client, header, Proxy};
 use rquest_util::Emulation;
 use serde::Serialize;
 use std::str::FromStr;
@@ -233,15 +233,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     if let Some(proxy_str) = args.proxy {
         let proxy = ProxyConfig::from_str(&proxy_str)?;
         
-        // Construct proxy URL with authentication
+        // Create proxy configuration with authentication
         let proxy_url = format!("http://{}:{}@{}:{}", 
             proxy.username,
             proxy.password,
             proxy.host,
             proxy.port
         );
+        let proxy_config = Proxy::http(proxy_url)?;
         
-        builder = builder.proxy(Url::parse(&proxy_url)?);
+        builder = builder.proxy(proxy_config);
     }
 
     // Build the client
