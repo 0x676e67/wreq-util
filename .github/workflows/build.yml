@@ -207,10 +207,24 @@ jobs:
           Write-Host "Test Results:"
           Get-Content trace_output.txt
 
+      - name: Setup Test Environment
+        if: matrix.os != 'windows-latest'
+        shell: bash
+        run: |
+          artifact_dir=$(find artifacts -name "rquest-*-ubuntu-latest" -type d | head -n 1)
+          echo "Found artifact directory: $artifact_dir"
+          mkdir -p dist
+          cp "$artifact_dir/rquest_runner" dist/ || {
+            echo "Failed to copy binary. Contents of $artifact_dir:"
+            ls -la "$artifact_dir"
+            exit 1
+          }
+
       - name: Run Verification Tests (Unix)
         if: matrix.os != 'windows-latest'
         shell: bash
         run: |
+          cd dist
           echo "Running test..."
           chmod +x rquest_runner
           ./rquest_runner -P Chrome136 -m get -u https://cloudflare.com/cdn-cgi/trace > trace_output.txt
