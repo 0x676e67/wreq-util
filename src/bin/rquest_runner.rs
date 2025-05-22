@@ -1,9 +1,141 @@
-use clap::{Parser, command};
+use clap::{Parser, command, ValueEnum};
 use rquest::{Client, header, Proxy};
 use rquest_util::Emulation;
 use serde::Serialize;
 use std::str::FromStr;
-use url::Url;
+use std::fs::{self, File};
+use std::io::Write;
+use chrono::Local;
+use log::{info, debug};
+use url;
+
+#[derive(Debug, Clone, ValueEnum)]
+enum HttpMethod {
+    GET,
+    POST,
+    PUT,
+    DELETE,
+    HEAD,
+}
+
+impl std::fmt::Display for HttpMethod {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            HttpMethod::GET => write!(f, "GET"),
+            HttpMethod::POST => write!(f, "POST"),
+            HttpMethod::PUT => write!(f, "PUT"),
+            HttpMethod::DELETE => write!(f, "DELETE"),
+            HttpMethod::HEAD => write!(f, "HEAD"),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+struct ValidUrl(String);
+
+impl FromStr for ValidUrl {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        url::Url::parse(s)
+            .map(|_| ValidUrl(s.to_string()))
+            .map_err(|e| format!("Invalid URL: {}", e))
+    }
+}
+
+impl From<String> for ValidUrl {
+    fn from(s: String) -> Self {
+        ValidUrl(s)
+    }
+}
+
+impl From<&str> for ValidUrl {
+    fn from(s: &str) -> Self {
+        ValidUrl(s.to_string())
+    }
+}
+
+#[derive(Debug, Clone)]
+struct ValidCookie(String);
+
+impl FromStr for ValidCookie {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.contains('=') {
+            Ok(ValidCookie(s.to_string()))
+        } else {
+            Err("Cookie must be in format name=value".to_string())
+        }
+    }
+}
+
+impl From<String> for ValidCookie {
+    fn from(s: String) -> Self {
+        ValidCookie(s)
+    }
+}
+
+impl From<&str> for ValidCookie {
+    fn from(s: &str) -> Self {
+        ValidCookie(s.to_string())
+    }
+}
+
+#[derive(Debug, Clone)]
+struct ValidCookies(String);
+
+impl FromStr for ValidCookies {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        for cookie in s.split(';') {
+            if !cookie.trim().contains('=') {
+                return Err(format!("Invalid cookie format in: {}", cookie));
+            }
+        }
+        Ok(ValidCookies(s.to_string()))
+    }
+}
+
+impl From<String> for ValidCookies {
+    fn from(s: String) -> Self {
+        ValidCookies(s)
+    }
+}
+
+impl From<&str> for ValidCookies {
+    fn from(s: &str) -> Self {
+        ValidCookies(s.to_string())
+    }
+}
+
+#[derive(Debug, Clone)]
+struct ValidHeader(String);
+
+impl FromStr for ValidHeader {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.contains(':') {
+            Ok(ValidHeader(s.to_string()))
+        } else {
+            Err("Header must be in format name:value".to_string())
+        }
+    }
+}
+
+impl From<String> for ValidHeader {
+    fn from(s: String) -> Self {
+        ValidHeader(s)
+    }
+}
+
+impl From<&str> for ValidHeader {
+    fn from(s: &str) -> Self {
+        ValidHeader(s.to_string())
+    }
+}
 
 /// A command-line HTTP client with browser emulation capabilities
 #[derive(Parser, Debug)]
@@ -18,10 +150,19 @@ use url::Url;
       rquest_runner -P Chrome136 -m GET -u https://example.com\n\
     \n\
     - With proxy:\n\
-      rquest_runner -P Chrome136 -m GET -u https://example.com -x 127.0.0.1:8080:user:pass\n\
+      rquest_runner -P Chrome136 -m GET -u https://example.com -xhost 127.0.0.1 -xport 8080 -xuser user -xpass pass\n\
     \n\
     - With cookies:\n\
-      rquest_runner -P Chrome136 -m GET -u https://example.com -c \"session=123\" -C \"user=john; theme=dark\"\n"
+      rquest_runner -P Chrome136 -m GET -u https://example.com -c \"session=123\" -C \"user=john; theme=dark\"\n\
+    \n\
+    - With custom headers:\n\
+      rquest_runner -P Chrome136 -m GET -u https://example.com -H \"Authorization: Bearer token\" -H \"X-Custom: value\"\n\
+    \n\
+    - With request body:\n\
+      rquest_runner -P Chrome136 -m POST -u https://example.com -b '{\"key\": \"value\"}'\n\
+    \n\
+    - With verbose logging:\n\
+      rquest_runner -P Chrome136 -m GET -u https://example.com --verbose\n"
 )]
 struct Args {
     /// Browser profile to emulate (e.g., Chrome136, Firefox136, Edge134)
@@ -30,20 +171,56 @@ struct Args {
 
     /// HTTP method (GET, POST, PUT, DELETE, HEAD)
     #[arg(short, long, value_name = "METHOD")]
-    method: String,
+    method: HttpMethod,
 
     /// Target URL to send the request to
     #[arg(short, long, value_name = "URL")]
-    url: String,
+    url: ValidUrl,
 
-    /// Proxy configuration in format ip:port:username:password
+    /// Request body (for POST, PUT, etc.)
     #[arg(
-        short = 'x',
-        long,
-        value_name = "PROXY",
-        help = "Proxy in format ip:port:username:password (e.g., 127.0.0.1:8080:user:pass)"
+        short = 'b',
+        long = "body",
+        value_name = "BODY",
+        help = "Request body (e.g., '{\"key\": \"value\"}' for JSON)"
     )]
-    proxy: Option<String>,
+    body: Option<String>,
+
+    /// Proxy host address
+    #[arg(
+        long = "xhost",
+        value_name = "HOST",
+        help = "Proxy host address (e.g., 127.0.0.1)",
+        requires = "proxy_port"
+    )]
+    proxy_host: Option<String>,
+
+    /// Proxy port number
+    #[arg(
+        long = "xport",
+        value_name = "PORT",
+        help = "Proxy port number (e.g., 8080)",
+        requires = "proxy_host"
+    )]
+    proxy_port: Option<u16>,
+
+    /// Proxy username
+    #[arg(
+        long = "xuser",
+        value_name = "USERNAME",
+        help = "Proxy username",
+        requires = "proxy_host"
+    )]
+    proxy_username: Option<String>,
+
+    /// Proxy password
+    #[arg(
+        long = "xpass",
+        value_name = "PASSWORD",
+        help = "Proxy password",
+        requires = "proxy_username"
+    )]
+    proxy_password: Option<String>,
 
     /// Single cookie in format name=value
     #[arg(
@@ -52,7 +229,7 @@ struct Args {
         value_name = "COOKIE",
         help = "Single cookie in format name=value (e.g., \"session=abc123\")"
     )]
-    cookie: Option<String>,
+    cookie: Option<ValidCookie>,
 
     /// Multiple cookies in format "name1=value1; name2=value2"
     #[arg(
@@ -61,7 +238,21 @@ struct Args {
         value_name = "COOKIES",
         help = "Multiple cookies in format \"name1=value1; name2=value2\""
     )]
-    cookies: Option<String>,
+    cookies: Option<ValidCookies>,
+
+    /// Custom headers in format "name:value"
+    #[arg(
+        short = 'H',
+        long = "header",
+        value_name = "HEADER",
+        help = "Custom header in format \"name:value\" (e.g., \"Authorization: Bearer token\")",
+        number_of_values = 1
+    )]
+    headers: Vec<ValidHeader>,
+
+    /// Enable verbose logging to a timestamped log file
+    #[arg(long)]
+    verbose: bool,
 }
 
 #[derive(Serialize)]
@@ -71,47 +262,12 @@ struct Response {
     body: String,
 }
 
-struct ProxyConfig {
-    host: String,
-    port: u16,
-    username: String,
-    password: String,
-}
-
-impl FromStr for ProxyConfig {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let parts: Vec<&str> = s.split(':').collect();
-        if parts.len() != 4 {
-            return Err("Proxy must be in format ip:port:username:password".to_string());
-        }
-
-        let port = parts[1].parse::<u16>()
-            .map_err(|_| "Invalid port number".to_string())?;
-
-        Ok(ProxyConfig {
-            host: parts[0].to_string(),
-            port,
-            username: parts[2].to_string(),
-            password: parts[3].to_string(),
-        })
-    }
-}
-
-fn parse_cookie(cookie_str: &str) -> Result<(String, String), String> {
-    let parts: Vec<&str> = cookie_str.split('=').collect();
+fn parse_header(header_str: &str) -> Result<(String, String), String> {
+    let parts: Vec<&str> = header_str.splitn(2, ':').collect();
     if parts.len() != 2 {
-        return Err("Cookie must be in format name=value".to_string());
+        return Err("Header must be in format name:value".to_string());
     }
     Ok((parts[0].trim().to_string(), parts[1].trim().to_string()))
-}
-
-fn parse_cookies(cookies_str: &str) -> Result<Vec<(String, String)>, String> {
-    cookies_str
-        .split(';')
-        .map(parse_cookie)
-        .collect()
 }
 
 fn parse_emulation(profile: &str) -> Result<Emulation, String> {
@@ -219,77 +375,163 @@ fn parse_emulation(profile: &str) -> Result<Emulation, String> {
     }
 }
 
+fn setup_logging(verbose: bool) -> Result<(), Box<dyn std::error::Error>> {
+    if verbose {
+        // Create logs directory if it doesn't exist
+        fs::create_dir_all("logs")?;
+
+        // Create timestamped log file
+        let timestamp = Local::now().format("%Y%m%d_%H%M%S");
+        let log_file = format!("logs/rquest_{}.log", timestamp);
+        
+        // Initialize logger
+        env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("debug"))
+            .format(|buf, record| {
+                let timestamp = Local::now().format("%Y-%m-%d %H:%M:%S%.3f");
+                writeln!(
+                    buf,
+                    "{} [{}] {}: {}",
+                    timestamp,
+                    record.level(),
+                    record.target(),
+                    record.args()
+                )
+            })
+            .target(env_logger::Target::Pipe(Box::new(File::create(&log_file)?)))
+            .init();
+
+        info!("Verbose logging enabled. Log file: {}", log_file);
+    } else {
+        // Initialize minimal logger
+        env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
+            .init();
+    }
+    Ok(())
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
 
+    // Setup logging
+    setup_logging(args.verbose)?;
+
     // Parse the emulation profile
     let emulation = parse_emulation(&args.profile)?;
+    debug!("Using emulation profile: {:?}", emulation);
 
     // Start building the client
     let mut builder = Client::builder().emulation(emulation);
 
     // Configure proxy if provided
-    if let Some(proxy_str) = args.proxy {
-        let proxy = ProxyConfig::from_str(&proxy_str)?;
+    if let (Some(host), Some(port)) = (&args.proxy_host, &args.proxy_port) {
+        debug!("Configuring proxy: {}:{}", host, port);
         
-        // Create proxy configuration with authentication
-        let proxy_url = format!("http://{}:{}@{}:{}", 
-            proxy.username,
-            proxy.password,
-            proxy.host,
-            proxy.port
-        );
-        let proxy_config = Proxy::http(proxy_url)?;
+        let proxy_url = if let (Some(username), Some(password)) = (&args.proxy_username, &args.proxy_password) {
+            format!("http://{}:{}@{}:{}", username, password, host, port)
+        } else {
+            format!("http://{}:{}", host, port)
+        };
         
+        let proxy_config = Proxy::all(proxy_url)?;
         builder = builder.proxy(proxy_config);
+        debug!("Proxy configured successfully");
     }
 
     // Build the client
     let client = builder.build()?;
+    debug!("Client built successfully");
 
     // Create the request based on method
-    let mut request = match args.method.to_uppercase().as_str() {
-        "GET" => client.get(&args.url),
-        "POST" => client.post(&args.url),
-        "PUT" => client.put(&args.url),
-        "DELETE" => client.delete(&args.url),
-        "HEAD" => client.head(&args.url),
-        _ => return Err(format!("Unsupported method: {}", args.method).into()),
+    let mut request = match args.method {
+        HttpMethod::GET => client.get(&args.url.0),
+        HttpMethod::POST => client.post(&args.url.0),
+        HttpMethod::PUT => client.put(&args.url.0),
+        HttpMethod::DELETE => client.delete(&args.url.0),
+        HttpMethod::HEAD => client.head(&args.url.0),
     };
 
+    // Add request body if provided and method supports it
+    if let Some(body) = args.body {
+        if matches!(args.method, HttpMethod::GET | HttpMethod::HEAD) {
+            return Err("Request body is not supported for GET and HEAD methods".into());
+        }
+        request = request.body(body);
+        debug!("Added request body");
+    }
+    
+    // Log detailed request information
+    info!("=== Request Details ===");
+    info!("URL: {}", args.url.0);
+    
+    // Parse and log query parameters if present
+    if let Ok(url) = url::Url::parse(&args.url.0) {
+        if let Some(query) = url.query() {
+            info!("Query String: {}", query);
+            info!("Query Parameters:");
+            for (key, value) in url.query_pairs() {
+                info!("  {}: {}", key, value);
+            }
+        }
+    }
+    
+    info!("Method: {}", args.method);
+    info!("Emulation Profile: {:?}", emulation);
+    
+    // Log all request headers
+    let mut request_headers = Vec::new();
+    
     // Add cookies if provided
     let mut cookie_header = String::new();
 
     // Handle single cookie
-    if let Some(cookie_str) = args.cookie {
-        let (name, value) = parse_cookie(&cookie_str)?;
-        cookie_header.push_str(&format!("{}={}", name, value));
+    if let Some(cookie) = args.cookie {
+        debug!("Adding single cookie: {}", cookie.0);
+        cookie_header.push_str(&cookie.0);
     }
 
     // Handle multiple cookies
-    if let Some(cookies_str) = args.cookies {
-        let cookies = parse_cookies(&cookies_str)?;
-        for (i, (name, value)) in cookies.iter().enumerate() {
-            if i > 0 || !cookie_header.is_empty() {
-                cookie_header.push_str("; ");
-            }
-            cookie_header.push_str(&format!("{}={}", name, value));
+    if let Some(cookies) = args.cookies {
+        debug!("Adding multiple cookies: {}", cookies.0);
+        if !cookie_header.is_empty() {
+            cookie_header.push_str("; ");
         }
+        cookie_header.push_str(&cookies.0);
     }
 
     // Add cookie header if we have any cookies
     if !cookie_header.is_empty() {
-        request = request.header(header::COOKIE, cookie_header);
+        request = request.header(header::COOKIE, cookie_header.clone());
+        request_headers.push(("Cookie".to_string(), cookie_header));
+    }
+
+    // Add custom headers
+    for header in args.headers {
+        debug!("Adding custom header: {}", header.0);
+        let (name, value) = parse_header(&header.0)?;
+        request = request.header(&name, &value);
+        request_headers.push((name, value));
+    }
+
+    // Log all headers
+    info!("=== Request Headers ===");
+    for (name, value) in &request_headers {
+        info!("{}: {}", name, value);
     }
 
     // Send the request
+    debug!("Sending request...");
     let resp = request.send().await?;
+    debug!("Received response with status: {}", resp.status());
     
-    // Extract status code
+    // Extract all information from response before consuming it
     let status = resp.status().as_u16();
+    let content_type = resp.headers()
+        .get(header::CONTENT_TYPE)
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("")
+        .to_string();
     
-    // Extract headers
     let headers: Vec<(String, String)> = resp
         .headers()
         .iter()
@@ -301,8 +543,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         })
         .collect();
 
-    // Get the body
+    // Log response details
+    info!("=== Response Details ===");
+    info!("Status: {}", status);
+    info!("=== Response Headers ===");
+    for (name, value) in &headers {
+        info!("{}: {}", name, value);
+    }
+
+    // Get the body (this consumes the response)
     let body = resp.text().await?;
+    debug!("Response body length: {} bytes", body.len());
+
+    // Log response body
+    info!("=== Response Body ===");
+    
+    // Check if response is JSON and pretty print if it is
+    if content_type.contains("json") {
+        if let Ok(json) = serde_json::from_str::<serde_json::Value>(&body) {
+            info!("{}", serde_json::to_string_pretty(&json)?);
+        } else {
+            info!("{}", body);
+        }
+    } else {
+        info!("{}", body);
+    }
 
     // Create and serialize the response
     let response = Response {

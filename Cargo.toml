@@ -46,6 +46,9 @@ strum = { version = "0.27.1", optional = true }
 strum_macros = { version = "0.27.1", optional = true }
 tokio = { version = "1", features = ["full"] }
 url = { version = "2.5", optional = true }
+log = "0.4"
+env_logger = "0.10"
+chrono = "0.4"
 
 [dev-dependencies]
 hyper = { version = "1.1.0", default-features = false, features = [
