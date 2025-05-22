@@ -1,11 +1,13 @@
+# Clean dist directory
+Write-Host "Cleaning dist directory..."
+if (Test-Path dist) {
+    Remove-Item -Path dist -Recurse -Force
+}
+New-Item -ItemType Directory -Path dist | Out-Null
+
 # Build the release binary
 Write-Host "Building release binary..."
 cargo build --bin rquest_runner --release --features "cli,emulation,gzip,brotli,deflate,zstd,rquest/full"
-
-# Create dist directory
-if (-not (Test-Path dist)) {
-    New-Item -ItemType Directory -Path dist | Out-Null
-}
 
 # Run the test
 Write-Host "Running test..."

@@ -1,11 +1,13 @@
 #!/bin/bash
 
+# Clean dist directory
+echo "Cleaning dist directory..."
+rm -rf dist
+mkdir -p dist
+
 # Build the release binary
 echo "Building release binary..."
 cargo build --bin rquest_runner --release --features "cli,emulation,gzip,brotli,deflate,zstd,rquest/full"
-
-# Create dist directory
-mkdir -p dist
 
 # Run the test
 echo "Running test..."

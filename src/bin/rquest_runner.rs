@@ -186,7 +186,16 @@ struct Args {
     profile: String,
 
     /// HTTP method (GET, POST, PUT, DELETE, HEAD)
-    #[arg(short, long, value_name = "METHOD")]
+    #[arg(short, long, value_name = "METHOD", value_parser = |s: &str| -> Result<HttpMethod, String> {
+        match s.to_uppercase().as_str() {
+            "GET" => Ok(HttpMethod::GET),
+            "POST" => Ok(HttpMethod::POST),
+            "PUT" => Ok(HttpMethod::PUT),
+            "DELETE" => Ok(HttpMethod::DELETE),
+            "HEAD" => Ok(HttpMethod::HEAD),
+            _ => Err(format!("Invalid HTTP method: {}. Valid values are: GET, POST, PUT, DELETE, HEAD", s))
+        }
+    })]
     method: HttpMethod,
 
     /// Target URL to send the request to
