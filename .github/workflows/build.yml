@@ -30,46 +30,23 @@ jobs:
       with:
         targets: ${{ matrix.target }}
 
-    - name: Install dependencies on Windows
+    - name: Install Windows Dependencies
       if: matrix.os == 'windows-latest'
+      shell: pwsh
       run: |
         choco install cmake -y
         choco install strawberryperl -y
         choco install pkgconfiglite -y
         choco install llvm -y
         choco install nasm -y
-        # Add NASM to both PATH and CMake paths
+        # Add NASM to PATH
         $nasmPath = "C:\Program Files\NASM"
         $env:Path = "$nasmPath;" + $env:Path
         echo "$nasmPath" >> $env:GITHUB_PATH
-        echo "CMAKE_ASM_NASM_COMPILER=$nasmPath\nasm.exe" >> $env:GITHUB_ENV
-        # Verify NASM installation using full path
-        & "$nasmPath\nasm.exe" -v
-      shell: pwsh
-
-    - name: Build on Windows with Static Linking
-      if: matrix.os == 'windows-latest'
-      env:
-        RUSTFLAGS: "-C target-feature=+crt-static"
-        CMAKE_SYSTEM_VERSION: "10.0"
-        CMAKE_ASM_NASM_FLAGS: "-f win64"
-        CMAKE_ASM_NASM_OBJECT_FORMAT: "win64"
-        NASM_PREFIX: "C:\\Program Files\\NASM\\"
-        BORING_BSSL_ASSUME_PATCHED: "1"
-        BORING_BSSL_SOURCE_PATH: "${{ github.workspace }}/boringssl"
-      run: |
-        # Clone and build BoringSSL
-        git clone https://github.com/google/boringssl.git
-        cd boringssl
-        mkdir build
-        cd build
-        cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release ..
-        cmake --build . --config Release
-        cd ../..
-        # Set environment variables for boring-sys2
-        cargo build --release --target "${{ matrix.target }}"
 
     - name: Build Binary
+      env:
+        RUSTFLAGS: ${{ matrix.os == 'windows-latest' && '-C target-feature=+crt-static' || '' }}
       run: |
         cargo build --bin rquest_runner --release --target ${{ matrix.target }} --features "cli,emulation,gzip,brotli,deflate,zstd,rquest/full"
 
