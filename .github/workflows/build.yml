@@ -55,9 +55,13 @@ jobs:
         CMAKE_ASM_NASM_FLAGS: "-f win64"
         CMAKE_ASM_NASM_OBJECT_FORMAT: "win64"
         NASM_PREFIX: "C:\\Program Files\\NASM\\"
+        BORING_BSSL_ASSUME_PATCHED: "1"
+        BORING_BSSL_PATH: "${{ github.workspace }}/target/boring-ssl"
+        BORING_BSSL_INCLUDE_PATH: "${{ github.workspace }}/target/boring-ssl/include"
       run: |
+        # Create BoringSSL directories
+        New-Item -ItemType Directory -Force -Path "${{ github.workspace }}/target/boring-ssl/include"
         # Set environment variables for boring-sys2
-        $env:BORING_BSSL_ASSUME_PATCHED = "1"
         cargo build --release --target "${{ matrix.target }}"
 
     - name: Build Binary
