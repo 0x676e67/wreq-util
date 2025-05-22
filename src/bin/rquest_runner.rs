@@ -10,6 +10,7 @@ use log::{info, debug};
 use url;
 
 #[derive(Debug, Clone, ValueEnum)]
+#[value(rename_all = "lowercase")]
 enum HttpMethod {
     GET,
     POST,
