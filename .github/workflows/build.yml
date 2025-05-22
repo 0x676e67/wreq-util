@@ -31,6 +31,7 @@ jobs:
         targets: ${{ matrix.target }}
 
     - name: Install dependencies on Windows
+      if: matrix.os == 'windows-latest'
       run: |
         choco install cmake -y
         choco install strawberryperl -y
@@ -46,6 +47,7 @@ jobs:
       shell: pwsh
 
     - name: Build on Windows with Static Linking
+      if: matrix.os == 'windows-latest'
       env:
         RUSTFLAGS: "-C target-feature=+crt-static"
         CMAKE_SYSTEM_VERSION: "10.0"
