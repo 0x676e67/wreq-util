@@ -58,7 +58,7 @@ jobs:
       run: |
         # Set environment variables for boring-sys2
         $env:BORING_BSSL_ASSUME_PATCHED = "1"
-        cargo build --release --target ${{ matrix.target_triple }}
+        cargo build --release --target "${{ matrix.target }}"
 
     - name: Build Binary
       run: |
