@@ -1,0 +1,93 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            binary: rquest_runner
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            binary: rquest_runner.exe
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: ${{ matrix.target }}
+
+    - name: Build Binary
+      run: |
+        cargo build --bin rquest_runner --release --target ${{ matrix.target }} --features "cli,emulation,gzip,brotli,deflate,zstd,rquest/full"
+
+    - name: Test Binary
+      run: |
+        ${{ matrix.os == 'windows-latest' && '.\' || './' }}target/${{ matrix.target }}/release/${{ matrix.binary }} -P Chrome136 -m GET -u https://cloudflare.com/cdn-cgi/trace > trace_output.txt
+        echo "Test completed at $(date '+%Y-%m-%d %H:%M:%S')" >> trace_output.txt
+
+    - name: Create Artifact Name with Timestamp
+      id: artifact_name
+      run: |
+        ${{ matrix.os == 'windows-latest' && 'echo ("artifact_name=" + "rquest-" + (Get-Date -Format "yyyyMMdd-HHmmss") + "-${{ matrix.os }}") >> $env:GITHUB_OUTPUT' || 'echo "artifact_name=rquest-$(date +%Y%m%d-%H%M%S)-${{ matrix.os }}" >> $GITHUB_OUTPUT' }}
+
+    - name: Create Distribution Directory
+      run: |
+        ${{ matrix.os == 'windows-latest' && 'mkdir dist' || 'mkdir -p dist' }}
+        cp target/${{ matrix.target }}/release/${{ matrix.binary }} dist/
+        cp trace_output.txt dist/
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.artifact_name.outputs.artifact_name }}
+        path: dist/
+        retention-days: 30
+
+  test-matrix:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download All Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+        pattern: rquest-*
+        merge-multiple: true
+
+    - name: Create Test Matrix
+      run: |
+        echo "Test Matrix Results" > test_matrix.md
+        echo "===================" >> test_matrix.md
+        echo "" >> test_matrix.md
+        echo "| Platform | Build Status | Test Output |" >> test_matrix.md
+        echo "|----------|--------------|-------------|" >> test_matrix.md
+        
+        for dir in artifacts/rquest-*; do
+          platform=$(basename "$dir" | cut -d'-' -f4)
+          if [ -f "$dir/trace_output.txt" ]; then
+            echo "| $platform | ✅ Success | $(head -n 1 "$dir/trace_output.txt") |" >> test_matrix.md
+          else
+            echo "| $platform | ❌ Failed | No test output |" >> test_matrix.md
+          fi
+        done
+
+    - name: Upload Test Matrix
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-matrix-${{ github.sha }}
+        path: test_matrix.md
+        retention-days: 30 

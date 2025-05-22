@@ -18,8 +18,8 @@ targets = ["x86_64-unknown-linux-gnu"]
 
 [features]
 default = ["emulation", "gzip", "brotli", "deflate", "zstd"]
-
 full = ["emulation", "emulation-rand", "gzip", "brotli", "deflate", "zstd"]
+cli = ["emulation", "emulation-serde", "dep:clap", "dep:serde_json", "dep:url"]
 
 # Emulation devices
 emulation = ["dep:typed-builder"]
@@ -39,12 +39,15 @@ zstd = ["rquest/zstd"]
 [dependencies]
 rquest = { version = ">=3.0.5,<10", features = ["gzip", "brotli", "deflate", "zstd"] }
 serde = { version = "1.0", features = ["derive"], optional = true }
+serde_json = { version = "1.0", optional = true }
+clap = { version = "4.5", features = ["derive"], optional = true }
 typed-builder = { version = "0.21.0", optional = true }
 strum = { version = "0.27.1", optional = true }
 strum_macros = { version = "0.27.1", optional = true }
+tokio = { version = "1", features = ["full"] }
+url = { version = "2.5", optional = true }
 
 [dev-dependencies]
-tokio = { version = "1", features = ["full"] }
 hyper = { version = "1.1.0", default-features = false, features = [
     "http1",
     "http2",
@@ -104,3 +107,8 @@ required-features = ["emulation", "gzip", "brotli", "deflate", "zstd", "rquest/f
 name = "emulation_option"
 path = "examples/emulation_option.rs"
 required-features = ["emulation", "gzip", "brotli", "deflate", "zstd", "rquest/full"]
+
+[[bin]]
+name = "rquest_runner"
+path = "src/bin/rquest_runner.rs"
+required-features = ["cli", "emulation", "gzip", "brotli", "deflate", "zstd", "rquest/full"]
