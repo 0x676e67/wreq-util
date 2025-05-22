@@ -30,6 +30,33 @@ jobs:
       with:
         targets: ${{ matrix.target }}
 
+    - name: Install dependencies on Windows
+      run: |
+        choco install cmake -y
+        choco install strawberryperl -y
+        choco install pkgconfiglite -y
+        choco install llvm -y
+        choco install nasm -y
+        # Add NASM to both PATH and CMake paths
+        $nasmPath = "C:\Program Files\NASM"
+        echo $nasmPath >> $env:GITHUB_PATH
+        echo "CMAKE_ASM_NASM_COMPILER=$nasmPath\nasm.exe" >> $env:GITHUB_ENV
+        # Verify NASM installation
+        nasm -v
+      shell: pwsh
+
+    - name: Build on Windows with Static Linking
+      env:
+        RUSTFLAGS: "-C target-feature=+crt-static"
+        CMAKE_SYSTEM_VERSION: "10.0"
+        CMAKE_ASM_NASM_FLAGS: "-f win64"
+        CMAKE_ASM_NASM_OBJECT_FORMAT: "win64"
+        NASM_PREFIX: "C:\\Program Files\\NASM\\"
+      run: |
+        # Set environment variables for boring-sys2
+        $env:BORING_BSSL_ASSUME_PATCHED = "1"
+        cargo build --release --target ${{ matrix.target_triple }}
+
     - name: Build Binary
       run: |
         cargo build --bin rquest_runner --release --target ${{ matrix.target }} --features "cli,emulation,gzip,brotli,deflate,zstd,rquest/full"
