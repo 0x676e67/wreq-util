@@ -40,10 +40,11 @@ jobs:
         choco install nasm -y
         # Add NASM to both PATH and CMake paths
         $nasmPath = "C:\Program Files\NASM"
-        echo $nasmPath >> $env:GITHUB_PATH
+        $env:Path = "$nasmPath;" + $env:Path
+        echo "$nasmPath" >> $env:GITHUB_PATH
         echo "CMAKE_ASM_NASM_COMPILER=$nasmPath\nasm.exe" >> $env:GITHUB_ENV
-        # Verify NASM installation
-        nasm -v
+        # Verify NASM installation using full path
+        & "$nasmPath\nasm.exe" -v
       shell: pwsh
 
     - name: Build on Windows with Static Linking
