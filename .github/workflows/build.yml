@@ -56,11 +56,16 @@ jobs:
         CMAKE_ASM_NASM_OBJECT_FORMAT: "win64"
         NASM_PREFIX: "C:\\Program Files\\NASM\\"
         BORING_BSSL_ASSUME_PATCHED: "1"
-        BORING_BSSL_PATH: "${{ github.workspace }}/target/boring-ssl"
-        BORING_BSSL_INCLUDE_PATH: "${{ github.workspace }}/target/boring-ssl/include"
+        BORING_BSSL_SOURCE_PATH: "${{ github.workspace }}/boringssl"
       run: |
-        # Create BoringSSL directories
-        New-Item -ItemType Directory -Force -Path "${{ github.workspace }}/target/boring-ssl/include"
+        # Clone and build BoringSSL
+        git clone https://github.com/google/boringssl.git
+        cd boringssl
+        mkdir build
+        cd build
+        cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release ..
+        cmake --build . --config Release
+        cd ../..
         # Set environment variables for boring-sys2
         cargo build --release --target "${{ matrix.target }}"
 
