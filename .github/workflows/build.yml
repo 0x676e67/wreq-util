@@ -39,10 +39,19 @@ jobs:
         ${{ matrix.os == 'windows-latest' && '.\' || './' }}target/${{ matrix.target }}/release/${{ matrix.binary }} -P Chrome136 -m GET -u https://cloudflare.com/cdn-cgi/trace > trace_output.txt
         echo "Test completed at $(date '+%Y-%m-%d %H:%M:%S')" >> trace_output.txt
 
-    - name: Create Artifact Name with Timestamp
-      id: artifact_name
+    - name: Create Artifact Name with Timestamp (Windows)
+      if: matrix.os == 'windows-latest'
+      id: artifact_name_windows
+      shell: pwsh
       run: |
-        ${{ matrix.os == 'windows-latest' && 'echo ("artifact_name=" + "rquest-" + (Get-Date -Format "yyyyMMdd-HHmmss") + "-${{ matrix.os }}") >> $env:GITHUB_OUTPUT' || 'echo "artifact_name=rquest-$(date +%Y%m%d-%H%M%S)-${{ matrix.os }}" >> $GITHUB_OUTPUT' }}
+        echo "artifact_name=rquest-$([datetime]::Now.ToString('yyyyMMdd-HHmmss'))-${{ matrix.os }}" >> $env:GITHUB_OUTPUT
+
+    - name: Create Artifact Name with Timestamp (Unix)
+      if: matrix.os != 'windows-latest'
+      id: artifact_name_unix
+      shell: bash
+      run: |
+        echo "artifact_name=rquest-$(date +%Y%m%d-%H%M%S)-${{ matrix.os }}" >> $GITHUB_OUTPUT
 
     - name: Create Distribution Directory
       run: |
@@ -53,7 +62,7 @@ jobs:
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.artifact_name.outputs.artifact_name }}
+        name: ${{ matrix.os == 'windows-latest' && steps.artifact_name_windows.outputs.artifact_name || steps.artifact_name_unix.outputs.artifact_name }}
         path: dist/
         retention-days: 30
 
