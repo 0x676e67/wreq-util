@@ -211,14 +211,35 @@ jobs:
         if: matrix.os != 'windows-latest'
         shell: bash
         run: |
+          # List all contents of artifacts directory for debugging
+          echo "Contents of artifacts directory:"
+          ls -la artifacts/
+          
+          # Find the artifact directory with more detailed error handling
           artifact_dir=$(find artifacts -name "rquest-*-ubuntu-latest" -type d | head -n 1)
+          if [ -z "$artifact_dir" ]; then
+            echo "No artifact directory found. Available directories:"
+            find artifacts -type d
+            exit 1
+          fi
+          
           echo "Found artifact directory: $artifact_dir"
           mkdir -p dist
-          cp "$artifact_dir/rquest_runner" dist/ || {
-            echo "Failed to copy binary. Contents of $artifact_dir:"
-            ls -la "$artifact_dir"
+          
+          # List contents of found directory
+          echo "Contents of $artifact_dir:"
+          ls -la "$artifact_dir"
+          
+          # Copy binary with error handling
+          if [ -f "$artifact_dir/rquest_runner" ]; then
+            cp "$artifact_dir/rquest_runner" dist/ || {
+              echo "Failed to copy binary. Error: $?"
+              exit 1
+            }
+          else
+            echo "Binary not found at $artifact_dir/rquest_runner"
             exit 1
-          }
+          fi
 
       - name: Run Verification Tests (Unix)
         if: matrix.os != 'windows-latest'
