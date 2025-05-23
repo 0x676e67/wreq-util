@@ -274,31 +274,17 @@ jobs:
           pattern: rquest-*
           merge-multiple: true
 
-      - name: Download Test Report
-        uses: actions/download-artifact@v4
-        with:
-          path: test-report
-          pattern: test-report-*
-
-      - name: Download Verification Results
-        uses: actions/download-artifact@v4
-        with:
-          path: verification
-          pattern: verification-*
-
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
           name: Release ${{ github.sha }}
           tag_name: v${{ github.sha }}
-          body_path: test-report/test_report.md
+          body: "Release of rquest_runner binaries for Windows and Linux"
           draft: false
           prerelease: false
           files: |
             artifacts/rquest_runner
             artifacts/rquest_runner.exe
-            artifacts/trace_output.txt
-            verification/*/trace_output.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
