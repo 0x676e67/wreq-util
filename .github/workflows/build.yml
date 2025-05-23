@@ -296,8 +296,9 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            artifacts/rquest-*/rquest_runner*
-            artifacts/rquest-*/trace_output.txt
+            artifacts/rquest_runner
+            artifacts/rquest_runner.exe
+            artifacts/trace_output.txt
             verification/*/trace_output.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
