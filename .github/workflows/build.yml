@@ -170,23 +170,24 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
-          $artifactDir = Get-ChildItem -Path "artifacts" -Filter "rquest-*-windows-latest" -Directory | Select-Object -First 1
-          Write-Host "Found artifact directory: $artifactDir"
-          if (-not $artifactDir) {
-            Write-Host "No artifact directory found. Contents of artifacts:"
-            Get-ChildItem -Path "artifacts" -Recurse
-            exit 1
-          }
+          # List all contents of artifacts directory for debugging
+          Write-Host "Contents of artifacts directory:"
+          Get-ChildItem -Path "artifacts" -Force
+          
+          # Create dist directory
           New-Item -ItemType Directory -Path "dist" -Force | Out-Null
-          $binaryPath = Join-Path $artifactDir "rquest_runner.exe"
-          if (-not (Test-Path $binaryPath)) {
-            Write-Host "Binary not found at: $binaryPath"
-            Write-Host "Contents of $artifactDir:"
-            Get-ChildItem -Path $artifactDir
+          
+          # Copy binary with error handling
+          $binaryPath = Join-Path "artifacts" "rquest_runner.exe"
+          if (Test-Path $binaryPath) {
+            Copy-Item -Path $binaryPath -Destination "dist\" -Force
+            Write-Host "Successfully copied binary to dist/"
+          } else {
+            Write-Host "Binary not found at $binaryPath"
+            Write-Host "Available files:"
+            Get-ChildItem -Path "artifacts" -Force
             exit 1
           }
-          Copy-Item -Path $binaryPath -Destination "dist\"
-          Set-Location dist
 
       - name: Run Verification Tests (Windows)
         if: matrix.os == 'windows-latest'
