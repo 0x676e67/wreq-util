@@ -215,29 +215,20 @@ jobs:
           echo "Contents of artifacts directory:"
           ls -la artifacts/
           
-          # Find the artifact directory with more detailed error handling
-          artifact_dir=$(find artifacts -name "rquest-*-ubuntu-latest" -type d | head -n 1)
-          if [ -z "$artifact_dir" ]; then
-            echo "No artifact directory found. Available directories:"
-            find artifacts -type d
-            exit 1
-          fi
-          
-          echo "Found artifact directory: $artifact_dir"
+          # Create dist directory
           mkdir -p dist
           
-          # List contents of found directory
-          echo "Contents of $artifact_dir:"
-          ls -la "$artifact_dir"
-          
           # Copy binary with error handling
-          if [ -f "$artifact_dir/rquest_runner" ]; then
-            cp "$artifact_dir/rquest_runner" dist/ || {
+          if [ -f "artifacts/rquest_runner" ]; then
+            cp "artifacts/rquest_runner" dist/ || {
               echo "Failed to copy binary. Error: $?"
               exit 1
             }
+            echo "Successfully copied binary to dist/"
           else
-            echo "Binary not found at $artifact_dir/rquest_runner"
+            echo "Binary not found at artifacts/rquest_runner"
+            echo "Available files:"
+            ls -la artifacts/
             exit 1
           fi
 
