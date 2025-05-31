@@ -153,6 +153,13 @@ impl From<&str> for ValidHeader {
     }
 }
 
+#[derive(Debug, Clone, ValueEnum)]
+#[value(rename_all = "lowercase")]
+enum ProxyType {
+    Http,
+    Socks5,
+}
+
 /// A command-line HTTP client with browser emulation capabilities
 #[derive(Parser, Debug)]
 #[command(
@@ -165,8 +172,11 @@ impl From<&str> for ValidHeader {
     - Basic request:\n\
       rquest_runner -P Chrome136 -m GET -u https://example.com\n\
     \n\
-    - With proxy:\n\
+    - With HTTP proxy:\n\
       rquest_runner -P Chrome136 -m GET -u https://example.com -xhost 127.0.0.1 -xport 8080 -xuser user -xpass pass\n\
+    \n\
+    - With SOCKS5 proxy:\n\
+      rquest_runner -P Chrome136 -m GET -u https://example.com -xhost 127.0.0.1 -xport 1080 -xtype socks5 -xuser user -xpass pass\n\
     \n\
     - With cookies:\n\
       rquest_runner -P Chrome136 -m GET -u https://example.com -c \"session=123\" -C \"user=john; theme=dark\"\n\
@@ -247,6 +257,16 @@ struct Args {
     )]
     proxy_password: Option<String>,
 
+    /// Proxy type (http or socks5)
+    #[arg(
+        long = "xtype",
+        value_name = "TYPE",
+        help = "Proxy type (http or socks5)",
+        default_value = "http",
+        requires = "proxy_host"
+    )]
+    proxy_type: ProxyType,
+
     /// Single cookie in format name=value
     #[arg(
         short = 'c',
@@ -285,6 +305,8 @@ struct Response {
     response_code: u16,
     headers: Vec<(String, String)>,
     body: String,
+    error: Option<String>,
+    error_string: Option<String>,
 }
 
 fn parse_header(header_str: &str) -> Result<(String, String), String> {
@@ -450,21 +472,63 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Configure proxy if provided
     if let (Some(host), Some(port)) = (&args.proxy_host, &args.proxy_port) {
-        debug!("Configuring proxy: {}:{}", host, port);
+        debug!("Configuring {} proxy: {}:{}", args.proxy_type, host, port);
         
-        let proxy_url = if let (Some(username), Some(password)) = (&args.proxy_username, &args.proxy_password) {
-            format!("http://{}:{}@{}:{}", username, password, host, port)
-        } else {
-            format!("http://{}:{}", host, port)
+        let proxy_url = match args.proxy_type {
+            ProxyType::Http => {
+                if let (Some(username), Some(password)) = (&args.proxy_username, &args.proxy_password) {
+                    format!("http://{}:{}@{}:{}", username, password, host, port)
+                } else {
+                    format!("http://{}:{}", host, port)
+                }
+            },
+            ProxyType::Socks5 => {
+                if let (Some(username), Some(password)) = (&args.proxy_username, &args.proxy_password) {
+                    format!("socks5://{}:{}@{}:{}", username, password, host, port)
+                } else {
+                    format!("socks5://{}:{}", host, port)
+                }
+            }
         };
         
-        let proxy_config = Proxy::all(proxy_url)?;
-        builder = builder.proxy(proxy_config);
-        debug!("Proxy configured successfully");
+        match Proxy::all(proxy_url) {
+            Ok(proxy_config) => {
+                builder = builder.proxy(proxy_config);
+                debug!("{} proxy configured successfully", args.proxy_type);
+            },
+            Err(e) => {
+                let error_msg = format!("Failed to configure proxy: {}", e);
+                debug!("{}", error_msg);
+                let response = Response {
+                    response_code: 0,
+                    headers: Vec::new(),
+                    body: String::new(),
+                    error: Some("ProxyError".to_string()),
+                    error_string: Some(error_msg),
+                };
+                println!("{}", serde_json::to_string_pretty(&response)?);
+                return Ok(());
+            }
+        }
     }
 
     // Build the client
-    let client = builder.build()?;
+    let client = match builder.build() {
+        Ok(client) => client,
+        Err(e) => {
+            let error_msg = format!("Failed to build client: {}", e);
+            debug!("{}", error_msg);
+            let response = Response {
+                response_code: 0,
+                headers: Vec::new(),
+                body: String::new(),
+                error: Some("ClientBuildError".to_string()),
+                error_string: Some(error_msg),
+            };
+            println!("{}", serde_json::to_string_pretty(&response)?);
+            return Ok(());
+        }
+    };
     debug!("Client built successfully");
 
     // Create the request based on method
@@ -479,7 +543,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Add request body if provided and method supports it
     if let Some(body) = args.body {
         if matches!(args.method, HttpMethod::GET | HttpMethod::HEAD) {
-            return Err("Request body is not supported for GET and HEAD methods".into());
+            let response = Response {
+                response_code: 0,
+                headers: Vec::new(),
+                body: String::new(),
+                error: Some("InvalidRequest".to_string()),
+                error_string: Some("Request body is not supported for GET and HEAD methods".to_string()),
+            };
+            println!("{}", serde_json::to_string_pretty(&response)?);
+            return Ok(());
         }
         request = request.body(body);
         debug!("Added request body");
@@ -546,7 +618,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Send the request
     debug!("Sending request...");
-    let resp = request.send().await?;
+    let resp = match request.send().await {
+        Ok(resp) => resp,
+        Err(e) => {
+            let error_msg = format!("Request failed: {}", e);
+            debug!("{}", error_msg);
+            let response = Response {
+                response_code: 0,
+                headers: Vec::new(),
+                body: String::new(),
+                error: Some("RequestError".to_string()),
+                error_string: Some(error_msg),
+            };
+            println!("{}", serde_json::to_string_pretty(&response)?);
+            return Ok(());
+        }
+    };
     debug!("Received response with status: {}", resp.status());
     
     // Extract all information from response before consuming it
@@ -577,7 +664,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Get the body (this consumes the response)
-    let body = resp.text().await?;
+    let body = match resp.text().await {
+        Ok(body) => body,
+        Err(e) => {
+            let error_msg = format!("Failed to read response body: {}", e);
+            debug!("{}", error_msg);
+            let response = Response {
+                response_code: status,
+                headers,
+                body: String::new(),
+                error: Some("BodyReadError".to_string()),
+                error_string: Some(error_msg),
+            };
+            println!("{}", serde_json::to_string_pretty(&response)?);
+            return Ok(());
+        }
+    };
     debug!("Response body length: {} bytes", body.len());
 
     // Log response body
@@ -599,6 +701,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         response_code: status,
         headers,
         body,
+        error: None,
+        error_string: None,
     };
 
     // Print as JSON

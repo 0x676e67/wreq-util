@@ -37,7 +37,7 @@ deflate = ["rquest/deflate"]
 zstd = ["rquest/zstd"]
 
 [dependencies]
-rquest = { version = "3.0.5", features = ["gzip", "brotli", "deflate", "zstd"] }
+rquest = { version = "3.0.5", features = ["gzip", "brotli", "deflate", "zstd", "socks"] }
 serde = { version = "1.0", features = ["derive"], optional = true }
 serde_json = { version = "1.0", optional = true }
 clap = { version = "4.5", features = ["derive"], optional = true }
@@ -49,6 +49,7 @@ url = { version = "2.5", optional = true }
 log = "0.4"
 env_logger = "0.10"
 chrono = "0.4"
+
 
 [dev-dependencies]
 hyper = { version = "1.1.0", default-features = false, features = [
@@ -78,6 +79,10 @@ doctest = false
 [[test]]
 name = "client"
 path = "tests/client.rs"
+
+[[test]]
+name = "proxy"
+path = "tests/proxy.rs"
 
 [[test]]
 name = "emulation_chrome"
