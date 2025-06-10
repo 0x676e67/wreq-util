@@ -10,8 +10,6 @@ A collection of utilities to do common things with [wreq](https://github.com/0x6
 
 ## Emulation
 
-- **HTTP/2 over TLS**
-
 - **Emulation Device**
 
   Most browser device models share the same TLS and HTTP/2 configuration, differing only in the User-Agent.

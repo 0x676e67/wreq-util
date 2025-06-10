@@ -225,7 +225,7 @@ impl EmulationOS {
 /// // Use `emulation_option` to create an EmulationProvider
 /// let emulation_provider = emulation_option.emulation();
 /// ```
-#[derive(Default, TypedBuilder)]
+#[derive(Default, Clone, TypedBuilder)]
 pub struct EmulationOption {
     /// The browser version to emulation.
     #[builder(default)]
