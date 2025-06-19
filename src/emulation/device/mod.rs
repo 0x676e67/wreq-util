@@ -7,6 +7,7 @@ mod macros;
 pub mod chrome;
 pub mod firefox;
 pub mod okhttp;
+pub mod opera;
 pub mod safari;
 
 mod emulation_imports {

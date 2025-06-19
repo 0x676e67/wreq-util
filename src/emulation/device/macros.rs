@@ -23,7 +23,6 @@ macro_rules! header_chrome_sec_fetch {
 
 macro_rules! header_chrome_ua {
     ($headers:expr, $ua:expr) => {
-        $headers.insert(UPGRADE_INSECURE_REQUESTS, HeaderValue::from_static("1"));
         $headers.insert(USER_AGENT, HeaderValue::from_static($ua));
     };
 }

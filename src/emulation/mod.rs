@@ -2,7 +2,7 @@ mod device;
 #[cfg(feature = "emulation-rand")]
 mod rand;
 
-use device::{chrome::*, firefox::*, okhttp::*, safari::*};
+use device::{chrome::*, firefox::*, okhttp::*, opera::*, safari::*};
 #[cfg(feature = "emulation-serde")]
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "emulation-rand")]
@@ -107,6 +107,7 @@ define_emulation_enum!(
     SafariIos18_1_1 => "safari_ios_18.1.1",
     Safari18_3 => "safari_18.3",
     Safari18_3_1 => "safari_18.3.1",
+
     OkHttp3_9 => "okhttp_3.9",
     OkHttp3_11 => "okhttp_3.11",
     OkHttp3_13 => "okhttp_3.13",
@@ -115,11 +116,13 @@ define_emulation_enum!(
     OkHttp4_10 => "okhttp_4.10",
     OkHttp4_12 => "okhttp_4.12",
     OkHttp5 => "okhttp_5",
+
     Edge101 => "edge_101",
     Edge122 => "edge_122",
     Edge127 => "edge_127",
     Edge131 => "edge_131",
     Edge134 => "edge_134",
+
     Firefox109 => "firefox_109",
     Firefox117 => "firefox_117",
     Firefox128 => "firefox_128",
@@ -128,7 +131,12 @@ define_emulation_enum!(
     FirefoxPrivate135 => "firefox_private_135",
     FirefoxAndroid135 => "firefox_android_135",
     Firefox136 => "firefox_136",
-    FirefoxPrivate136 => "firefox_private_136"
+    FirefoxPrivate136 => "firefox_private_136",
+
+    Opera116 => "opera_116",
+    Opera117 => "opera_117",
+    Opera118 => "opera_118",
+    Opera119 => "opera_119"
 );
 
 /// ======== Emulation impls ========
@@ -332,7 +340,12 @@ impl EmulationProviderFactory for EmulationOption {
             Emulation::FirefoxPrivate135 => ff_private_135::emulation,
             Emulation::FirefoxAndroid135 => ff_android_135::emulation,
             Emulation::Firefox136 => ff136::emulation,
-            Emulation::FirefoxPrivate136 => ff_private_136::emulation
+            Emulation::FirefoxPrivate136 => ff_private_136::emulation,
+
+            Emulation::Opera116 => opera116::emulation,
+            Emulation::Opera117 => opera117::emulation,
+            Emulation::Opera118 => opera118::emulation,
+            Emulation::Opera119 => opera119::emulation
         )
     }
 }
