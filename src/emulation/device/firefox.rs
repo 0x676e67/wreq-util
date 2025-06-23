@@ -691,3 +691,23 @@ mod_generator!(
         )
     ]
 );
+
+mod_generator!(
+    ff139,
+    ff135::build_emulation,
+    header_initializer_with_zstd,
+    [
+        (
+            MacOS,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:139.0) Gecko/20100101 Firefox/139.0"
+        ),
+        (
+            Windows,
+            "Mozilla/5.0 (Windows NT 10.0; rv:136.0) Gecko/20100101 Firefox/139.0"
+        ),
+        (
+            Linux,
+            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/139.0"
+        )
+    ]
+);

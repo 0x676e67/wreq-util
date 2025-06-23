@@ -66,3 +66,10 @@ test_emulation!(
     ["t13d1715h2_5b57614c22b0_a54fffd0eb61"],
     "6ea73faa8fc5aac76bded7bd238f6433"
 );
+
+test_emulation!(
+    test_firefox_139,
+    Emulation::Firefox139,
+    ["t13d1717h2_5b57614c22b0_3cbfd9057e0d"],
+    "6ea73faa8fc5aac76bded7bd238f6433"
+);
