@@ -103,7 +103,6 @@ macro_rules! header_firefox_ua {
             HeaderName::from_static("te"),
             HeaderValue::from_static("trailers"),
         );
-        $headers.insert(UPGRADE_INSECURE_REQUESTS, HeaderValue::from_static("1"));
         $headers.insert(USER_AGENT, HeaderValue::from_static($ua));
     };
 }

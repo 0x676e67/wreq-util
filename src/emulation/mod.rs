@@ -13,6 +13,7 @@ use wreq::{EmulationProvider, EmulationProviderFactory};
 macro_rules! define_emulation_enum {
     ($(#[$meta:meta])* $name:ident, $default_variant:ident, $($variant:ident => $rename:expr),*) => {
         $(#[$meta])*
+        #[non_exhaustive]
         #[derive(Clone, Copy, Hash, Debug, PartialEq, Eq)]
         #[cfg_attr(feature = "emulation-rand", derive(VariantArray))]
         #[cfg_attr(feature = "emulation-serde", derive(Deserialize, Serialize))]
@@ -88,6 +89,7 @@ define_emulation_enum!(
     Chrome134 => "chrome_134",
     Chrome135 => "chrome_135",
     Chrome136 => "chrome_136",
+    Chrome137 => "chrome_137",
 
     SafariIos17_2 => "safari_ios_17.2",
     SafariIos17_4_1 => "safari_ios_17.4.1",
@@ -297,6 +299,7 @@ impl EmulationProviderFactory for EmulationOption {
             Emulation::Chrome134 => v134::emulation,
             Emulation::Chrome135 => v135::emulation,
             Emulation::Chrome136 => v136::emulation,
+            Emulation::Chrome137 => v137::emulation,
 
             Emulation::SafariIos17_2 => safari_ios_17_2::emulation,
             Emulation::SafariIos17_4_1 => safari_ios_17_4_1::emulation,

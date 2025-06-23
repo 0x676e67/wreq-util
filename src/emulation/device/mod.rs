@@ -15,8 +15,7 @@ mod emulation_imports {
     #[cfg(all(feature = "gzip", feature = "deflate", feature = "brotli"))]
     pub use wreq::header::ACCEPT_ENCODING;
     pub use wreq::header::{
-        ACCEPT, ACCEPT_LANGUAGE, HeaderMap, HeaderName, HeaderValue, UPGRADE_INSECURE_REQUESTS,
-        USER_AGENT,
+        ACCEPT, ACCEPT_LANGUAGE, HeaderMap, HeaderName, HeaderValue, USER_AGENT,
     };
     pub use wreq::{EmulationProvider, Http2Config};
 }
