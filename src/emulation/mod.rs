@@ -346,7 +346,7 @@ impl EmulationProviderFactory for EmulationOption {
             Emulation::Firefox136 => ff136::emulation,
             Emulation::FirefoxPrivate136 => ff_private_136::emulation,
             Emulation::Firefox139 => ff139::emulation,
-            
+
             Emulation::Opera116 => opera116::emulation,
             Emulation::Opera117 => opera117::emulation,
             Emulation::Opera118 => opera118::emulation,
