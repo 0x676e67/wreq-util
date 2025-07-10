@@ -71,6 +71,18 @@ macro_rules! http2_config {
             .settings_order(SETTINGS_ORDER)
             .build()
     };
+    (6) => {
+        Http2Config::builder()
+            .initial_stream_window_size(2097152)
+            .initial_connection_window_size(10485760)
+            .max_concurrent_streams(100)
+            .enable_push(false)
+            .unknown_setting9(true)
+            .headers_priority(NEW_HEADER_PRIORITY)
+            .headers_pseudo_order(NEW_HEADERS_PSEUDO_ORDER)
+            .settings_order(NEW_SETTINGS_ORDER)
+            .build()
+    };
 }
 
 #[inline]
@@ -472,4 +484,12 @@ mod_generator!(
     safari18_2::build_emulation,
     header_initializer_for_18,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+);
+
+mod_generator!(
+    safari18_5,
+    tls_config!(2, CIPHER_LIST_2, NEW_SIGALGS_LIST),
+    http2_config!(6),
+    header_initializer_for_18,
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15"
 );
