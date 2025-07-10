@@ -37,7 +37,7 @@ deflate = ["wreq/deflate"]
 zstd = ["wreq/zstd"]
 
 [dependencies]
-wreq = { version = ">=3.0.5,<10", features = ["gzip", "brotli", "deflate", "zstd"] }
+wreq = { version = ">=3.0.5,<6", default-features = false }
 serde = { version = "1.0", features = ["derive"], optional = true }
 typed-builder = { version = "0.21.0", optional = true }
 strum = { version = "0.27.1", optional = true }
