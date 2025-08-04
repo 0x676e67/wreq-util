@@ -1,3 +1,6 @@
+#[macro_use]
+mod macros;
+
 use super::{emulation_imports::*, http2_imports::*, tls_imports::*};
 
 const CURVES: &str = join!(":", "X25519", "P-256", "P-384");
@@ -35,17 +38,41 @@ const CIPHER_LIST: &str = join!(
     "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
 );
 
+#[derive(TypedBuilder)]
+struct OkHttpTlsConfig {
+    #[builder(default = CURVES)]
+    curves: &'static str,
+
+    #[builder(default = SIGALGS_LIST)]
+    sigalgs_list: &'static str,
+
+    cipher_list: &'static str,
+}
+
+impl From<OkHttpTlsConfig> for TlsOptions {
+    fn from(val: OkHttpTlsConfig) -> Self {
+        TlsOptions::builder()
+            .enable_ocsp_stapling(true)
+            .curves_list(val.curves)
+            .sigalgs_list(val.sigalgs_list)
+            .cipher_list(val.cipher_list)
+            .min_tls_version(TlsVersion::TLS_1_2)
+            .max_tls_version(TlsVersion::TLS_1_3)
+            .build()
+    }
+}
+
 fn build_emulation(
     option: EmulationOption,
     cipher_list: &'static str,
-    default_headers: Option<HeaderMap>,
+    user_agent: &'static str,
 ) -> Emulation {
-    let tls_opts = OkHttpTlsConfig::builder()
-        .cipher_list(cipher_list)
-        .build()
-        .into();
-
-    let mut builder = Emulation::builder().tls_options(tls_opts);
+    let mut builder = Emulation::builder().tls_options(
+        OkHttpTlsConfig::builder()
+            .cipher_list(cipher_list)
+            .build()
+            .into(),
+    );
 
     if !option.skip_http2 {
         let settings_order = SettingsOrder::builder()
@@ -84,67 +111,20 @@ fn build_emulation(
         builder = builder.http2_options(http2_opts);
     }
 
-    if let Some(headers) = default_headers {
+    if !option.skip_headers {
+        let mut headers = HeaderMap::new();
+        headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
+        headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
+        headers.insert(USER_AGENT, HeaderValue::from_static(user_agent));
+        #[cfg(all(feature = "gzip", feature = "deflate", feature = "brotli"))]
+        headers.insert(
+            ACCEPT_ENCODING,
+            HeaderValue::from_static("gzip, deflate, br"),
+        );
         builder = builder.headers(headers);
     }
 
     builder.build()
-}
-
-#[derive(TypedBuilder)]
-struct OkHttpTlsConfig {
-    #[builder(default = CURVES)]
-    curves: &'static str,
-
-    #[builder(default = SIGALGS_LIST)]
-    sigalgs_list: &'static str,
-
-    cipher_list: &'static str,
-}
-
-impl From<OkHttpTlsConfig> for TlsOptions {
-    fn from(val: OkHttpTlsConfig) -> Self {
-        TlsOptions::builder()
-            .enable_ocsp_stapling(true)
-            .curves_list(val.curves)
-            .sigalgs_list(val.sigalgs_list)
-            .cipher_list(val.cipher_list)
-            .min_tls_version(TlsVersion::TLS_1_2)
-            .max_tls_version(TlsVersion::TLS_1_3)
-            .build()
-    }
-}
-
-fn header_initializer(ua: &'static str) -> HeaderMap {
-    let mut headers = HeaderMap::new();
-    headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
-    headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
-    headers.insert(USER_AGENT, HeaderValue::from_static(ua));
-    #[cfg(all(feature = "gzip", feature = "deflate", feature = "brotli"))]
-    headers.insert(
-        ACCEPT_ENCODING,
-        HeaderValue::from_static("gzip, deflate, br"),
-    );
-    headers
-}
-
-macro_rules! mod_generator {
-    ($mod_name:ident, $cipher_list:expr, $ua:expr) => {
-        pub(crate) mod $mod_name {
-            use super::*;
-
-            #[inline(always)]
-            pub fn emulation(option: EmulationOption) -> Emulation {
-                let default_headers = if !option.skip_headers {
-                    Some(header_initializer($ua))
-                } else {
-                    None
-                };
-
-                build_emulation(option, $cipher_list, default_headers)
-            }
-        }
-    };
 }
 
 mod_generator!(
