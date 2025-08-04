@@ -37,11 +37,11 @@ deflate = ["wreq/deflate"]
 zstd = ["wreq/zstd"]
 
 [dependencies]
-wreq = { version = ">=3.0.5,<6", default-features = false }
+wreq = { version = "6.0.0-rc.1", default-features = false }
 serde = { version = "1.0", features = ["derive"], optional = true }
 typed-builder = { version = "0.21.0", optional = true }
-strum = { version = "0.27.1", optional = true }
-strum_macros = { version = "0.27.1", optional = true }
+strum = { version = "0.27.2", optional = true }
+strum_macros = { version = "0.27.2", optional = true }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
@@ -93,14 +93,36 @@ path = "tests/emulation_safari.rs"
 [[example]]
 name = "emulation"
 path = "examples/emulation.rs"
-required-features = ["emulation", "gzip", "brotli", "deflate", "zstd", "wreq/full"]
+required-features = [
+    "emulation",
+    "gzip",
+    "brotli",
+    "deflate",
+    "zstd",
+    "wreq/full",
+]
 
 [[example]]
 name = "emulation_rand"
 path = "examples/emulation_rand.rs"
-required-features = ["emulation", "gzip", "brotli", "deflate", "zstd", "wreq/full", "emulation-rand"]
+required-features = [
+    "emulation",
+    "gzip",
+    "brotli",
+    "deflate",
+    "zstd",
+    "wreq/full",
+    "emulation-rand",
+]
 
 [[example]]
 name = "emulation_option"
 path = "examples/emulation_option.rs"
-required-features = ["emulation", "gzip", "brotli", "deflate", "zstd", "wreq/full"]
+required-features = [
+    "emulation",
+    "gzip",
+    "brotli",
+    "deflate",
+    "zstd",
+    "wreq/full",
+]

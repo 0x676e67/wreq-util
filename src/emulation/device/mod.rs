@@ -11,26 +11,28 @@ pub mod opera;
 pub mod safari;
 
 mod emulation_imports {
-    pub use crate::emulation::{EmulationOS, EmulationOption};
     #[cfg(all(feature = "gzip", feature = "deflate", feature = "brotli"))]
     pub use wreq::header::ACCEPT_ENCODING;
-    pub use wreq::header::{
-        ACCEPT, ACCEPT_LANGUAGE, HeaderMap, HeaderName, HeaderValue, USER_AGENT,
+    pub use wreq::{
+        Emulation,
+        header::{ACCEPT, ACCEPT_LANGUAGE, HeaderMap, HeaderName, HeaderValue, USER_AGENT},
+        http2::Http2Options,
     };
-    pub use wreq::{EmulationProvider, Http2Config};
+
+    pub use crate::emulation::{EmulationOS, EmulationOption};
 }
 
 mod tls_imports {
     pub use typed_builder::TypedBuilder;
-    pub use wreq::{
-        AlpnProtos, AlpsProtos, CertCompressionAlgorithm, ExtensionType, SslCurve, TlsConfig,
+    pub use wreq::tls::{
+        AlpnProtocol, AlpsProtocol, CertificateCompressionAlgorithm, ExtensionType, TlsOptions,
         TlsVersion,
     };
 }
 
 mod http2_imports {
-    pub use std::sync::LazyLock;
-    pub use wreq::PseudoOrder::{self, *};
-    pub use wreq::SettingsOrder::{self, *};
-    pub use wreq::{Priority, StreamDependency, StreamId};
+    pub use wreq::http2::{
+        Priorities, Priority, PseudoId, PseudoOrder, SettingId, SettingsOrder, StreamDependency,
+        StreamId,
+    };
 }

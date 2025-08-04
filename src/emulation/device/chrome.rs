@@ -1,23 +1,66 @@
-use super::emulation_imports::*;
-use super::*;
-use http2::*;
+use header::*;
 use tls::*;
 
-macro_rules! tls_config {
+use super::{emulation_imports::*, http2_imports::*, *};
+
+macro_rules! headers_stream_dependency {
+    () => {
+        StreamDependency::new(StreamId::zero(), 255, true)
+    };
+}
+
+macro_rules! pseudo_order {
+    () => {
+        PseudoOrder::builder()
+            .extend([
+                PseudoId::Method,
+                PseudoId::Authority,
+                PseudoId::Scheme,
+                PseudoId::Path,
+            ])
+            .build()
+    };
+}
+
+macro_rules! settings_order {
+    () => {
+        SettingsOrder::builder()
+            .extend([
+                SettingId::HeaderTableSize,
+                SettingId::EnablePush,
+                SettingId::MaxConcurrentStreams,
+                SettingId::InitialWindowSize,
+                SettingId::MaxFrameSize,
+                SettingId::MaxHeaderListSize,
+                SettingId::EnableConnectProtocol,
+                SettingId::NoRfc7540Priorities,
+            ])
+            .build()
+    };
+}
+
+macro_rules! tls_options {
     (1) => {
-        ChromeTlsConfig::builder().build()
+        ChromeTlsConfig::builder().build().into()
     };
     (2) => {
-        ChromeTlsConfig::builder().enable_ech_grease(true).build()
+        ChromeTlsConfig::builder()
+            .enable_ech_grease(true)
+            .build()
+            .into()
     };
     (3) => {
-        ChromeTlsConfig::builder().permute_extensions(true).build()
+        ChromeTlsConfig::builder()
+            .permute_extensions(true)
+            .build()
+            .into()
     };
     (4) => {
         ChromeTlsConfig::builder()
             .permute_extensions(true)
             .enable_ech_grease(true)
             .build()
+            .into()
     };
     (5) => {
         ChromeTlsConfig::builder()
@@ -25,6 +68,7 @@ macro_rules! tls_config {
             .enable_ech_grease(true)
             .pre_shared_key(true)
             .build()
+            .into()
     };
     (6, $curves:expr) => {
         ChromeTlsConfig::builder()
@@ -33,6 +77,7 @@ macro_rules! tls_config {
             .pre_shared_key(true)
             .enable_ech_grease(true)
             .build()
+            .into()
     };
     (7, $curves:expr) => {
         ChromeTlsConfig::builder()
@@ -42,128 +87,122 @@ macro_rules! tls_config {
             .enable_ech_grease(true)
             .alps_use_new_codepoint(true)
             .build()
+            .into()
     };
 }
 
-macro_rules! http2_config {
+macro_rules! http2_options {
     (1) => {
-        Http2Config::builder()
-            .initial_stream_window_size(6291456)
+        Http2Options::builder()
+            .initial_window_size(6291456)
             .initial_connection_window_size(15728640)
             .max_concurrent_streams(1000)
             .max_header_list_size(262144)
             .header_table_size(65536)
-            .headers_priority(HEADER_PRIORITY)
-            .headers_pseudo_order(HEADERS_PSEUDO_ORDER)
-            .settings_order(SETTINGS_ORDER)
+            .headers_stream_dependency(headers_stream_dependency!())
+            .headers_pseudo_order(pseudo_order!())
+            .settings_order(settings_order!())
             .build()
     };
     (2) => {
-        Http2Config::builder()
-            .initial_stream_window_size(6291456)
+        Http2Options::builder()
+            .initial_window_size(6291456)
             .initial_connection_window_size(15728640)
             .max_concurrent_streams(1000)
             .max_header_list_size(262144)
             .header_table_size(65536)
             .enable_push(false)
-            .headers_priority(HEADER_PRIORITY)
-            .headers_pseudo_order(HEADERS_PSEUDO_ORDER)
-            .settings_order(SETTINGS_ORDER)
+            .headers_stream_dependency(headers_stream_dependency!())
+            .headers_pseudo_order(pseudo_order!())
+            .settings_order(settings_order!())
             .build()
     };
     (3) => {
-        Http2Config::builder()
-            .initial_stream_window_size(6291456)
+        Http2Options::builder()
+            .initial_window_size(6291456)
             .initial_connection_window_size(15728640)
             .max_header_list_size(262144)
             .header_table_size(65536)
             .enable_push(false)
-            .headers_priority(HEADER_PRIORITY)
-            .headers_pseudo_order(HEADERS_PSEUDO_ORDER)
-            .settings_order(SETTINGS_ORDER)
+            .headers_stream_dependency(headers_stream_dependency!())
+            .headers_pseudo_order(pseudo_order!())
+            .settings_order(settings_order!())
             .build()
     };
 }
 
-#[inline]
-fn header_initializer(
-    sec_ch_ua: &'static str,
-    ua: &'static str,
-    emulation_os: EmulationOS,
-) -> HeaderMap {
-    let mut headers = HeaderMap::new();
-    header_chrome_sec_ch_ua!(
-        headers,
-        sec_ch_ua,
-        emulation_os.platform(),
-        emulation_os.is_mobile()
-    );
-    header_chrome_ua!(headers, ua);
-    header_chrome_sec_fetch!(headers);
-    header_chrome_accpet!(headers);
-    headers
-}
+mod header {
 
-#[inline]
-fn header_initializer_with_zstd(
-    sec_ch_ua: &'static str,
-    ua: &'static str,
-    emulation_os: EmulationOS,
-) -> HeaderMap {
-    let mut headers = HeaderMap::new();
-    header_chrome_sec_ch_ua!(
-        headers,
-        sec_ch_ua,
-        emulation_os.platform(),
-        emulation_os.is_mobile()
-    );
-    header_chrome_ua!(headers, ua);
-    header_chrome_sec_fetch!(headers);
-    header_chrome_accpet!(zstd, headers);
-    headers
-}
+    use super::*;
 
-#[inline]
-fn header_initializer_with_zstd_priority(
-    sec_ch_ua: &'static str,
-    ua: &'static str,
-    emulation_os: EmulationOS,
-) -> HeaderMap {
-    let mut headers = HeaderMap::new();
-    header_chrome_sec_ch_ua!(
-        headers,
-        sec_ch_ua,
-        emulation_os.platform(),
-        emulation_os.is_mobile()
-    );
-    header_chrome_ua!(headers, ua);
-    header_chrome_sec_fetch!(headers);
-    header_chrome_accpet!(zstd, headers);
-    headers.insert(
-        HeaderName::from_static("priority"),
-        HeaderValue::from_static("u=0, i"),
-    );
-    headers
+    #[inline]
+    pub fn header_initializer(
+        sec_ch_ua: &'static str,
+        ua: &'static str,
+        emulation_os: EmulationOS,
+    ) -> HeaderMap {
+        let mut headers = HeaderMap::new();
+        header_chrome_sec_ch_ua!(
+            headers,
+            sec_ch_ua,
+            emulation_os.platform(),
+            emulation_os.is_mobile()
+        );
+        header_chrome_ua!(headers, ua);
+        header_chrome_sec_fetch!(headers);
+        header_chrome_accpet!(headers);
+        headers
+    }
+
+    #[inline]
+    pub fn header_initializer_with_zstd(
+        sec_ch_ua: &'static str,
+        ua: &'static str,
+        emulation_os: EmulationOS,
+    ) -> HeaderMap {
+        let mut headers = HeaderMap::new();
+        header_chrome_sec_ch_ua!(
+            headers,
+            sec_ch_ua,
+            emulation_os.platform(),
+            emulation_os.is_mobile()
+        );
+        header_chrome_ua!(headers, ua);
+        header_chrome_sec_fetch!(headers);
+        header_chrome_accpet!(zstd, headers);
+        headers
+    }
+
+    #[inline]
+    pub fn header_initializer_with_zstd_priority(
+        sec_ch_ua: &'static str,
+        ua: &'static str,
+        emulation_os: EmulationOS,
+    ) -> HeaderMap {
+        let mut headers = HeaderMap::new();
+        header_chrome_sec_ch_ua!(
+            headers,
+            sec_ch_ua,
+            emulation_os.platform(),
+            emulation_os.is_mobile()
+        );
+        header_chrome_ua!(headers, ua);
+        header_chrome_sec_fetch!(headers);
+        header_chrome_accpet!(zstd, headers);
+        headers.insert(
+            HeaderName::from_static("priority"),
+            HeaderValue::from_static("u=0, i"),
+        );
+        headers
+    }
 }
 
 mod tls {
     use super::tls_imports::*;
 
-    pub const CURVES_1: &[SslCurve] = &[SslCurve::X25519, SslCurve::SECP256R1, SslCurve::SECP384R1];
-
-    pub const CURVES_2: &[SslCurve] = &[
-        SslCurve::X25519_KYBER768_DRAFT00,
-        SslCurve::X25519,
-        SslCurve::SECP256R1,
-        SslCurve::SECP384R1,
-    ];
-
-    pub const CURVES_3: &[SslCurve] = &[
-        SslCurve::X25519_MLKEM768,
-        SslCurve::X25519,
-        SslCurve::SECP256R1,
-        SslCurve::SECP384R1,
-    ];
+    pub const CURVES_1: &str = join!(":", "X25519", "P-256", "P-384");
+    pub const CURVES_2: &str = join!(":", "X25519Kyber768Draft00", "X25519", "P-256", "P-384");
+    pub const CURVES_3: &str = join!(":", "X25519MLKEM768", "X25519", "P-256", "P-384");
 
     pub const CIPHER_LIST: &str = join!(
         ":",
@@ -196,13 +235,13 @@ mod tls {
         "rsa_pkcs1_sha512"
     );
 
-    pub const CERT_COMPRESSION_ALGORITHM: &[CertCompressionAlgorithm] =
-        &[CertCompressionAlgorithm::Brotli];
+    pub const CERT_COMPRESSION_ALGORITHM: &[CertificateCompressionAlgorithm] =
+        &[CertificateCompressionAlgorithm::BROTLI];
 
     #[derive(TypedBuilder)]
     pub struct ChromeTlsConfig {
         #[builder(default = CURVES_1)]
-        curves: &'static [SslCurve],
+        curves: &'static str,
 
         #[builder(default = SIGALGS_LIST)]
         sigalgs_list: &'static str,
@@ -210,8 +249,8 @@ mod tls {
         #[builder(default = CIPHER_LIST)]
         cipher_list: &'static str,
 
-        #[builder(default = AlpsProtos::HTTP2, setter(into))]
-        alps_protos: AlpsProtos,
+        #[builder(default = AlpsProtocol::HTTP2, setter(into))]
+        alps_protos: AlpsProtocol,
 
         #[builder(default = false)]
         alps_use_new_codepoint: bool,
@@ -226,13 +265,13 @@ mod tls {
         pre_shared_key: bool,
     }
 
-    impl From<ChromeTlsConfig> for TlsConfig {
+    impl From<ChromeTlsConfig> for TlsOptions {
         fn from(val: ChromeTlsConfig) -> Self {
-            TlsConfig::builder()
+            TlsOptions::builder()
                 .grease_enabled(true)
                 .enable_ocsp_stapling(true)
                 .enable_signed_cert_timestamps(true)
-                .curves(val.curves)
+                .curves_list(val.curves)
                 .sigalgs_list(val.sigalgs_list)
                 .cipher_list(val.cipher_list)
                 .min_tls_version(TlsVersion::TLS_1_2)
@@ -240,45 +279,19 @@ mod tls {
                 .permute_extensions(val.permute_extensions)
                 .pre_shared_key(val.pre_shared_key)
                 .enable_ech_grease(val.enable_ech_grease)
-                .alps_protos(val.alps_protos)
+                .alps_protocols([val.alps_protos])
                 .alps_use_new_codepoint(val.alps_use_new_codepoint)
-                .cert_compression_algorithm(CERT_COMPRESSION_ALGORITHM)
+                .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM)
                 .build()
         }
     }
-
-    impl From<ChromeTlsConfig> for Option<TlsConfig> {
-        #[inline(always)]
-        fn from(val: ChromeTlsConfig) -> Self {
-            Some(val.into())
-        }
-    }
-}
-
-mod http2 {
-    use super::http2_imports::*;
-
-    pub const HEADER_PRIORITY: (u32, u8, bool) = (0, 255, true);
-
-    pub const HEADERS_PSEUDO_ORDER: [PseudoOrder; 4] = [Method, Authority, Scheme, Path];
-
-    pub const SETTINGS_ORDER: [SettingsOrder; 8] = [
-        HeaderTableSize,
-        EnablePush,
-        MaxConcurrentStreams,
-        InitialWindowSize,
-        MaxFrameSize,
-        MaxHeaderListSize,
-        UnknownSetting8,
-        UnknownSetting9,
-    ];
 }
 
 macro_rules! mod_generator {
     (
         $mod_name:ident,
-        $tls_config:expr,
-        $http2_config:expr,
+        $tls_options:expr,
+        $http2_options:expr,
         $header_initializer:ident,
         [($default_os:ident, $default_sec_ch_ua:tt, $default_ua:tt) $(, ($other_os:ident, $other_sec_ch_ua:tt, $other_ua:tt))*]
     ) => {
@@ -286,7 +299,7 @@ macro_rules! mod_generator {
             use super::*;
 
             #[inline(always)]
-            pub fn emulation(option: EmulationOption) -> EmulationProvider {
+            pub fn emulation(option: EmulationOption) -> Emulation {
                 let default_headers = if !option.skip_headers {
                     #[allow(unreachable_patterns)]
                     let default_headers = match option.emulation_os {
@@ -315,12 +328,18 @@ macro_rules! mod_generator {
             pub fn build_emulation(
                 option: EmulationOption,
                 default_headers: Option<HeaderMap>
-            ) -> EmulationProvider {
-                EmulationProvider::builder()
-                     .tls_config($tls_config)
-                    .http2_config(conditional_http2!(option.skip_http2, $http2_config))
-                    .default_headers(default_headers)
-                    .build()
+            ) -> Emulation {
+                let mut builder = Emulation::builder().tls_options($tls_options);
+
+                if !option.skip_http2 {
+                    builder = builder.http2_options($http2_options);
+                }
+
+                if let Some(headers) = default_headers {
+                    builder = builder.headers(headers);
+                }
+
+                builder.build()
             }
         }
     };
@@ -334,7 +353,7 @@ macro_rules! mod_generator {
             use super::*;
 
             #[inline(always)]
-            pub fn emulation(option: EmulationOption) -> EmulationProvider {
+            pub fn emulation(option: EmulationOption) -> Emulation {
                 let default_headers = if !option.skip_headers {
                     #[allow(unreachable_patterns)]
                     let default_headers = match option.emulation_os {
@@ -364,8 +383,8 @@ macro_rules! mod_generator {
 
 mod_generator!(
     v100,
-    tls_config!(1),
-    http2_config!(1),
+    tls_options!(1),
+    http2_options!(1),
     header_initializer,
     [
         (
@@ -499,8 +518,8 @@ mod_generator!(
 
 mod_generator!(
     v105,
-    tls_config!(2),
-    http2_config!(1),
+    tls_options!(2),
+    http2_options!(1),
     header_initializer,
     [
         (
@@ -533,8 +552,8 @@ mod_generator!(
 
 mod_generator!(
     v106,
-    tls_config!(3),
-    http2_config!(2),
+    tls_options!(3),
+    http2_options!(2),
     header_initializer,
     [
         (
@@ -727,8 +746,8 @@ mod_generator!(
 
 mod_generator!(
     v116,
-    tls_config!(4),
-    http2_config!(2),
+    tls_options!(4),
+    http2_options!(2),
     header_initializer,
     [
         (
@@ -761,8 +780,8 @@ mod_generator!(
 
 mod_generator!(
     v117,
-    tls_config!(5),
-    http2_config!(3),
+    tls_options!(5),
+    http2_options!(3),
     header_initializer,
     [
         (
@@ -890,8 +909,8 @@ mod_generator!(
 
 mod_generator!(
     v118,
-    tls_config!(4),
-    http2_config!(3),
+    tls_options!(4),
+    http2_options!(3),
     header_initializer,
     [
         (
@@ -957,8 +976,8 @@ mod_generator!(
 
 mod_generator!(
     v124,
-    tls_config!(6, CURVES_2),
-    http2_config!(3),
+    tls_options!(6, CURVES_2),
+    http2_options!(3),
     header_initializer_with_zstd,
     [
         (
@@ -1190,8 +1209,8 @@ mod_generator!(
 
 mod_generator!(
     v131,
-    tls_config!(6, CURVES_3),
-    http2_config!(3),
+    tls_options!(6, CURVES_3),
+    http2_options!(3),
     header_initializer_with_zstd_priority,
     [
         (
@@ -1258,8 +1277,8 @@ mod_generator!(
 
 mod_generator!(
     v132,
-    tls_config!(7, CURVES_3),
-    http2_config!(3),
+    tls_options!(7, CURVES_3),
+    http2_options!(3),
     header_initializer_with_zstd_priority,
     [
         (

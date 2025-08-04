@@ -1,9 +1,13 @@
-use super::{Emulation, EmulationOS, EmulationOption};
-use std::cell::Cell;
-use std::collections::hash_map::RandomState;
-use std::hash::{BuildHasher, Hasher};
-use std::num::Wrapping;
+use std::{
+    cell::Cell,
+    collections::hash_map::RandomState,
+    hash::{BuildHasher, Hasher},
+    num::Wrapping,
+};
+
 use strum::VariantArray;
+
+use super::{Emulation, EmulationOS, EmulationOption};
 
 // from: https://github.com/seanmonstar/reqwest/blob/44ac897f1ab35ba24a195927043d185d5cbb6912/src/util.rs#L27
 fn fast_random() -> u64 {
@@ -71,9 +75,12 @@ impl Emulation {
 
 #[cfg(test)]
 mod tests {
+    use std::{
+        sync::{Arc, Mutex},
+        thread,
+    };
+
     use super::*;
-    use std::sync::{Arc, Mutex};
-    use std::thread;
 
     #[test]
     fn test_concurrent_get_random_emulation() {

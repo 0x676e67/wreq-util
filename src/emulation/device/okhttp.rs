@@ -1,34 +1,120 @@
-use super::emulation_imports::*;
-use super::*;
-use http2::*;
-use tls::*;
+use super::{emulation_imports::*, http2_imports::*, tls_imports::*};
 
-#[inline]
-pub fn build_emulation(
+const CURVES: &str = join!(":", "X25519", "P-256", "P-384");
+
+const SIGALGS_LIST: &str = join!(
+    ":",
+    "ecdsa_secp256r1_sha256",
+    "rsa_pss_rsae_sha256",
+    "rsa_pkcs1_sha256",
+    "ecdsa_secp384r1_sha384",
+    "rsa_pss_rsae_sha384",
+    "rsa_pkcs1_sha384",
+    "rsa_pss_rsae_sha512",
+    "rsa_pkcs1_sha512",
+    "rsa_pkcs1_sha1"
+);
+
+const CIPHER_LIST: &str = join!(
+    ":",
+    "TLS_AES_128_GCM_SHA256",
+    "TLS_AES_256_GCM_SHA384",
+    "TLS_CHACHA20_POLY1305_SHA256",
+    "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+    "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+    "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+    "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+    "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
+    "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256",
+    "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+    "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+    "TLS_RSA_WITH_AES_128_GCM_SHA256",
+    "TLS_RSA_WITH_AES_256_GCM_SHA384",
+    "TLS_RSA_WITH_AES_128_CBC_SHA",
+    "TLS_RSA_WITH_AES_256_CBC_SHA",
+    "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
+);
+
+fn build_emulation(
     option: EmulationOption,
     cipher_list: &'static str,
     default_headers: Option<HeaderMap>,
-) -> EmulationProvider {
-    EmulationProvider::builder()
-        .tls_config(OkHttpTlsConfig::builder().cipher_list(cipher_list).build())
-        .http2_config(conditional_http2!(
-            option.skip_http2,
-            Http2Config::builder()
-                .initial_stream_window_size(6291456)
-                .initial_connection_window_size(15728640)
-                .max_concurrent_streams(1000)
-                .max_header_list_size(262144)
-                .header_table_size(65536)
-                .headers_priority(HEADER_PRIORITY)
-                .headers_pseudo_order(HEADERS_PSEUDO_ORDER)
-                .settings_order(SETTINGS_ORDER)
-                .build()
-        ))
-        .default_headers(default_headers)
+) -> Emulation {
+    let tls_opts = OkHttpTlsConfig::builder()
+        .cipher_list(cipher_list)
         .build()
+        .into();
+
+    let mut builder = Emulation::builder().tls_options(tls_opts);
+
+    if !option.skip_http2 {
+        let settings_order = SettingsOrder::builder()
+            .extend([
+                SettingId::HeaderTableSize,
+                SettingId::EnablePush,
+                SettingId::MaxConcurrentStreams,
+                SettingId::InitialWindowSize,
+                SettingId::MaxFrameSize,
+                SettingId::MaxHeaderListSize,
+                SettingId::EnableConnectProtocol,
+                SettingId::NoRfc7540Priorities,
+            ])
+            .build();
+
+        let http2_opts = Http2Options::builder()
+            .initial_window_size(6291456)
+            .initial_connection_window_size(15728640)
+            .max_concurrent_streams(1000)
+            .max_header_list_size(262144)
+            .header_table_size(65536)
+            .headers_stream_dependency(StreamDependency::new(StreamId::zero(), 255, true))
+            .headers_pseudo_order(
+                PseudoOrder::builder()
+                    .extend([
+                        PseudoId::Method,
+                        PseudoId::Path,
+                        PseudoId::Authority,
+                        PseudoId::Scheme,
+                    ])
+                    .build(),
+            )
+            .settings_order(settings_order)
+            .build();
+
+        builder = builder.http2_options(http2_opts);
+    }
+
+    if let Some(headers) = default_headers {
+        builder = builder.headers(headers);
+    }
+
+    builder.build()
 }
 
-#[inline]
+#[derive(TypedBuilder)]
+struct OkHttpTlsConfig {
+    #[builder(default = CURVES)]
+    curves: &'static str,
+
+    #[builder(default = SIGALGS_LIST)]
+    sigalgs_list: &'static str,
+
+    cipher_list: &'static str,
+}
+
+impl From<OkHttpTlsConfig> for TlsOptions {
+    fn from(val: OkHttpTlsConfig) -> Self {
+        TlsOptions::builder()
+            .enable_ocsp_stapling(true)
+            .curves_list(val.curves)
+            .sigalgs_list(val.sigalgs_list)
+            .cipher_list(val.cipher_list)
+            .min_tls_version(TlsVersion::TLS_1_2)
+            .max_tls_version(TlsVersion::TLS_1_3)
+            .build()
+    }
+}
+
 fn header_initializer(ua: &'static str) -> HeaderMap {
     let mut headers = HeaderMap::new();
     headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
@@ -42,102 +128,13 @@ fn header_initializer(ua: &'static str) -> HeaderMap {
     headers
 }
 
-mod tls {
-    use super::tls_imports::*;
-
-    pub const CURVES: &[SslCurve] = &[SslCurve::X25519, SslCurve::SECP256R1, SslCurve::SECP384R1];
-
-    pub const SIGALGS_LIST: &str = join!(
-        ":",
-        "ecdsa_secp256r1_sha256",
-        "rsa_pss_rsae_sha256",
-        "rsa_pkcs1_sha256",
-        "ecdsa_secp384r1_sha384",
-        "rsa_pss_rsae_sha384",
-        "rsa_pkcs1_sha384",
-        "rsa_pss_rsae_sha512",
-        "rsa_pkcs1_sha512",
-        "rsa_pkcs1_sha1"
-    );
-
-    pub const CIPHER_LIST: &str = join!(
-        ":",
-        "TLS_AES_128_GCM_SHA256",
-        "TLS_AES_256_GCM_SHA384",
-        "TLS_CHACHA20_POLY1305_SHA256",
-        "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
-        "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
-        "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
-        "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
-        "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
-        "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256",
-        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
-        "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
-        "TLS_RSA_WITH_AES_128_GCM_SHA256",
-        "TLS_RSA_WITH_AES_256_GCM_SHA384",
-        "TLS_RSA_WITH_AES_128_CBC_SHA",
-        "TLS_RSA_WITH_AES_256_CBC_SHA",
-        "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
-    );
-
-    #[derive(TypedBuilder)]
-    pub struct OkHttpTlsConfig {
-        #[builder(default = CURVES)]
-        curves: &'static [SslCurve],
-
-        #[builder(default = SIGALGS_LIST)]
-        sigalgs_list: &'static str,
-
-        cipher_list: &'static str,
-    }
-
-    impl From<OkHttpTlsConfig> for TlsConfig {
-        fn from(val: OkHttpTlsConfig) -> Self {
-            TlsConfig::builder()
-                .enable_ocsp_stapling(true)
-                .curves(val.curves)
-                .sigalgs_list(val.sigalgs_list)
-                .cipher_list(val.cipher_list)
-                .min_tls_version(TlsVersion::TLS_1_2)
-                .max_tls_version(TlsVersion::TLS_1_3)
-                .build()
-        }
-    }
-
-    impl From<OkHttpTlsConfig> for Option<TlsConfig> {
-        #[inline(always)]
-        fn from(val: OkHttpTlsConfig) -> Self {
-            Some(val.into())
-        }
-    }
-}
-
-mod http2 {
-    use super::http2_imports::*;
-
-    pub const HEADER_PRIORITY: (u32, u8, bool) = (0, 255, true);
-
-    pub const HEADERS_PSEUDO_ORDER: [PseudoOrder; 4] = [Method, Path, Authority, Scheme];
-
-    pub const SETTINGS_ORDER: [SettingsOrder; 8] = [
-        HeaderTableSize,
-        EnablePush,
-        MaxConcurrentStreams,
-        InitialWindowSize,
-        MaxFrameSize,
-        MaxHeaderListSize,
-        UnknownSetting8,
-        UnknownSetting9,
-    ];
-}
-
 macro_rules! mod_generator {
     ($mod_name:ident, $cipher_list:expr, $ua:expr) => {
         pub(crate) mod $mod_name {
             use super::*;
 
             #[inline(always)]
-            pub fn emulation(option: EmulationOption) -> EmulationProvider {
+            pub fn emulation(option: EmulationOption) -> Emulation {
                 let default_headers = if !option.skip_headers {
                     Some(header_initializer($ua))
                 } else {

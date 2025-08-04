@@ -1,9 +1,3 @@
-macro_rules! conditional_http2 {
-    ($skip_http2:expr, $http2:expr) => {
-        if $skip_http2 { None } else { Some($http2) }
-    };
-}
-
 macro_rules! header_chrome_sec_ch_ua {
     ($headers:expr, $ua:expr, $platform:expr, $is_mobile:expr) => {
         let mobile = if $is_mobile { "?1" } else { "?0" };

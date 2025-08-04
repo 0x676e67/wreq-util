@@ -1,7 +1,6 @@
 #[macro_use]
 mod support;
 
-use support::CLIENT;
 use wreq_util::Emulation;
 
 test_emulation!(

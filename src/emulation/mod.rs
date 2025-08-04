@@ -8,7 +8,6 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "emulation-rand")]
 use strum_macros::VariantArray;
 use typed_builder::TypedBuilder;
-use wreq::{EmulationProvider, EmulationProviderFactory};
 
 macro_rules! define_emulation_enum {
     ($(#[$meta:meta])* $name:ident, $default_variant:ident, $($variant:ident => $rename:expr),*) => {
@@ -144,8 +143,8 @@ define_emulation_enum!(
 );
 
 /// ======== Emulation impls ========
-impl EmulationProviderFactory for Emulation {
-    fn emulation(self) -> EmulationProvider {
+impl wreq::EmulationFactory for Emulation {
+    fn emulation(self) -> wreq::Emulation {
         EmulationOption::builder()
             .emulation(self)
             .build()
@@ -208,12 +207,12 @@ impl EmulationOS {
 
 /// Represents the configuration options for emulating a browser and operating system.
 ///
-/// The `EmulationOption` struct allows you to configure various aspects of browser and OS emulation,
-/// including the browser version, operating system, and whether to skip certain features like HTTP/2
-/// or headers.
+/// The `EmulationOption` struct allows you to configure various aspects of browser and OS
+/// emulation, including the browser version, operating system, and whether to skip certain features
+/// like HTTP/2 or headers.
 ///
-/// This struct is typically used to build an `EmulationProvider` that can be applied to HTTP clients
-/// for making requests that mimic specific browser and OS configurations.
+/// This struct is typically used to build an `EmulationProvider` that can be applied to HTTP
+/// clients for making requests that mimic specific browser and OS configurations.
 ///
 /// # Fields
 ///
@@ -267,8 +266,8 @@ macro_rules! emulation_match {
     }
 }
 
-impl EmulationProviderFactory for EmulationOption {
-    fn emulation(self) -> EmulationProvider {
+impl wreq::EmulationFactory for EmulationOption {
+    fn emulation(self) -> wreq::Emulation {
         emulation_match!(
             self.emulation,
             self,

@@ -1,174 +1,253 @@
-use super::emulation_imports::*;
-use super::*;
-use http2::*;
+use header::*;
 use tls::*;
 
-macro_rules! tls_config {
+use super::{emulation_imports::*, http2_imports::*, *};
+
+macro_rules! headers_stream_dependency {
+    (1) => {
+        StreamDependency::new(StreamId::zero(), 41, false)
+    };
+    (2) => {
+        StreamDependency::new(StreamId::from(13), 41, false)
+    };
+}
+
+macro_rules! pseudo_order {
+    () => {
+        PseudoOrder::builder()
+            .extend([
+                PseudoId::Method,
+                PseudoId::Path,
+                PseudoId::Authority,
+                PseudoId::Scheme,
+            ])
+            .build()
+    };
+}
+
+macro_rules! settings_order {
+    () => {
+        SettingsOrder::builder()
+            .extend([
+                SettingId::HeaderTableSize,
+                SettingId::EnablePush,
+                SettingId::MaxConcurrentStreams,
+                SettingId::InitialWindowSize,
+                SettingId::MaxFrameSize,
+                SettingId::MaxHeaderListSize,
+                SettingId::EnableConnectProtocol,
+                SettingId::NoRfc7540Priorities,
+            ])
+            .build()
+    };
+}
+
+macro_rules! http2_options {
+    (1) => {
+        Http2Options::builder()
+            .initial_stream_id(3)
+            .header_table_size(65536)
+            .enable_push(false)
+            .initial_window_size(131072)
+            .max_frame_size(16384)
+            .initial_connection_window_size(12517377 + 65535)
+            .headers_stream_dependency(headers_stream_dependency!(1))
+            .headers_pseudo_order(pseudo_order!())
+            .settings_order(settings_order!())
+            .build()
+    };
+    (2) => {
+        Http2Options::builder()
+            .initial_stream_id(15)
+            .header_table_size(65536)
+            .initial_window_size(131072)
+            .max_frame_size(16384)
+            .initial_connection_window_size(12517377 + 65535)
+            .headers_stream_dependency(headers_stream_dependency!(2))
+            .headers_pseudo_order(pseudo_order!())
+            .settings_order(settings_order!())
+            .priorities(
+                Priorities::builder()
+                    .extend([
+                        Priority::new(
+                            StreamId::from(3),
+                            StreamDependency::new(StreamId::zero(), 200, false),
+                        ),
+                        Priority::new(
+                            StreamId::from(5),
+                            StreamDependency::new(StreamId::zero(), 100, false),
+                        ),
+                        Priority::new(
+                            StreamId::from(7),
+                            StreamDependency::new(StreamId::zero(), 0, false),
+                        ),
+                        Priority::new(
+                            StreamId::from(9),
+                            StreamDependency::new(StreamId::from(7), 0, false),
+                        ),
+                        Priority::new(
+                            StreamId::from(11),
+                            StreamDependency::new(StreamId::from(3), 0, false),
+                        ),
+                        Priority::new(
+                            StreamId::from(13),
+                            StreamDependency::new(StreamId::zero(), 240, false),
+                        ),
+                    ])
+                    .build(),
+            )
+            .build()
+    };
+    (3) => {
+        Http2Options::builder()
+            .initial_stream_id(3)
+            .header_table_size(65536)
+            .enable_push(false)
+            .max_concurrent_streams(0)
+            .initial_window_size(131072)
+            .max_frame_size(16384)
+            .initial_connection_window_size(12517377 + 65535)
+            .headers_stream_dependency(headers_stream_dependency!(1))
+            .headers_pseudo_order(pseudo_order!())
+            .settings_order(settings_order!())
+            .build()
+    };
+    (4) => {
+        Http2Options::builder()
+            .initial_stream_id(3)
+            .header_table_size(4096)
+            .enable_push(false)
+            .initial_window_size(32768)
+            .max_frame_size(16384)
+            .initial_connection_window_size(12517377 + 65535)
+            .headers_stream_dependency(headers_stream_dependency!(1))
+            .headers_pseudo_order(pseudo_order!())
+            .settings_order(settings_order!())
+            .build()
+    };
+}
+
+macro_rules! tls_options {
     (1, $cipher_list:expr, $curves:expr) => {
         FirefoxTlsConfig::builder()
             .cipher_list($cipher_list)
-            .curves($curves)
+            .curves_list($curves)
             .enable_ech_grease(true)
             .pre_shared_key(true)
             .psk_skip_session_tickets(true)
             .key_shares_limit(3)
-            .cert_compression_algorithm(CERT_COMPRESSION_ALGORITHM)
+            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM)
             .build()
+            .into()
     };
     (2, $cipher_list:expr, $curves:expr) => {
         FirefoxTlsConfig::builder()
             .cipher_list($cipher_list)
-            .curves($curves)
+            .curves_list($curves)
             .key_shares_limit(2)
             .build()
+            .into()
     };
     (3, $cipher_list:expr, $curves:expr) => {
         FirefoxTlsConfig::builder()
             .cipher_list($cipher_list)
-            .curves($curves)
+            .curves_list($curves)
             .session_ticket(false)
             .enable_ech_grease(true)
             .psk_dhe_ke(false)
             .key_shares_limit(2)
             .build()
+            .into()
     };
     (4, $cipher_list:expr, $curves:expr) => {
         FirefoxTlsConfig::builder()
             .cipher_list($cipher_list)
-            .curves($curves)
+            .curves_list($curves)
             .enable_ech_grease(true)
             .enable_signed_cert_timestamps(true)
             .session_ticket(true)
             .pre_shared_key(true)
             .psk_skip_session_tickets(true)
             .key_shares_limit(3)
-            .cert_compression_algorithm(CERT_COMPRESSION_ALGORITHM)
+            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM)
             .build()
+            .into()
     };
     (5, $cipher_list:expr, $curves:expr) => {
         FirefoxTlsConfig::builder()
             .cipher_list($cipher_list)
-            .curves($curves)
+            .curves_list($curves)
             .enable_ech_grease(true)
             .pre_shared_key(true)
             .psk_skip_session_tickets(true)
             .key_shares_limit(2)
-            .cert_compression_algorithm(CERT_COMPRESSION_ALGORITHM)
+            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM)
             .build()
+            .into()
     };
     (6, $cipher_list:expr, $curves:expr) => {
         FirefoxTlsConfig::builder()
             .cipher_list($cipher_list)
-            .curves($curves)
+            .curves_list($curves)
             .enable_ech_grease(true)
             .enable_signed_cert_timestamps(true)
             .session_ticket(false)
             .psk_dhe_ke(false)
             .key_shares_limit(3)
-            .cert_compression_algorithm(CERT_COMPRESSION_ALGORITHM)
+            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM)
             .build()
+            .into()
     };
 }
 
-macro_rules! http2_config {
-    (1) => {
-        Http2Config::builder()
-            .initial_stream_id(3)
-            .header_table_size(65536)
-            .enable_push(false)
-            .initial_stream_window_size(131072)
-            .max_frame_size(16384)
-            .initial_connection_window_size(12517377 + 65535)
-            .headers_priority(HEADER_PRIORITY)
-            .headers_pseudo_order(HEADERS_PSEUDO_ORDER)
-            .settings_order(SETTINGS_ORDER)
-            .build()
-    };
-    (2) => {
-        Http2Config::builder()
-            .initial_stream_id(15)
-            .header_table_size(65536)
-            .initial_stream_window_size(131072)
-            .max_frame_size(16384)
-            .initial_connection_window_size(12517377 + 65535)
-            .headers_priority((13, 41, false))
-            .headers_pseudo_order(HEADERS_PSEUDO_ORDER)
-            .settings_order(SETTINGS_ORDER)
-            .priority(PRIORITY.as_slice())
-            .build()
-    };
-    (3) => {
-        Http2Config::builder()
-            .initial_stream_id(3)
-            .header_table_size(65536)
-            .enable_push(false)
-            .max_concurrent_streams(0)
-            .initial_stream_window_size(131072)
-            .max_frame_size(16384)
-            .initial_connection_window_size(12517377 + 65535)
-            .headers_priority(HEADER_PRIORITY)
-            .headers_pseudo_order(HEADERS_PSEUDO_ORDER)
-            .settings_order(SETTINGS_ORDER)
-            .build()
-    };
-    (4) => {
-        Http2Config::builder()
-            .initial_stream_id(3)
-            .header_table_size(4096)
-            .enable_push(false)
-            .initial_stream_window_size(32768)
-            .max_frame_size(16384)
-            .initial_connection_window_size(12517377 + 65535)
-            .headers_priority(HEADER_PRIORITY)
-            .headers_pseudo_order(HEADERS_PSEUDO_ORDER)
-            .settings_order(SETTINGS_ORDER)
-            .build()
-    };
-}
+mod header {
+    use super::*;
 
-#[inline]
-fn header_initializer(ua: &'static str) -> HeaderMap {
-    let mut headers = HeaderMap::new();
-    header_firefox_ua!(headers, ua);
-    header_firefox_accept!(headers);
-    header_firefox_sec_fetch!(headers);
-    headers
-}
+    #[inline]
+    pub fn header_initializer(ua: &'static str) -> HeaderMap {
+        let mut headers = HeaderMap::new();
+        header_firefox_ua!(headers, ua);
+        header_firefox_accept!(headers);
+        header_firefox_sec_fetch!(headers);
+        headers
+    }
 
-#[inline]
-fn header_initializer_with_zstd(ua: &'static str) -> HeaderMap {
-    let mut headers = HeaderMap::new();
-    header_firefox_ua!(headers, ua);
-    header_firefox_accept!(zstd, headers);
-    header_firefox_sec_fetch!(headers);
-    headers.insert(
-        HeaderName::from_static("priority"),
-        HeaderValue::from_static("u=0, i"),
-    );
-    headers
+    #[inline]
+    pub fn header_initializer_with_zstd(ua: &'static str) -> HeaderMap {
+        let mut headers = HeaderMap::new();
+        header_firefox_ua!(headers, ua);
+        header_firefox_accept!(zstd, headers);
+        header_firefox_sec_fetch!(headers);
+        headers.insert(
+            HeaderName::from_static("priority"),
+            HeaderValue::from_static("u=0, i"),
+        );
+        headers
+    }
 }
 
 mod tls {
     use super::tls_imports::*;
 
-    pub const CURVES_1: &[SslCurve] = &[
-        SslCurve::X25519,
-        SslCurve::SECP256R1,
-        SslCurve::SECP384R1,
-        SslCurve::SECP521R1,
-        SslCurve::FFDHE2048,
-        SslCurve::FFDHE3072,
-    ];
-
-    pub const CURVES_2: &[SslCurve] = &[
-        SslCurve::X25519_MLKEM768,
-        SslCurve::X25519,
-        SslCurve::SECP256R1,
-        SslCurve::SECP384R1,
-        SslCurve::SECP521R1,
-        SslCurve::FFDHE2048,
-        SslCurve::FFDHE3072,
-    ];
+    pub const CURVES_1: &str = join!(
+        ":",
+        "X25519",
+        "P-256",
+        "P-384",
+        "P-521",
+        "ffdhe2048",
+        "ffdhe3072"
+    );
+    pub const CURVES_2: &str = join!(
+        ":",
+        "X25519MLKEM768",
+        "X25519",
+        "P-256",
+        "P-384",
+        "P-521",
+        "ffdhe2048",
+        "ffdhe3072"
+    );
 
     pub const CIPHER_LIST_1: &str = join!(
         ":",
@@ -190,7 +269,6 @@ mod tls {
         "TLS_RSA_WITH_AES_128_CBC_SHA",
         "TLS_RSA_WITH_AES_256_CBC_SHA"
     );
-
     pub const CIPHER_LIST_2: &str = join!(
         ":",
         "TLS_AES_128_GCM_SHA256",
@@ -225,10 +303,10 @@ mod tls {
         "rsa_pkcs1_sha1"
     );
 
-    pub const CERT_COMPRESSION_ALGORITHM: &[CertCompressionAlgorithm] = &[
-        CertCompressionAlgorithm::Zlib,
-        CertCompressionAlgorithm::Brotli,
-        CertCompressionAlgorithm::Zstd,
+    pub const CERT_COMPRESSION_ALGORITHM: &[CertificateCompressionAlgorithm] = &[
+        CertificateCompressionAlgorithm::ZLIB,
+        CertificateCompressionAlgorithm::BROTLI,
+        CertificateCompressionAlgorithm::ZSTD,
     ];
 
     pub const DELEGATED_CREDENTIALS: &str = join!(
@@ -241,38 +319,25 @@ mod tls {
 
     pub const RECORD_SIZE_LIMIT: u16 = 0x4001;
 
-    pub const EXTENSION_PERMUTATION_INDICES: &[u8] = &{
-        const EXTENSIONS: &[ExtensionType] = &[
-            ExtensionType::SERVER_NAME,
-            ExtensionType::EXTENDED_MASTER_SECRET,
-            ExtensionType::RENEGOTIATE,
-            ExtensionType::SUPPORTED_GROUPS,
-            ExtensionType::EC_POINT_FORMATS,
-            ExtensionType::SESSION_TICKET,
-            ExtensionType::APPLICATION_LAYER_PROTOCOL_NEGOTIATION,
-            ExtensionType::STATUS_REQUEST,
-            ExtensionType::DELEGATED_CREDENTIAL,
-            ExtensionType::CERTIFICATE_TIMESTAMP,
-            ExtensionType::KEY_SHARE,
-            ExtensionType::SUPPORTED_VERSIONS,
-            ExtensionType::SIGNATURE_ALGORITHMS,
-            ExtensionType::PSK_KEY_EXCHANGE_MODES,
-            ExtensionType::RECORD_SIZE_LIMIT,
-            ExtensionType::CERT_COMPRESSION,
-            ExtensionType::ENCRYPTED_CLIENT_HELLO,
-        ];
-
-        let mut indices = [0u8; EXTENSIONS.len()];
-        let mut index = usize::MIN;
-        while index < EXTENSIONS.len() {
-            if let Some(idx) = ExtensionType::index_of(EXTENSIONS[index]) {
-                indices[index] = idx as u8;
-            }
-            index += 1;
-        }
-
-        indices
-    };
+    pub const EXTENSION_PERMUTATION_INDICES: &[ExtensionType] = &[
+        ExtensionType::SERVER_NAME,
+        ExtensionType::EXTENDED_MASTER_SECRET,
+        ExtensionType::RENEGOTIATE,
+        ExtensionType::SUPPORTED_GROUPS,
+        ExtensionType::EC_POINT_FORMATS,
+        ExtensionType::SESSION_TICKET,
+        ExtensionType::APPLICATION_LAYER_PROTOCOL_NEGOTIATION,
+        ExtensionType::STATUS_REQUEST,
+        ExtensionType::DELEGATED_CREDENTIAL,
+        ExtensionType::CERTIFICATE_TIMESTAMP,
+        ExtensionType::KEY_SHARE,
+        ExtensionType::SUPPORTED_VERSIONS,
+        ExtensionType::SIGNATURE_ALGORITHMS,
+        ExtensionType::PSK_KEY_EXCHANGE_MODES,
+        ExtensionType::RECORD_SIZE_LIMIT,
+        ExtensionType::CERT_COMPRESSION,
+        ExtensionType::ENCRYPTED_CLIENT_HELLO,
+    ];
 
     #[derive(TypedBuilder)]
     pub struct FirefoxTlsConfig {
@@ -283,7 +348,7 @@ mod tls {
         cipher_list: &'static str,
 
         #[builder(setter(into))]
-        curves: &'static [SslCurve],
+        curves_list: &'static str,
 
         #[builder(default = true)]
         session_ticket: bool,
@@ -313,16 +378,16 @@ mod tls {
         psk_dhe_ke: bool,
 
         #[builder(default, setter(into))]
-        cert_compression_algorithm: Option<&'static [CertCompressionAlgorithm]>,
+        certificate_compression_algorithms: Option<&'static [CertificateCompressionAlgorithm]>,
 
         #[builder(default = EXTENSION_PERMUTATION_INDICES, setter(into))]
-        extension_permutation_indices: &'static [u8],
+        extension_permutation: &'static [ExtensionType],
     }
 
-    impl From<FirefoxTlsConfig> for TlsConfig {
+    impl From<FirefoxTlsConfig> for TlsOptions {
         fn from(val: FirefoxTlsConfig) -> Self {
-            TlsConfig::builder()
-                .curves(val.curves)
+            let mut builder = TlsOptions::builder()
+                .curves_list(val.curves_list)
                 .sigalgs_list(val.sigalgs_list)
                 .cipher_list(val.cipher_list)
                 .session_ticket(val.session_ticket)
@@ -331,82 +396,31 @@ mod tls {
                 .enable_ocsp_stapling(true)
                 .enable_ech_grease(val.enable_ech_grease)
                 .enable_signed_cert_timestamps(val.enable_signed_cert_timestamps)
-                .alpn_protos(AlpnProtos::ALL)
+                .alpn_protocols([AlpnProtocol::HTTP2, AlpnProtocol::HTTP1])
                 .min_tls_version(TlsVersion::TLS_1_2)
                 .max_tls_version(TlsVersion::TLS_1_3)
                 .key_shares_limit(val.key_shares_limit)
                 .pre_shared_key(val.pre_shared_key)
                 .psk_skip_session_ticket(val.psk_skip_session_tickets)
                 .psk_dhe_ke(val.psk_dhe_ke)
-                .cert_compression_algorithm(val.cert_compression_algorithm)
-                .extension_permutation_indices(val.extension_permutation_indices)
+                .extension_permutation(val.extension_permutation)
                 .aes_hw_override(true)
-                .random_aes_hw_override(true)
-                .build()
+                .random_aes_hw_override(true);
+
+            if let Some(cert_compression_algorithms) = val.certificate_compression_algorithms {
+                builder = builder.certificate_compression_algorithms(cert_compression_algorithms)
+            }
+
+            builder.build()
         }
     }
-
-    impl From<FirefoxTlsConfig> for Option<TlsConfig> {
-        #[inline(always)]
-        fn from(val: FirefoxTlsConfig) -> Self {
-            Some(val.into())
-        }
-    }
-}
-
-mod http2 {
-    use super::http2_imports::*;
-
-    pub const HEADER_PRIORITY: (u32, u8, bool) = (0, 41, false);
-
-    pub const HEADERS_PSEUDO_ORDER: [PseudoOrder; 4] = [Method, Path, Authority, Scheme];
-
-    pub const SETTINGS_ORDER: [SettingsOrder; 8] = [
-        HeaderTableSize,
-        EnablePush,
-        MaxConcurrentStreams,
-        InitialWindowSize,
-        MaxFrameSize,
-        MaxHeaderListSize,
-        UnknownSetting8,
-        UnknownSetting9,
-    ];
-
-    pub static PRIORITY: LazyLock<[Priority; 6]> = LazyLock::new(|| {
-        [
-            Priority::new(
-                StreamId::from(3),
-                StreamDependency::new(StreamId::zero(), 200, false),
-            ),
-            Priority::new(
-                StreamId::from(5),
-                StreamDependency::new(StreamId::zero(), 100, false),
-            ),
-            Priority::new(
-                StreamId::from(7),
-                StreamDependency::new(StreamId::zero(), 0, false),
-            ),
-            Priority::new(
-                StreamId::from(9),
-                StreamDependency::new(StreamId::from(7), 0, false),
-            ),
-            Priority::new(
-                StreamId::from(11),
-                StreamDependency::new(StreamId::from(3), 0, false),
-            ),
-            Priority::new(
-                StreamId::from(13),
-                StreamDependency::new(StreamId::zero(), 240, false),
-            ),
-        ]
-    });
 }
 
 macro_rules! mod_generator {
     (
         $mod_name:ident,
-        $tls_config:expr,
-        $http2_config:expr,
+        $tls_options:expr,
+        $http2_options:expr,
         $header_initializer:ident,
         [($default_os:ident, $default_ua:tt) $(, ($other_os:ident, $other_ua:tt))*]
     ) => {
@@ -414,7 +428,7 @@ macro_rules! mod_generator {
             use super::*;
 
             #[inline(always)]
-            pub fn emulation(option: EmulationOption) -> EmulationProvider {
+            pub fn emulation(option: EmulationOption) -> Emulation {
                 let default_headers = if !option.skip_headers {
                     #[allow(unreachable_patterns)]
                     let default_headers = match option.emulation_os {
@@ -440,12 +454,18 @@ macro_rules! mod_generator {
             pub fn build_emulation(
                 option: EmulationOption,
                 default_headers: Option<HeaderMap>
-            ) -> EmulationProvider {
-                EmulationProvider::builder()
-                    .tls_config($tls_config)
-                    .http2_config(conditional_http2!(option.skip_http2, $http2_config))
-                    .default_headers(default_headers)
-                    .build()
+            ) -> Emulation {
+                let mut builder = Emulation::builder().tls_options($tls_options);
+
+                if !option.skip_http2 {
+                    builder = builder.http2_options($http2_options);
+                }
+
+                if let Some(headers) = default_headers {
+                    builder = builder.headers(headers);
+                }
+
+                builder.build()
             }
         }
     };
@@ -459,7 +479,7 @@ macro_rules! mod_generator {
             use super::*;
 
             #[inline(always)]
-            pub fn emulation(option: EmulationOption) -> EmulationProvider {
+            pub fn emulation(option: EmulationOption) -> Emulation {
                 let default_headers = if !option.skip_headers {
                     #[allow(unreachable_patterns)]
                     let default_headers = match option.emulation_os {
@@ -486,8 +506,8 @@ macro_rules! mod_generator {
 
 mod_generator!(
     ff109,
-    tls_config!(2, CIPHER_LIST_1, CURVES_1),
-    http2_config!(2),
+    tls_options!(2, CIPHER_LIST_1, CURVES_1),
+    http2_options!(2),
     header_initializer,
     [
         (
@@ -543,8 +563,8 @@ mod_generator!(
 
 mod_generator!(
     ff128,
-    tls_config!(3, CIPHER_LIST_2, CURVES_1),
-    http2_config!(3),
+    tls_options!(3, CIPHER_LIST_2, CURVES_1),
+    http2_options!(3),
     header_initializer_with_zstd,
     [
         (
@@ -572,8 +592,8 @@ mod_generator!(
 
 mod_generator!(
     ff133,
-    tls_config!(1, CIPHER_LIST_1, CURVES_2),
-    http2_config!(1),
+    tls_options!(1, CIPHER_LIST_1, CURVES_2),
+    http2_options!(1),
     header_initializer_with_zstd,
     [
         (
@@ -601,8 +621,8 @@ mod_generator!(
 
 mod_generator!(
     ff135,
-    tls_config!(4, CIPHER_LIST_1, CURVES_2),
-    http2_config!(1),
+    tls_options!(4, CIPHER_LIST_1, CURVES_2),
+    http2_options!(1),
     header_initializer_with_zstd,
     [
         (
@@ -622,8 +642,8 @@ mod_generator!(
 
 mod_generator!(
     ff_private_135,
-    tls_config!(6, CIPHER_LIST_1, CURVES_2),
-    http2_config!(1),
+    tls_options!(6, CIPHER_LIST_1, CURVES_2),
+    http2_options!(1),
     header_initializer_with_zstd,
     [
         (
@@ -643,8 +663,8 @@ mod_generator!(
 
 mod_generator!(
     ff_android_135,
-    tls_config!(5, CIPHER_LIST_1, CURVES_1),
-    http2_config!(4),
+    tls_options!(5, CIPHER_LIST_1, CURVES_1),
+    http2_options!(4),
     header_initializer_with_zstd,
     [(
         Android,
