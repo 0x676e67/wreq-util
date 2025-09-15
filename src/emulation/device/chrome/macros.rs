@@ -117,7 +117,6 @@ macro_rules! mod_generator {
         pub(crate) mod $mod_name {
             use super::*;
 
-            #[inline(always)]
             pub fn emulation(option: EmulationOption) -> Emulation {
                 let default_headers = if !option.skip_headers {
                     #[allow(unreachable_patterns)]
@@ -143,7 +142,6 @@ macro_rules! mod_generator {
                 build_emulation(option, default_headers)
             }
 
-            #[inline(always)]
             pub fn build_emulation(
                 option: EmulationOption,
                 default_headers: Option<HeaderMap>
