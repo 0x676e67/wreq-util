@@ -5,7 +5,7 @@ use wreq_util::Emulation;
 async fn main() -> Result<(), wreq::Error> {
     // Build a client to emulation Firefox136
     let client = Client::builder()
-        .emulation(Emulation::Firefox136)
+        .emulation(Emulation::Firefox109)
         .cert_verification(false)
         .build()?;
 

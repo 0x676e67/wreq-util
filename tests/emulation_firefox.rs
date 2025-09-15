@@ -7,14 +7,14 @@ test_emulation!(
     test_firefox_109,
     Emulation::Firefox109,
     ["t13d1715h2_5b57614c22b0_3d5424432f57"],
-    "3d9132023bf26a71d40fe766e5c24c9d"
+    "73d042072ceabaedacfd45e84dff1020"
 );
 
 test_emulation!(
     test_firefox_117,
     Emulation::Firefox117,
     ["t13d1715h2_5b57614c22b0_3d5424432f57"],
-    "3d9132023bf26a71d40fe766e5c24c9d"
+    "73d042072ceabaedacfd45e84dff1020"
 );
 
 test_emulation!(
