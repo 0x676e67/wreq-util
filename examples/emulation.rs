@@ -11,7 +11,7 @@ async fn main() -> Result<(), wreq::Error> {
 
     // Use the API you're already familiar with
     let text = client
-        .get("https://tls.peet.ws/api/all")
+        .get("https://tls.browserleaks.com/")
         .send()
         .await?
         .text()
