@@ -5,13 +5,13 @@ use wreq_util::Emulation;
 async fn main() -> Result<(), wreq::Error> {
     // Build a client to emulation Firefox136
     let client = Client::builder()
-        .emulation(Emulation::Firefox109)
+        .emulation(Emulation::Firefox139)
         .cert_verification(false)
         .build()?;
 
     // Use the API you're already familiar with
     let text = client
-        .get("https://tls.peet.ws/api/all")
+        .get("https://tls.browserleaks.com/")
         .send()
         .await?
         .text()

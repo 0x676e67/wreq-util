@@ -1133,3 +1133,102 @@ mod_generator!(
         )
     ]
 );
+
+mod_generator!(
+    v138,
+    v132::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="138", "Not=A?Brand";v="24", "Google Chrome";v="138""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+        ),
+        (
+            Linux,
+            r#""Chromium";v="138", "Not=A?Brand";v="24", "Google Chrome";v="138""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+        ),
+        (
+            Android,
+            r#""Chromium";v="138", "Not=A?Brand";v="24", "Google Chrome";v="138""#,
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="138", "Not=A?Brand";v="24", "Google Chrome";v="138""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="138", "Not=A?Brand";v="24", "Google Chrome";v="138""#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/138.0.0.0 Mobile/15E148 Safari/604.1"
+        )
+    ]
+);
+
+mod_generator!(
+    v139,
+    v132::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="139", "Not=A?Brand";v="24", "Google Chrome";v="139""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+        ),
+        (
+            Linux,
+            r#""Chromium";v="139", "Not=A?Brand";v="24", "Google Chrome";v="139""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+        ),
+        (
+            Android,
+            r#""Chromium";v="139", "Not=A?Brand";v="24", "Google Chrome";v="139""#,
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="139", "Not=A?Brand";v="24", "Google Chrome";v="139""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="139", "Not=A?Brand";v="24", "Google Chrome";v="139""#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/139.0.0.0 Mobile/15E148 Safari/604.1"
+        )
+    ]
+);
+
+mod_generator!(
+    v140,
+    v132::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+        ),
+        (
+            Linux,
+            r#""Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+        ),
+        (
+            Android,
+            r#""Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140""#,
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140""#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/140.0.0.0 Mobile/15E148 Safari/604.1"
+        )
+    ]
+);
