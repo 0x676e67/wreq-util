@@ -72,3 +72,17 @@ test_emulation!(
     ["t13d1717h2_5b57614c22b0_3cbfd9057e0d"],
     "6ea73faa8fc5aac76bded7bd238f6433"
 );
+
+test_emulation!(
+    test_firefox_142,
+    Emulation::Firefox142,
+    ["t13d1717h2_5b57614c22b0_3cbfd9057e0d"],
+    "6ea73faa8fc5aac76bded7bd238f6433"
+);
+
+test_emulation!(
+    test_firefox_143,
+    Emulation::Firefox143,
+    ["t13d1717h2_5b57614c22b0_3cbfd9057e0d"],
+    "6ea73faa8fc5aac76bded7bd238f6433"
+);
