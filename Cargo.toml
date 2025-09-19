@@ -35,7 +35,7 @@ deflate = ["wreq/deflate"]
 zstd = ["wreq/zstd"]
 
 [dependencies]
-wreq = { version = "6.0.0-rc.15", default-features = false }
+wreq = { version = "6.0.0-rc.20", default-features = false }
 serde = { version = "1.0", features = ["derive"], optional = true }
 typed-builder = { version = "0.22.0", optional = true }
 strum = { version = "0.27.2", optional = true }
@@ -62,7 +62,7 @@ futures-util = { version = "0.3.0" }
 tower = { version = "0.5.2", default-features = false, features = ["limit"] }
 pin-project-lite = "0.2.0"
 tracing = "0.1"
-tracing-subscriber = "0.3.19"
+tracing-subscriber = "0.3.20"
 
 [lib]
 doctest = false

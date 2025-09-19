@@ -3,15 +3,15 @@ use wreq_util::Emulation;
 
 #[tokio::main]
 async fn main() -> Result<(), wreq::Error> {
-    // Build a client to emulation Firefox136
+    // Build a client to emulation Safari26
     let client = Client::builder()
-        .emulation(Emulation::Firefox139)
+        .emulation(Emulation::Safari26)
         .cert_verification(false)
         .build()?;
 
     // Use the API you're already familiar with
     let text = client
-        .get("https://tls.browserleaks.com/")
+        .get("https://tls.peet.ws/api/all")
         .send()
         .await?
         .text()

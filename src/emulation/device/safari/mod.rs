@@ -121,7 +121,7 @@ mod_generator!(
 
 mod_generator!(
     safari18_2,
-    tls_options!(2, CIPHER_LIST_2, NEW_SIGALGS_LIST),
+    tls_options!(2, CIPHER_LIST_2, SIGALGS_LIST_2),
     http2_options!(3),
     header_initializer_for_18,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.2 Safari/605.1.15"
@@ -143,8 +143,16 @@ mod_generator!(
 
 mod_generator!(
     safari18_5,
-    tls_options!(2, CIPHER_LIST_2, NEW_SIGALGS_LIST),
+    tls_options!(2, CIPHER_LIST_2, SIGALGS_LIST_2),
     http2_options!(6),
     header_initializer_for_18,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15"
+);
+
+mod_generator!(
+    safari26,
+    tls_options!(3, CIPHER_LIST_3, SIGALGS_LIST_2, CURVES_2),
+    http2_options!(6),
+    header_initializer_for_18,
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15"
 );

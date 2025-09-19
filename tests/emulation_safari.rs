@@ -135,3 +135,10 @@ test_emulation!(
     ["t13d2014h2_a09f3c656075_e42f34c56612"],
     "c52879e43202aeb92740be6e8c86ea96"
 );
+
+test_emulation!(
+    test_safari_26,
+    Emulation::Safari26,
+    ["t13d2013h2_a09f3c656075_7f0f34a4126d"],
+    "c52879e43202aeb92740be6e8c86ea96"
+);

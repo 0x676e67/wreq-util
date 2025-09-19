@@ -174,7 +174,7 @@ impl From<FirefoxTlsConfig> for TlsOptions {
             .pre_shared_key(val.pre_shared_key)
             .psk_skip_session_ticket(val.psk_skip_session_tickets)
             .psk_dhe_ke(val.psk_dhe_ke)
-            .prefer_chacha20(true)
+            .preserve_tls13_cipher_list(true)
             .extension_permutation(val.extension_permutation)
             .aes_hw_override(true)
             .random_aes_hw_override(true);

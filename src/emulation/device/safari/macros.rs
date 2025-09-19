@@ -75,6 +75,17 @@ macro_rules! tls_options {
             .build()
             .into()
     };
+    (3, $cipher_list:expr, $sigalgs_list:expr, $curves:expr) => {
+        SafariTlsConfig::builder()
+            .curves($curves)
+            .cipher_list($cipher_list)
+            .sigalgs_list($sigalgs_list)
+            .preserve_tls13_cipher_list(true)
+            .min_tls_version(wreq::tls::TlsVersion::TLS_1_2)
+            .max_tls_version(wreq::tls::TlsVersion::TLS_1_3)
+            .build()
+            .into()
+    };
 }
 
 macro_rules! http2_options {

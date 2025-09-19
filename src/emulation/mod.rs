@@ -112,6 +112,7 @@ define_emulation_enum!(
     Safari18_3 => "safari_18.3",
     Safari18_3_1 => "safari_18.3.1",
     Safari18_5 => "safari_18.5",
+    Safari26 => "safari_26",
 
     OkHttp3_9 => "okhttp_3.9",
     OkHttp3_11 => "okhttp_3.11",
@@ -329,6 +330,7 @@ impl wreq::EmulationFactory for EmulationOption {
             Emulation::Safari18_3 => safari18_3::emulation,
             Emulation::Safari18_3_1 => safari18_3_1::emulation,
             Emulation::Safari18_5 => safari18_5::emulation,
+            Emulation::Safari26 => safari26::emulation,
 
             Emulation::OkHttp3_9 => okhttp3_9::emulation,
             Emulation::OkHttp3_11 => okhttp3_11::emulation,
