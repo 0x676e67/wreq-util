@@ -59,6 +59,65 @@ macro_rules! tls_options {
     };
 }
 
+macro_rules! tls_options {
+    (@build $builder:expr) => {
+        $builder.build().into()
+    };
+
+    (@base $builder:expr, $cipher_list:expr, $curves:expr) => {
+        $builder
+            .cipher_list($cipher_list)
+            .curves_list($curves)
+    };
+
+    (1, $cipher_list:expr, $curves:expr) => {
+        tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
+            .enable_ech_grease(true)
+            .pre_shared_key(true)
+            .psk_skip_session_tickets(true)
+            .key_shares_limit(3)
+            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM))
+    };
+    (2, $cipher_list:expr, $curves:expr) => {
+        tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
+            .key_shares_limit(2))
+    };
+    (3, $cipher_list:expr, $curves:expr) => {
+        tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
+            .session_ticket(false)
+            .enable_ech_grease(true)
+            .psk_dhe_ke(false)
+            .key_shares_limit(2))
+    };
+    (4, $cipher_list:expr, $curves:expr) => {
+        tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
+            .enable_ech_grease(true)
+            .enable_signed_cert_timestamps(true)
+            .session_ticket(true)
+            .pre_shared_key(true)
+            .psk_skip_session_tickets(true)
+            .key_shares_limit(3)
+            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM))
+    };
+    (5, $cipher_list:expr, $curves:expr) => {
+        tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
+            .enable_ech_grease(true)
+            .pre_shared_key(true)
+            .psk_skip_session_tickets(true)
+            .key_shares_limit(2)
+            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM))
+    };
+    (6, $cipher_list:expr, $curves:expr) => {
+        tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
+            .enable_ech_grease(true)
+            .enable_signed_cert_timestamps(true)
+            .session_ticket(false)
+            .psk_dhe_ke(false)
+            .key_shares_limit(3)
+            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM))
+    };
+}
+
 pub const CURVES_1: &str = join!(
     ":",
     "X25519",
