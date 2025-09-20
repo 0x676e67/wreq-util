@@ -12,19 +12,7 @@ macro_rules! tls_options {
     };
 }
 
-macro_rules! tls_options {
-    ($curves:expr) => {
-        OperaTlsConfig::builder()
-            .curves($curves)
-            .permute_extensions(true)
-            .pre_shared_key(true)
-            .enable_ech_grease(true)
-            .build()
-            .into()
-    };
-}
-
-pub const CURVES: &'static str = join!(":", "X25519MLKEM768", "X25519", "P-256", "P-384");
+pub const CURVES: &str = join!(":", "X25519MLKEM768", "X25519", "P-256", "P-384");
 
 pub const CIPHER_LIST: &str = join!(
     ":",
