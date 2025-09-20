@@ -7,7 +7,7 @@ mod header;
 use header::*;
 use tls::*;
 
-use super::{emulation_imports::*, http2_imports::*, *};
+use super::*;
 
 macro_rules! mod_generator {
     ($mod_name:ident, $tls_options:expr, $http2_options:expr, $header_initializer:ident, $ua:expr) => {
@@ -207,4 +207,18 @@ mod_generator!(
     http2_options!(6),
     header_initializer_for_18,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15"
+);
+
+mod_generator!(
+    safari_ipad_26,
+    safari26::build_emulation,
+    header_initializer_for_18,
+    "Mozilla/5.0 (iPad; CPU OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1"
+);
+
+mod_generator!(
+    safari_ios_26,
+    safari26::build_emulation,
+    header_initializer_for_18,
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 26_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1"
 );

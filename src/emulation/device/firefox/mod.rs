@@ -7,7 +7,7 @@ mod header;
 use header::*;
 use tls::*;
 
-use super::{emulation_imports::*, http2_imports::*, *};
+use super::*;
 
 macro_rules! mod_generator {
     (

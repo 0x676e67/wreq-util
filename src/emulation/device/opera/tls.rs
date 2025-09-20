@@ -1,4 +1,4 @@
-use super::tls_imports::*;
+use super::*;
 
 macro_rules! tls_options {
     ($curves:expr) => {

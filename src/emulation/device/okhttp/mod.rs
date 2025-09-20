@@ -1,3 +1,5 @@
+use super::*;
+
 macro_rules! mod_generator {
     ($mod_name:ident, $cipher:expr, $ua:expr) => {
         pub(crate) mod $mod_name {
@@ -8,8 +10,6 @@ macro_rules! mod_generator {
         }
     };
 }
-
-use super::{emulation_imports::*, http2_imports::*, tls_imports::*};
 
 const CURVES: &str = join!(":", "X25519", "P-256", "P-384");
 
