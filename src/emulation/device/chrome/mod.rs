@@ -1,7 +1,8 @@
 #[macro_use]
-mod macros;
-mod header;
+mod http2;
+#[macro_use]
 mod tls;
+mod header;
 
 use header::*;
 use tls::*;

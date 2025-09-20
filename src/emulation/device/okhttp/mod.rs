@@ -1,5 +1,13 @@
-#[macro_use]
-mod macros;
+macro_rules! mod_generator {
+    ($mod_name:ident, $cipher:expr, $ua:expr) => {
+        pub(crate) mod $mod_name {
+            use super::*;
+            pub fn emulation(option: EmulationOption) -> Emulation {
+                build_emulation(option, $cipher, $ua)
+            }
+        }
+    };
+}
 
 use super::{emulation_imports::*, http2_imports::*, tls_imports::*};
 
@@ -58,6 +66,7 @@ impl From<OkHttpTlsConfig> for TlsOptions {
             .cipher_list(val.cipher_list)
             .min_tls_version(TlsVersion::TLS_1_2)
             .max_tls_version(TlsVersion::TLS_1_3)
+            .aes_hw_override(true)
             .build()
     }
 }

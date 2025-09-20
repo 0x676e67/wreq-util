@@ -1,5 +1,47 @@
 use super::tls_imports::*;
 
+macro_rules! tls_options {
+    (@build $builder:expr) => {
+        $builder.build().into()
+    };
+
+    (1) => {
+        tls_options!(@build ChromeTlsConfig::builder())
+    };
+    (2) => {
+        tls_options!(@build ChromeTlsConfig::builder().enable_ech_grease(true))
+    };
+    (3) => {
+        tls_options!(@build ChromeTlsConfig::builder().permute_extensions(true))
+    };
+    (4) => {
+        tls_options!(@build ChromeTlsConfig::builder()
+            .permute_extensions(true)
+            .enable_ech_grease(true))
+    };
+    (5) => {
+        tls_options!(@build ChromeTlsConfig::builder()
+            .permute_extensions(true)
+            .enable_ech_grease(true)
+            .pre_shared_key(true))
+    };
+    (6, $curves:expr) => {
+        tls_options!(@build ChromeTlsConfig::builder()
+            .permute_extensions(true)
+            .enable_ech_grease(true)
+            .pre_shared_key(true)
+            .curves($curves))
+    };
+    (7, $curves:expr) => {
+        tls_options!(@build ChromeTlsConfig::builder()
+            .permute_extensions(true)
+            .enable_ech_grease(true)
+            .pre_shared_key(true)
+            .curves($curves)
+            .alps_use_new_codepoint(true))
+    };
+}
+
 pub const CURVES_1: &str = join!(":", "X25519", "P-256", "P-384");
 pub const CURVES_2: &str = join!(":", "X25519Kyber768Draft00", "X25519", "P-256", "P-384");
 pub const CURVES_3: &str = join!(":", "X25519MLKEM768", "X25519", "P-256", "P-384");

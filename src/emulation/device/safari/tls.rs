@@ -1,5 +1,32 @@
 use super::tls_imports::*;
 
+macro_rules! tls_options {
+    (1, $cipher_list:expr) => {
+        SafariTlsConfig::builder()
+            .cipher_list($cipher_list)
+            .build()
+            .into()
+    };
+    (2, $cipher_list:expr, $sigalgs_list:expr) => {
+        SafariTlsConfig::builder()
+            .cipher_list($cipher_list)
+            .sigalgs_list($sigalgs_list)
+            .build()
+            .into()
+    };
+    (3, $cipher_list:expr, $sigalgs_list:expr, $curves:expr) => {
+        SafariTlsConfig::builder()
+            .curves($curves)
+            .cipher_list($cipher_list)
+            .sigalgs_list($sigalgs_list)
+            .preserve_tls13_cipher_list(true)
+            .min_tls_version(wreq::tls::TlsVersion::TLS_1_2)
+            .max_tls_version(wreq::tls::TlsVersion::TLS_1_3)
+            .build()
+            .into()
+    };
+}
+
 pub const CURVES_1: &str = join!(":", "X25519", "P-256", "P-384", "P-521");
 
 pub const CURVES_2: &str = join!(":", "X25519MLKEM768", "X25519", "P-256", "P-384", "P-521");

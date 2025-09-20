@@ -61,33 +61,6 @@ macro_rules! settings_order {
     };
 }
 
-macro_rules! tls_options {
-    (1, $cipher_list:expr) => {
-        SafariTlsConfig::builder()
-            .cipher_list($cipher_list)
-            .build()
-            .into()
-    };
-    (2, $cipher_list:expr, $sigalgs_list:expr) => {
-        SafariTlsConfig::builder()
-            .cipher_list($cipher_list)
-            .sigalgs_list($sigalgs_list)
-            .build()
-            .into()
-    };
-    (3, $cipher_list:expr, $sigalgs_list:expr, $curves:expr) => {
-        SafariTlsConfig::builder()
-            .curves($curves)
-            .cipher_list($cipher_list)
-            .sigalgs_list($sigalgs_list)
-            .preserve_tls13_cipher_list(true)
-            .min_tls_version(wreq::tls::TlsVersion::TLS_1_2)
-            .max_tls_version(wreq::tls::TlsVersion::TLS_1_3)
-            .build()
-            .into()
-    };
-}
-
 macro_rules! http2_options {
     (@base $builder:expr) => {
         $builder
@@ -154,56 +127,5 @@ macro_rules! http2_options {
             .headers_pseudo_order(headers_pseudo_order!(2))
             .settings_order(settings_order!(2))
             .build()
-    };
-}
-
-macro_rules! mod_generator {
-    ($mod_name:ident, $tls_options:expr, $http2_options:expr, $header_initializer:ident, $ua:expr) => {
-        pub(crate) mod $mod_name {
-            use super::*;
-
-            pub fn emulation(option: EmulationOption) -> Emulation {
-                let default_headers = if !option.skip_headers {
-                    Some($header_initializer($ua))
-                } else {
-                    None
-                };
-
-                build_emulation(option, default_headers)
-            }
-
-            pub fn build_emulation(
-                option: EmulationOption,
-                default_headers: Option<HeaderMap>,
-            ) -> Emulation {
-                let mut builder = Emulation::builder().tls_options($tls_options);
-
-                if !option.skip_http2 {
-                    builder = builder.http2_options($http2_options);
-                }
-
-                if let Some(headers) = default_headers {
-                    builder = builder.headers(headers);
-                }
-
-                builder.build()
-            }
-        }
-    };
-
-    ($mod_name:ident, $build_emulation:expr, $header_initializer:ident, $ua:expr) => {
-        pub(crate) mod $mod_name {
-            use super::*;
-
-            pub fn emulation(option: EmulationOption) -> Emulation {
-                let default_headers = if !option.skip_headers {
-                    Some($header_initializer($ua))
-                } else {
-                    None
-                };
-
-                $build_emulation(option, default_headers)
-            }
-        }
     };
 }
