@@ -9,8 +9,52 @@ use serde::{Deserialize, Serialize};
 use strum_macros::VariantArray;
 use typed_builder::TypedBuilder;
 
-macro_rules! define_emulation_enum {
-    ($(#[$meta:meta])* $name:ident, $default_variant:ident, $($variant:ident => $rename:expr),*) => {
+macro_rules! define_enum {
+    (
+        $(#[$meta:meta])*
+        with_dispatch,
+        $name:ident, $default_variant:ident,
+        $(
+            $variant:ident => ($rename:expr, $emulation_fn:path)
+        ),* $(,)?
+    ) => {
+        $(#[$meta])*
+        #[non_exhaustive]
+        #[derive(Clone, Copy, Hash, Debug, PartialEq, Eq)]
+        #[cfg_attr(feature = "emulation-rand", derive(VariantArray))]
+        #[cfg_attr(feature = "emulation-serde", derive(Deserialize, Serialize))]
+        pub enum $name {
+            $(
+                #[cfg_attr(feature = "emulation-serde", serde(rename = $rename))]
+                $variant,
+            )*
+        }
+
+        impl Default for $name {
+            fn default() -> Self {
+                $name::$default_variant
+            }
+        }
+
+        impl $name {
+            pub fn into_emulation(self, opt: EmulationOption) -> wreq::Emulation {
+                match self {
+                    $(
+                        $name::$variant => $emulation_fn(opt),
+                    )*
+                }
+            }
+        }
+    };
+
+    (
+        $(#[$meta:meta])*
+        plain,
+        $name:ident, $default_variant:ident,
+        $(
+            $variant:ident => $rename:expr
+        ),* $(,)?
+    ) => {
         $(#[$meta])*
         #[non_exhaustive]
         #[derive(Clone, Copy, Hash, Debug, PartialEq, Eq)]
@@ -31,8 +75,8 @@ macro_rules! define_emulation_enum {
     };
 }
 
-define_emulation_enum!(
-    /// Represents different browser versions for impersonation.
+define_enum!(
+    /// Represents different browser versions for emulation.
     ///
     /// The `Emulation` enum provides variants for different browser versions that can be used
     /// to emulation HTTP requests. Each variant corresponds to a specific browser version.
@@ -46,110 +90,107 @@ define_emulation_enum!(
     /// The serialized names of the variants use underscores to separate the browser name and
     /// version number, following the pattern `browser_version`. For example, `Chrome100` is
     /// serialized as `"chrome_100"`.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use wreq_util::Emulation;
-    ///
-    /// let emulation = Emulation::Chrome100;
-    /// let serialized = serde_json::to_string(&emulation).unwrap();
-    /// assert_eq!(serialized, "\"chrome_100\"");
-    ///
-    /// let deserialized: Emulation = serde_json::from_str(&serialized).unwrap();
-    /// assert_eq!(deserialized, Emulation::Chrome100);
-    /// ```
-    Emulation, Chrome133,
-    Chrome100 => "chrome_100",
-    Chrome101 => "chrome_101",
-    Chrome104 => "chrome_104",
-    Chrome105 => "chrome_105",
-    Chrome106 => "chrome_106",
-    Chrome107 => "chrome_107",
-    Chrome108 => "chrome_108",
-    Chrome109 => "chrome_109",
-    Chrome110 => "chrome_110",
-    Chrome114 => "chrome_114",
-    Chrome116 => "chrome_116",
-    Chrome117 => "chrome_117",
-    Chrome118 => "chrome_118",
-    Chrome119 => "chrome_119",
-    Chrome120 => "chrome_120",
-    Chrome123 => "chrome_123",
-    Chrome124 => "chrome_124",
-    Chrome126 => "chrome_126",
-    Chrome127 => "chrome_127",
-    Chrome128 => "chrome_128",
-    Chrome129 => "chrome_129",
-    Chrome130 => "chrome_130",
-    Chrome131 => "chrome_131",
-    Chrome132 => "chrome_132",
-    Chrome133 => "chrome_133",
-    Chrome134 => "chrome_134",
-    Chrome135 => "chrome_135",
-    Chrome136 => "chrome_136",
-    Chrome137 => "chrome_137",
-    Chrome138 => "chrome_138",
-    Chrome139 => "chrome_139",
-    Chrome140 => "chrome_140",
+    with_dispatch,
+    Emulation, Chrome100,
 
-    SafariIos17_2 => "safari_ios_17.2",
-    SafariIos17_4_1 => "safari_ios_17.4.1",
-    SafariIos16_5 => "safari_ios_16.5",
-    Safari15_3 => "safari_15.3",
-    Safari15_5 => "safari_15.5",
-    Safari15_6_1 => "safari_15.6.1",
-    Safari16 => "safari_16",
-    Safari16_5 => "safari_16.5",
-    Safari17_0 => "safari_17.0",
-    Safari17_2_1 => "safari_17.2.1",
-    Safari17_4_1 => "safari_17.4.1",
-    Safari17_5 => "safari_17.5",
-    Safari18 => "safari_18",
-    SafariIPad18 => "safari_ipad_18",
-    Safari18_2 => "safari_18.2",
-    SafariIos18_1_1 => "safari_ios_18.1.1",
-    Safari18_3 => "safari_18.3",
-    Safari18_3_1 => "safari_18.3.1",
-    Safari18_5 => "safari_18.5",
-    Safari26 => "safari_26",
+    // Chrome versions
+    Chrome100 => ("chrome_100", v100::emulation),
+    Chrome101 => ("chrome_101", v101::emulation),
+    Chrome104 => ("chrome_104", v104::emulation),
+    Chrome105 => ("chrome_105", v105::emulation),
+    Chrome106 => ("chrome_106", v106::emulation),
+    Chrome107 => ("chrome_107", v107::emulation),
+    Chrome108 => ("chrome_108", v108::emulation),
+    Chrome109 => ("chrome_109", v109::emulation),
+    Chrome110 => ("chrome_110", v110::emulation),
+    Chrome114 => ("chrome_114", v114::emulation),
+    Chrome116 => ("chrome_116", v116::emulation),
+    Chrome117 => ("chrome_117", v117::emulation),
+    Chrome118 => ("chrome_118", v118::emulation),
+    Chrome119 => ("chrome_119", v119::emulation),
+    Chrome120 => ("chrome_120", v120::emulation),
+    Chrome123 => ("chrome_123", v123::emulation),
+    Chrome124 => ("chrome_124", v124::emulation),
+    Chrome126 => ("chrome_126", v126::emulation),
+    Chrome127 => ("chrome_127", v127::emulation),
+    Chrome128 => ("chrome_128", v128::emulation),
+    Chrome129 => ("chrome_129", v129::emulation),
+    Chrome130 => ("chrome_130", v130::emulation),
+    Chrome131 => ("chrome_131", v131::emulation),
+    Chrome132 => ("chrome_132", v132::emulation),
+    Chrome133 => ("chrome_133", v133::emulation),
+    Chrome134 => ("chrome_134", v134::emulation),
+    Chrome135 => ("chrome_135", v135::emulation),
+    Chrome136 => ("chrome_136", v136::emulation),
+    Chrome137 => ("chrome_137", v137::emulation),
+    Chrome138 => ("chrome_138", v138::emulation),
+    Chrome139 => ("chrome_139", v139::emulation),
+    Chrome140 => ("chrome_140", v140::emulation),
 
-    OkHttp3_9 => "okhttp_3.9",
-    OkHttp3_11 => "okhttp_3.11",
-    OkHttp3_13 => "okhttp_3.13",
-    OkHttp3_14 => "okhttp_3.14",
-    OkHttp4_9 => "okhttp_4.9",
-    OkHttp4_10 => "okhttp_4.10",
-    OkHttp4_12 => "okhttp_4.12",
-    OkHttp5 => "okhttp_5",
+    // Edge versions
+    Edge101 => ("edge_101", edge101::emulation),
+    Edge122 => ("edge_122", edge122::emulation),
+    Edge127 => ("edge_127", edge127::emulation),
+    Edge131 => ("edge_131", edge131::emulation),
+    Edge134 => ("edge_134", edge134::emulation),
 
-    Edge101 => "edge_101",
-    Edge122 => "edge_122",
-    Edge127 => "edge_127",
-    Edge131 => "edge_131",
-    Edge134 => "edge_134",
+    // Opera versions
+    Opera116 => ("opera_116", opera116::emulation),
+    Opera117 => ("opera_117", opera117::emulation),
+    Opera118 => ("opera_118", opera118::emulation),
+    Opera119 => ("opera_119", opera119::emulation),
 
-    Firefox109 => "firefox_109",
-    Firefox117 => "firefox_117",
-    Firefox128 => "firefox_128",
-    Firefox133 => "firefox_133",
-    Firefox135 => "firefox_135",
-    FirefoxPrivate135 => "firefox_private_135",
-    FirefoxAndroid135 => "firefox_android_135",
-    Firefox136 => "firefox_136",
-    FirefoxPrivate136 => "firefox_private_136",
-    Firefox139 => "firefox_139",
-    Firefox142 => "firefox_142",
-    Firefox143 => "firefox_143",
+    // Safari versions
+    SafariIos17_2 => ("safari_ios_17.2", safari_ios_17_2::emulation),
+    SafariIos17_4_1 => ("safari_ios_17.4.1", safari_ios_17_4_1::emulation),
+    SafariIos16_5 => ("safari_ios_16.5", safari_ios_16_5::emulation),
+    Safari15_3 => ("safari_15.3", safari15_3::emulation),
+    Safari15_5 => ("safari_15.5", safari15_5::emulation),
+    Safari15_6_1 => ("safari_15.6.1", safari15_6_1::emulation),
+    Safari16 => ("safari_16", safari16::emulation),
+    Safari16_5 => ("safari_16.5", safari16_5::emulation),
+    Safari17_0 => ("safari_17.0", safari17_0::emulation),
+    Safari17_2_1 => ("safari_17.2.1", safari17_2_1::emulation),
+    Safari17_4_1 => ("safari_17.4.1", safari17_4_1::emulation),
+    Safari17_5 => ("safari_17.5", safari17_5::emulation),
+    Safari18 => ("safari_18", safari18::emulation),
+    SafariIPad18 => ("safari_ipad_18", safari_ipad_18::emulation),
+    Safari18_2 => ("safari_18.2", safari18_2::emulation),
+    SafariIos18_1_1 => ("safari_ios_18.1.1", safari_ios_18_1_1::emulation),
+    Safari18_3 => ("safari_18.3", safari18_3::emulation),
+    Safari18_3_1 => ("safari_18.3.1", safari18_3_1::emulation),
+    Safari18_5 => ("safari_18.5", safari18_5::emulation),
+    Safari26 => ("safari_26", safari26::emulation),
 
-    Opera116 => "opera_116",
-    Opera117 => "opera_117",
-    Opera118 => "opera_118",
-    Opera119 => "opera_119"
+    // Firefox versions
+    Firefox109 => ("firefox_109", ff109::emulation),
+    Firefox117 => ("firefox_117", ff117::emulation),
+    Firefox128 => ("firefox_128", ff128::emulation),
+    Firefox133 => ("firefox_133", ff133::emulation),
+    Firefox135 => ("firefox_135", ff135::emulation),
+    FirefoxPrivate135 => ("firefox_private_135", ff_private_135::emulation),
+    FirefoxAndroid135 => ("firefox_android_135", ff_android_135::emulation),
+    Firefox136 => ("firefox_136", ff136::emulation),
+    FirefoxPrivate136 => ("firefox_private_136", ff_private_136::emulation),
+    Firefox139 => ("firefox_139", ff139::emulation),
+    Firefox142 => ("firefox_142", ff142::emulation),
+    Firefox143 => ("firefox_143", ff143::emulation),
+
+    // OkHttp versions
+    OkHttp3_9 => ("okhttp_3.9", okhttp3_9::emulation),
+    OkHttp3_11 => ("okhttp_3.11", okhttp3_11::emulation),
+    OkHttp3_13 => ("okhttp_3.13", okhttp3_13::emulation),
+    OkHttp3_14 => ("okhttp_3.14", okhttp3_14::emulation),
+    OkHttp4_9 => ("okhttp_4.9", okhttp4_9::emulation),
+    OkHttp4_10 => ("okhttp_4.10", okhttp4_10::emulation),
+    OkHttp4_12 => ("okhttp_4.12", okhttp4_12::emulation),
+    OkHttp5 => ("okhttp_5", okhttp5::emulation)
+
 );
 
 /// ======== Emulation impls ========
 impl wreq::EmulationFactory for Emulation {
+    #[inline]
     fn emulation(self) -> wreq::Emulation {
         EmulationOption::builder()
             .emulation(self)
@@ -158,8 +199,8 @@ impl wreq::EmulationFactory for Emulation {
     }
 }
 
-define_emulation_enum!(
-    /// Represents different operating systems for impersonation.
+define_enum!(
+    /// Represents different operating systems for emulation.
     ///
     /// The `EmulationOS` enum provides variants for different operating systems that can be used
     /// to emulation HTTP requests. Each variant corresponds to a specific operating system.
@@ -171,19 +212,7 @@ define_emulation_enum!(
     ///
     /// The serialized names of the variants use lowercase letters to represent the operating system names.
     /// For example, `Windows` is serialized as `"windows"`.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use wreq::EmulationOS;
-    ///
-    /// let emulation_os = EmulationOS::Windows;
-    /// let serialized = serde_json::to_string(&emulation_os).unwrap();
-    /// assert_eq!(serialized, "\"windows\"");
-    ///
-    /// let deserialized: EmulationOS = serde_json::from_str(&serialized).unwrap();
-    /// assert_eq!(deserialized, EmulationOS::Windows);
-    /// ```
+    plain,
     EmulationOS, MacOS,
     Windows => "windows",
     MacOS => "macos",
@@ -226,22 +255,6 @@ impl EmulationOS {
 /// - `emulation_os`: The operating system to emulate. Defaults to `EmulationOS::default()`.
 /// - `skip_http2`: Whether to skip HTTP/2 support. Defaults to `false`.
 /// - `skip_headers`: Whether to skip adding default headers. Defaults to `false`.
-///
-/// # Examples
-///
-/// ```rust
-/// use wreq_util::{Emulation, EmulationOS, EmulationOption};
-///
-/// let emulation_option = EmulationOption::builder()
-///     .emulation(Emulation::Chrome134)
-///     .emulation_os(EmulationOS::MacOS)
-///     .skip_http2(true)
-///     .skip_headers(false)
-///     .build();
-///
-/// // Use `emulation_option` to create an EmulationProvider
-/// let emulation_provider = emulation_option.emulation();
-/// ```
 #[derive(Default, Clone, TypedBuilder)]
 pub struct EmulationOption {
     /// The browser version to emulation.
@@ -262,108 +275,9 @@ pub struct EmulationOption {
 }
 
 /// ======== EmulationOption impls ========
-macro_rules! emulation_match {
-    ($ver:expr, $opt:expr, $($variant:pat => $path:expr),+) => {
-        match $ver {
-            $(
-                $variant => $path($opt),
-            )+
-        }
-    }
-}
-
 impl wreq::EmulationFactory for EmulationOption {
+    #[inline]
     fn emulation(self) -> wreq::Emulation {
-        emulation_match!(
-            self.emulation,
-            self,
-
-            Emulation::Chrome100 => v100::emulation,
-            Emulation::Chrome101 => v101::emulation,
-            Emulation::Chrome104 => v104::emulation,
-            Emulation::Chrome105 => v105::emulation,
-            Emulation::Chrome106 => v106::emulation,
-            Emulation::Chrome107 => v107::emulation,
-            Emulation::Chrome108 => v108::emulation,
-            Emulation::Chrome109 => v109::emulation,
-            Emulation::Chrome110 => v110::emulation,
-            Emulation::Chrome114 => v114::emulation,
-            Emulation::Chrome116 => v116::emulation,
-            Emulation::Chrome117 => v117::emulation,
-            Emulation::Chrome118 => v118::emulation,
-            Emulation::Chrome119 => v119::emulation,
-            Emulation::Chrome120 => v120::emulation,
-            Emulation::Chrome123 => v123::emulation,
-            Emulation::Chrome124 => v124::emulation,
-            Emulation::Chrome126 => v126::emulation,
-            Emulation::Chrome127 => v127::emulation,
-            Emulation::Chrome128 => v128::emulation,
-            Emulation::Chrome129 => v129::emulation,
-            Emulation::Chrome130 => v130::emulation,
-            Emulation::Chrome131 => v131::emulation,
-            Emulation::Chrome132 => v132::emulation,
-            Emulation::Chrome133 => v133::emulation,
-            Emulation::Chrome134 => v134::emulation,
-            Emulation::Chrome135 => v135::emulation,
-            Emulation::Chrome136 => v136::emulation,
-            Emulation::Chrome137 => v137::emulation,
-            Emulation::Chrome138 => v138::emulation,
-            Emulation::Chrome139 => v139::emulation,
-            Emulation::Chrome140 => v140::emulation,
-
-            Emulation::SafariIos17_2 => safari_ios_17_2::emulation,
-            Emulation::SafariIos17_4_1 => safari_ios_17_4_1::emulation,
-            Emulation::SafariIos16_5 => safari_ios_16_5::emulation,
-            Emulation::Safari15_3 => safari15_3::emulation,
-            Emulation::Safari15_5 => safari15_5::emulation,
-            Emulation::Safari15_6_1 => safari15_6_1::emulation,
-            Emulation::Safari16 => safari16::emulation,
-            Emulation::Safari16_5 => safari16_5::emulation,
-            Emulation::Safari17_0 => safari17_0::emulation,
-            Emulation::Safari17_2_1 => safari17_2_1::emulation,
-            Emulation::Safari17_4_1 => safari17_4_1::emulation,
-            Emulation::Safari17_5 => safari17_5::emulation,
-            Emulation::Safari18 => safari18::emulation,
-            Emulation::SafariIPad18 => safari_ipad_18::emulation,
-            Emulation::Safari18_2 => safari18_2::emulation,
-            Emulation::SafariIos18_1_1 => safari_ios_18_1_1::emulation,
-            Emulation::Safari18_3 => safari18_3::emulation,
-            Emulation::Safari18_3_1 => safari18_3_1::emulation,
-            Emulation::Safari18_5 => safari18_5::emulation,
-            Emulation::Safari26 => safari26::emulation,
-
-            Emulation::OkHttp3_9 => okhttp3_9::emulation,
-            Emulation::OkHttp3_11 => okhttp3_11::emulation,
-            Emulation::OkHttp3_13 => okhttp3_13::emulation,
-            Emulation::OkHttp3_14 => okhttp3_14::emulation,
-            Emulation::OkHttp4_9 => okhttp4_9::emulation,
-            Emulation::OkHttp4_10 => okhttp4_10::emulation,
-            Emulation::OkHttp4_12 => okhttp4_12::emulation,
-            Emulation::OkHttp5 => okhttp5::emulation,
-
-            Emulation::Edge101 => edge101::emulation,
-            Emulation::Edge122 => edge122::emulation,
-            Emulation::Edge127 => edge127::emulation,
-            Emulation::Edge131 => edge131::emulation,
-            Emulation::Edge134 => edge134::emulation,
-
-            Emulation::Firefox109 => ff109::emulation,
-            Emulation::Firefox117 => ff117::emulation,
-            Emulation::Firefox128 => ff128::emulation,
-            Emulation::Firefox133 => ff133::emulation,
-            Emulation::Firefox135 => ff135::emulation,
-            Emulation::FirefoxPrivate135 => ff_private_135::emulation,
-            Emulation::FirefoxAndroid135 => ff_android_135::emulation,
-            Emulation::Firefox136 => ff136::emulation,
-            Emulation::FirefoxPrivate136 => ff_private_136::emulation,
-            Emulation::Firefox139 => ff139::emulation,
-            Emulation::Firefox142 => ff142::emulation,
-            Emulation::Firefox143 => ff143::emulation,
-
-            Emulation::Opera116 => opera116::emulation,
-            Emulation::Opera117 => opera117::emulation,
-            Emulation::Opera118 => opera118::emulation,
-            Emulation::Opera119 => opera119::emulation
-        )
+        self.emulation.into_emulation(self)
     }
 }
