@@ -23,6 +23,10 @@ A collection of utilities to do common things with [wreq](https://github.com/0x6
   | <span style="display:inline-flex; align-items:center;"><img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_32x32.png" width="16" height="16"> Firefox</span>    | `Firefox109`, `Firefox117`, `Firefox128`, `Firefox133`, `Firefox135`, `FirefoxPrivate135`, `FirefoxAndroid135`, `Firefox136`, `FirefoxPrivate136`, `Firefox139`, `Firefox142`, `Firefox143` |
   | OkHttp | `OkHttp3_9`, `OkHttp3_11`, `OkHttp3_13`, `OkHttp3_14`, `OkHttp4_9`, `OkHttp4_10`, `OkHttp4_12`, `OkHttp5` |
 
+## Services
+
+Help sustain the ongoing development of this open-source project by reaching out for [commercial support](mailto:gngppz@gmail.com). Receive private guidance, expert reviews, or direct access to the maintainer, with personalized technical assistance tailored to your needs.
+
 ## License
 
 Licensed under the GNU General Public License v3.0 ([LICENSE](./LICENSE) or https://www.gnu.org/licenses/gpl-3.0.html).
