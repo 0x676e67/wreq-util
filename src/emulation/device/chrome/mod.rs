@@ -1233,3 +1233,36 @@ mod_generator!(
         )
     ]
 );
+
+mod_generator!(
+    v141,
+    v132::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+        ),
+        (
+            Linux,
+            r#""Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+        ),
+        (
+            Android,
+            r#""Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141""#,
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36"
+        ),
+        (
+            Windows,
+            r#""Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+        ),
+        (
+            IOS,
+            r#""Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141""#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/141.0.0.0 Mobile/15E148 Safari/604.1"
+        )
+    ]
+);
