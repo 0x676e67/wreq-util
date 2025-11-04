@@ -14,7 +14,7 @@ pub fn header_initializer(
     );
     header_chrome_ua!(headers, ua);
     header_chrome_sec_fetch!(headers);
-    header_chrome_accpet!(headers);
+    header_chrome_accept!(headers);
     headers
 }
 
@@ -32,7 +32,7 @@ pub fn header_initializer_with_zstd(
     );
     header_chrome_ua!(headers, ua);
     header_chrome_sec_fetch!(headers);
-    header_chrome_accpet!(zstd, headers);
+    header_chrome_accept!(zstd, headers);
     headers
 }
 
@@ -50,7 +50,7 @@ pub fn header_initializer_with_zstd_priority(
     );
     header_chrome_ua!(headers, ua);
     header_chrome_sec_fetch!(headers);
-    header_chrome_accpet!(zstd, headers);
+    header_chrome_accept!(zstd, headers);
     headers.insert(
         HeaderName::from_static("priority"),
         HeaderValue::from_static("u=0, i"),
