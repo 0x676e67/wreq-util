@@ -21,7 +21,7 @@ macro_rules! header_chrome_ua {
     };
 }
 
-macro_rules! header_chrome_accpet {
+macro_rules! header_chrome_accept {
     ($headers:expr) => {
         $headers.insert(ACCEPT, HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"));
         #[cfg(all(feature = "gzip", feature = "deflate", feature = "brotli"))]
