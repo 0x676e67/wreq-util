@@ -29,10 +29,10 @@ emulation-serde = ["dep:serde"]
 emulation-rand = ["emulation", "dep:strum_macros", "dep:strum"]
 
 # Compression algorithms
-gzip = ["wreq/gzip"]
-brotli = ["wreq/brotli"]
-deflate = ["wreq/deflate"]
-zstd = ["wreq/zstd"]
+gzip = []
+brotli = []
+deflate = []
+zstd = []
 
 [dependencies]
 wreq = { version = "6.0.0-rc.20", default-features = false }
