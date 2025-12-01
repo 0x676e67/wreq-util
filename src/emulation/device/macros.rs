@@ -24,7 +24,7 @@ macro_rules! header_chrome_ua {
 macro_rules! header_chrome_accept {
     ($headers:expr) => {
         $headers.insert(ACCEPT, HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"));
-        #[cfg(all(feature = "gzip", feature = "deflate", feature = "brotli"))]
+        #[cfg(all(feature = "emulation-gzip", feature = "emulation-deflate", feature = "emulation-brotli"))]
         $headers.insert(
             ACCEPT_ENCODING,
             HeaderValue::from_static("gzip, deflate, br"),
@@ -34,10 +34,10 @@ macro_rules! header_chrome_accept {
     (zstd, $headers:expr) => {
         $headers.insert(ACCEPT, HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"));
         #[cfg(all(
-            feature = "gzip",
-            feature = "deflate",
-            feature = "brotli",
-            feature = "zstd"
+            feature = "emulation-gzip",
+            feature = "emulation-deflate",
+            feature = "emulation-brotli",
+            feature = "emulation-zstd"
         ))]
         $headers.insert(
             ACCEPT_ENCODING,
@@ -63,7 +63,11 @@ macro_rules! header_firefox_accept {
                 "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             ),
         );
-        #[cfg(all(feature = "gzip", feature = "deflate", feature = "brotli"))]
+        #[cfg(all(
+            feature = "emulation-gzip",
+            feature = "emulation-deflate",
+            feature = "emulation-brotli"
+        ))]
         $headers.insert(
             ACCEPT_ENCODING,
             HeaderValue::from_static("gzip, deflate, br"),
@@ -78,10 +82,10 @@ macro_rules! header_firefox_accept {
             ),
         );
         #[cfg(all(
-            feature = "gzip",
-            feature = "deflate",
-            feature = "brotli",
-            feature = "zstd"
+            feature = "emulation-gzip",
+            feature = "emulation-deflate",
+            feature = "emulation-brotli",
+            feature = "emulation-zstd"
         ))]
         $headers.insert(
             ACCEPT_ENCODING,
