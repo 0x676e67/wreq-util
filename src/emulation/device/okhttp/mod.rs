@@ -125,7 +125,11 @@ fn build_emulation(
         headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
         headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
         headers.insert(USER_AGENT, HeaderValue::from_static(user_agent));
-        #[cfg(all(feature = "gzip", feature = "deflate", feature = "brotli"))]
+        #[cfg(all(
+            feature = "emulation-gzip",
+            feature = "emulation-deflate",
+            feature = "emulation-brotli"
+        ))]
         headers.insert(
             ACCEPT_ENCODING,
             HeaderValue::from_static("gzip, deflate, br"),
