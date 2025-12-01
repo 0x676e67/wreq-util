@@ -91,21 +91,21 @@ path = "tests/emulation_safari.rs"
 [[example]]
 name = "emulation"
 path = "examples/emulation.rs"
-required-features = ["emulation", "gzip", "brotli", "deflate", "zstd"]
+required-features = ["emulation", "emulation-gzip", "emulation-brotli", "emulation-deflate", "emulation-zstd"]
 
 [[example]]
 name = "emulation_rand"
 path = "examples/emulation_rand.rs"
 required-features = [
     "emulation",
-    "gzip",
-    "brotli",
-    "deflate",
-    "zstd",
+    "emulation-gzip",
+    "emulation-brotli",
+    "emulation-deflate",
+    "emulation-zstd",
     "emulation-rand",
 ]
 
 [[example]]
 name = "emulation_option"
 path = "examples/emulation_option.rs"
-required-features = ["emulation", "gzip", "brotli", "deflate", "zstd"]
+required-features = ["emulation", "emulation-gzip", "emulation-brotli", "emulation-deflate", "emulation-zstd"]
