@@ -180,6 +180,8 @@ define_enum!(
     Firefox139 => ("firefox_139", ff139::emulation),
     Firefox142 => ("firefox_142", ff142::emulation),
     Firefox143 => ("firefox_143", ff143::emulation),
+    Firefox144 => ("firefox_144", ff144::emulation),
+    Firefox145 => ("firefox_145", ff145::emulation),
 
     // OkHttp versions
     OkHttp3_9 => ("okhttp_3.9", okhttp3_9::emulation),
