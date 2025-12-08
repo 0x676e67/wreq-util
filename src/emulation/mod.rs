@@ -163,6 +163,7 @@ define_enum!(
     Safari18_3_1 => ("safari_18.3.1", safari18_3_1::emulation),
     Safari18_5 => ("safari_18.5", safari18_5::emulation),
     Safari26 => ("safari_26", safari26::emulation),
+    Safari26_1 => ("safari_26.1", safari26_1::emulation),
     SafariIPad26 => ("safari_ipad_26", safari_ipad_26::emulation),
     SafariIos26 => ("safari_ios_26", safari_ios_26::emulation),
 

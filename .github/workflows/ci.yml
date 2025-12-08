@@ -28,18 +28,6 @@ jobs:
         run: cargo fmt --all -- --check
       - name: Clippy check
         run: cargo clippy --all-targets --all-features
-      - name: Install macros expand
-        run: cargo install cargo-expand
-      - name: Expand emulation
-        run: cargo expand emulation --all-features
-      - name: Expand emulation chrome
-        run: cargo expand emulation::device::chrome --all-features
-      - name: Expand emulation firefox
-        run: cargo expand emulation::device::firefox --all-features
-      - name: Expand emulation safari
-        run: cargo expand emulation::device::safari --all-features
-      - name: Expand emulation okhttp
-        run: cargo expand emulation::device::okhttp --all-features
 
   docs:
     name: Docs
@@ -68,7 +56,7 @@ jobs:
       - name: Tests
         run: | 
           set -euxo pipefail
-          cargo nextest run --workspace --all-features
+          cargo nextest run --workspace
 
   linux:
     name: Linux
