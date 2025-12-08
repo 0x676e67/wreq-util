@@ -1,10 +1,8 @@
 # wreq-util
 
-[![CI](https://github.com/0x676e67/wreq-util/actions/workflows/ci.yml/badge.svg)](https://github.com/0x676e67/wreq-util/actions/workflows/ci.yml)
 [![MIT licensed](https://img.shields.io/badge/license-GPL3.0-blue.svg)](./LICENSE)
 [![crates.io](https://img.shields.io/crates/v/wreq-util.svg?logo=rust)](https://crates.io/crates/wreq-util)
 [![docs.rs](https://img.shields.io/docsrs/wreq-util?logo=rust)](https://docs.rs/wreq-util)
-![Crates.io Total Downloads](https://img.shields.io/crates/d/wreq-util)
 
 A collection of utilities to do common things with [wreq](https://github.com/0x676e67/wreq).
 
