@@ -1037,6 +1037,237 @@ mod_generator!(
 );
 
 mod_generator!(
+    edge135,
+    v132::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="135", "Not:A-Brand";v="24", "Microsoft Edge";v="135"#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0"
+        ),
+        (
+            Android,
+            r#""Chromium";v="135", "Not:A-Brand";v="24", "Microsoft Edge";v="135"#,
+            "Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="135", "Not:A-Brand";v="24", "Microsoft Edge";v="135"#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0"
+        ),
+        (
+            Linux,
+            r#""Chromium";v="135", "Not:A-Brand";v="24", "Microsoft Edge";v="135"#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="135", "Not:A-Brand";v="24", "Microsoft Edge";v="135"#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/135.0.0.0"
+        )
+    ]
+);
+
+mod_generator!(
+    edge136,
+    v132::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="136", "Not:A-Brand";v="24", "Microsoft Edge";v="136"#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0"
+        ),
+        (
+            Android,
+            r#""Chromium";v="136", "Not:A-Brand";v="24", "Microsoft Edge";v="136"#,
+            "Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="136", "Not:A-Brand";v="24", "Microsoft Edge";v="136"#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0"
+        ),
+        (
+            Linux,
+            r#""Chromium";v="136", "Not:A-Brand";v="24", "Microsoft Edge";v="136"#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="136", "Not:A-Brand";v="24", "Microsoft Edge";v="136"#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/136.0.0.0"
+        )
+    ]
+);
+
+mod_generator!(
+    edge137,
+    v132::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="137", "Not:A-Brand";v="24", "Microsoft Edge";v="137"#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0"
+        ),
+        (
+            Android,
+            r#""Chromium";v="137", "Not:A-Brand";v="24", "Microsoft Edge";v="137"#,
+            "Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="137", "Not:A-Brand";v="24", "Microsoft Edge";v="137"#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0"
+        ),
+        (
+            Linux,
+            r#""Chromium";v="137", "Not:A-Brand";v="24", "Microsoft Edge";v="137"#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="137", "Not:A-Brand";v="24", "Microsoft Edge";v="137"#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/137.0.0.0"
+        )
+    ]
+);
+
+mod_generator!(
+    edge138,
+    v132::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="138", "Not=A?Brand";v="24", "Microsoft Edge";v="138"#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0"
+        ),
+        (
+            Android,
+            r#""Chromium";v="138", "Not=A?Brand";v="24", "Microsoft Edge";v="138"#,
+            "Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="138", "Not=A?Brand";v="24", "Microsoft Edge";v="138"#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0"
+        ),
+        (
+            Linux,
+            r#""Chromium";v="138", "Not=A?Brand";v="24", "Microsoft Edge";v="138"#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="138", "Not=A?Brand";v="24", "Microsoft Edge";v="138"#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/138.0.0.0"
+        )
+    ]
+);
+
+mod_generator!(
+    edge139,
+    v132::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="139", "Not=A?Brand";v="24", "Microsoft Edge";v="139"#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0"
+        ),
+        (
+            Android,
+            r#""Chromium";v="139", "Not=A?Brand";v="24", "Microsoft Edge";v="139"#,
+            "Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="139", "Not=A?Brand";v="24", "Microsoft Edge";v="139"#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0"
+        ),
+        (
+            Linux,
+            r#""Chromium";v="139", "Not=A?Brand";v="24", "Microsoft Edge";v="139"#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="139", "Not=A?Brand";v="24", "Microsoft Edge";v="139"#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/139.0.0.0"
+        )
+    ]
+);
+
+mod_generator!(
+    edge140,
+    v132::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="140", "Not=A?Brand";v="24", "Microsoft Edge";v="140"#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0"
+        ),
+        (
+            Android,
+            r#""Chromium";v="140", "Not=A?Brand";v="24", "Microsoft Edge";v="140"#,
+            "Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="140", "Not=A?Brand";v="24", "Microsoft Edge";v="140"#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0"
+        ),
+        (
+            Linux,
+            r#""Chromium";v="140", "Not=A?Brand";v="24", "Microsoft Edge";v="140"#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="140", "Not=A?Brand";v="24", "Microsoft Edge";v="140"#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/140.0.0.0"
+        )
+    ]
+);
+
+mod_generator!(
+    edge141,
+    v132::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="141", "Not=A?Brand";v="24", "Microsoft Edge";v="141"#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0"
+        ),
+        (
+            Android,
+            r#""Chromium";v="141", "Not=A?Brand";v="24", "Microsoft Edge";v="141"#,
+            "Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="141", "Not=A?Brand";v="24", "Microsoft Edge";v="141"#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0"
+        ),
+        (
+            Linux,
+            r#""Chromium";v="141", "Not=A?Brand";v="24", "Microsoft Edge";v="141"#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="141", "Not=A?Brand";v="24", "Microsoft Edge";v="141"#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/141.0.0.0"
+        )
+    ]
+);
+
+mod_generator!(
     v135,
     v132::build_emulation,
     header_initializer_with_zstd_priority,
@@ -1296,6 +1527,39 @@ mod_generator!(
             IOS,
             r#""Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/142.0.0.0 Mobile/15E148 Safari/604.1"
+        )
+    ]
+);
+
+mod_generator!(
+    edge142,
+    v132::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Chromium";v="142", "Microsoft Edge";v="142", "Not_A Brand";v="99""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0"
+        ),
+        (
+            Android,
+            r#""Chromium";v="142", "Microsoft Edge";v="142", "Not_A Brand";v="99""#,
+            "Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Mobile Safari/537.36 Edg/142.0.0.0"
+        ),
+        (
+            Windows,
+            r#""Chromium";v="142", "Microsoft Edge";v="142", "Not_A Brand";v="99""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0"
+        ),
+        (
+            Linux,
+            r#""Chromium";v="142", "Microsoft Edge";v="142", "Not_A Brand";v="99""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0"
+        ),
+        (
+            IOS,
+            r#""Chromium";v="142", "Microsoft Edge";v="142", "Not_A Brand";v="99""#,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0"
         )
     ]
 );
