@@ -9,11 +9,7 @@ pub fn header_initializer_for_15(ua: &'static str) -> HeaderMap {
         HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"),
     );
     headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
-    #[cfg(all(
-        feature = "emulation-gzip",
-        feature = "emulation-deflate",
-        feature = "emulation-brotli"
-    ))]
+    #[cfg(feature = "emulation-compression")]
     headers.insert(
         ACCEPT_ENCODING,
         HeaderValue::from_static("gzip, deflate, br"),
@@ -29,11 +25,7 @@ pub fn header_initializer_for_16_17(ua: &'static str) -> HeaderMap {
         HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"),
     );
     headers.insert("sec-fetch-site", HeaderValue::from_static("none"));
-    #[cfg(all(
-        feature = "emulation-gzip",
-        feature = "emulation-deflate",
-        feature = "emulation-brotli"
-    ))]
+    #[cfg(feature = "emulation-compression")]
     headers.insert(
         ACCEPT_ENCODING,
         HeaderValue::from_static("gzip, deflate, br"),
@@ -58,11 +50,7 @@ pub fn header_initializer_for_18(ua: &'static str) -> HeaderMap {
     headers.insert("sec-fetch-mode", HeaderValue::from_static("navigate"));
     headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
     headers.insert("priority", HeaderValue::from_static("u=0, i"));
-    #[cfg(all(
-        feature = "emulation-gzip",
-        feature = "emulation-deflate",
-        feature = "emulation-brotli"
-    ))]
+    #[cfg(feature = "emulation-compression")]
     headers.insert(
         ACCEPT_ENCODING,
         HeaderValue::from_static("gzip, deflate, br"),

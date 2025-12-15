@@ -9,11 +9,7 @@ pub mod opera;
 pub mod safari;
 
 pub use typed_builder::TypedBuilder;
-#[cfg(all(
-    feature = "emulation-gzip",
-    feature = "emulation-deflate",
-    feature = "emulation-brotli"
-))]
+#[cfg(feature = "emulation-compression")]
 pub use wreq::header::ACCEPT_ENCODING;
 pub use wreq::{
     Emulation,

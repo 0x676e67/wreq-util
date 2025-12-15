@@ -16,12 +16,7 @@ pub fn header_initializer_with_zstd_priority(
     header_chrome_ua!(headers, ua);
 
     headers.insert(ACCEPT, HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"));
-    #[cfg(all(
-        feature = "emulation-gzip",
-        feature = "emulation-deflate",
-        feature = "emulation-brotli",
-        feature = "emulation-zstd"
-    ))]
+    #[cfg(feature = "emulation-compression")]
     headers.insert(
         ACCEPT_ENCODING,
         HeaderValue::from_static("gzip, deflate, br, zstd"),
