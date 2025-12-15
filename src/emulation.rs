@@ -174,8 +174,10 @@ define_enum!(
     Safari18_5 => ("safari_18.5", safari18_5::emulation),
     Safari26 => ("safari_26", safari26::emulation),
     Safari26_1 => ("safari_26.1", safari26_1::emulation),
+    Safari26_2 => ("safari_26.2", safari26_2::emulation),
     SafariIPad26 => ("safari_ipad_26", safari_ipad_26::emulation),
     SafariIos26 => ("safari_ios_26", safari_ios_26::emulation),
+    SafariIos26_2 => ("safari_ios_26.2", safari_ios_26_2::emulation),
 
     // Firefox versions
     Firefox109 => ("firefox_109", ff109::emulation),
