@@ -237,3 +237,10 @@ mod_generator!(
     header_initializer_for_18,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.1 Safari/605.1.15"
 );
+
+mod_generator!(
+    safari_ipad_26_2,
+    safari26::build_emulation,
+    header_initializer_for_18,
+    "Mozilla/5.0 (iPad; CPU OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1"
+);
