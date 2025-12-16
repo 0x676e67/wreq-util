@@ -102,3 +102,8 @@ required-features = ["emulation"]
 name = "middleware_delay"
 path = "examples/middleware_delay.rs"
 required-features = ["middleware-delay"]
+
+[[example]]
+name = "middleware_jitter_delay"
+path = "examples/middleware_jitter_delay.rs"
+required-features = ["middleware-delay"]
