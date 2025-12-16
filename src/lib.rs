@@ -6,7 +6,8 @@
 #![doc = include_str!("../README.md")]
 
 #[cfg(feature = "emulation")]
-mod emulation;
+pub mod emulation;
+pub mod middleware;
 
 #[cfg(feature = "emulation")]
 pub use self::emulation::{Emulation, EmulationOS, EmulationOption};
