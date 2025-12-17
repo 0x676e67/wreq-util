@@ -232,8 +232,7 @@ mod_generator!(
 
 mod_generator!(
     safari26_1,
-    tls_options!(2, CIPHER_LIST_2, SIGALGS_LIST_2),
-    http2_options!(6),
+    safari18_5::build_emulation,
     header_initializer_for_18,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.1 Safari/605.1.15"
 );
@@ -247,8 +246,7 @@ mod_generator!(
 
 mod_generator!(
     safari26_2,
-    tls_options!(2, CIPHER_LIST_2, SIGALGS_LIST_2),
-    http2_options!(6),
+    safari18_5::build_emulation,
     header_initializer_for_18,
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Safari/605.1.15"
 );
