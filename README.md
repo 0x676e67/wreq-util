@@ -15,7 +15,7 @@ See the [crate documentation](https://docs.rs/wreq-util/latest/wreq_util) for mo
 
 - **Emulation** various mainstream browsers (Chrome, Firefox, Safari, Opera, OkHttp) and their versions.
 
-- **Delay/JitterDelay**: Add fixed or jittered delays to HTTP [request](https://docs.rs/http/latest/http/request/index.html)/[response](https://docs.rs/http/latest/http/response/index.html), with customizable strategies and predicates.
+- **Delay/JitterDelay**: Add fixed or jittered delays to HTTP [request](https://docs.rs/http/latest/http/request/index.html), with customizable strategies and predicates.
 
 ## Compatibility
 
