@@ -1,9 +1,9 @@
 macro_rules! headers_stream_dependency {
     (1) => {
-        StreamDependency::new(StreamId::zero(), 41, false)
+        StreamDependency::new(StreamId::zero(), 21, false)
     };
     (2) => {
-        StreamDependency::new(StreamId::from(13), 41, false)
+        StreamDependency::new(StreamId::from(13), 21, false)
     };
 }
 
