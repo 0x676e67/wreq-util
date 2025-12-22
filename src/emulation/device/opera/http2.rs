@@ -1,6 +1,6 @@
 macro_rules! headers_stream_dependency {
     () => {
-        StreamDependency::new(StreamId::zero(), 255, true)
+        StreamDependency::new(StreamId::zero(), 219, true)
     };
 }
 

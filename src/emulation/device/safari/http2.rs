@@ -1,12 +1,3 @@
-macro_rules! headers_stream_dependency {
-    (1) => {
-        StreamDependency::new(StreamId::zero(), 255, true)
-    };
-    (2) => {
-        StreamDependency::new(StreamId::zero(), 255, false)
-    };
-}
-
 macro_rules! headers_pseudo_order {
     (1) => {
         PseudoOrder::builder()
@@ -71,7 +62,6 @@ macro_rules! http2_options {
         http2_options!(@base Http2Options::builder())
             .initial_window_size(2097152)
             .initial_connection_window_size(10551295)
-            .headers_stream_dependency(headers_stream_dependency!(1))
             .headers_pseudo_order(headers_pseudo_order!(1))
             .settings_order(settings_order!(1))
             .build()
@@ -81,7 +71,6 @@ macro_rules! http2_options {
             .initial_window_size(2097152)
             .initial_connection_window_size(10551295)
             .enable_push(false)
-            .headers_stream_dependency(headers_stream_dependency!(1))
             .headers_pseudo_order(headers_pseudo_order!(1))
             .settings_order(settings_order!(1))
             .build()
@@ -93,7 +82,6 @@ macro_rules! http2_options {
             .enable_push(false)
             .enable_connect_protocol(true)
             .no_rfc7540_priorities(true)
-            .headers_stream_dependency(headers_stream_dependency!(2))
             .headers_pseudo_order(headers_pseudo_order!(2))
             .settings_order(settings_order!(2))
             .build()
@@ -102,7 +90,6 @@ macro_rules! http2_options {
         http2_options!(@base Http2Options::builder())
             .initial_window_size(4194304)
             .initial_connection_window_size(10551295)
-            .headers_stream_dependency(headers_stream_dependency!(1))
             .headers_pseudo_order(headers_pseudo_order!(1))
             .settings_order(settings_order!(1))
             .build()
@@ -112,7 +99,6 @@ macro_rules! http2_options {
             .initial_window_size(4194304)
             .initial_connection_window_size(10551295)
             .enable_push(false)
-            .headers_stream_dependency(headers_stream_dependency!(1))
             .headers_pseudo_order(headers_pseudo_order!(1))
             .settings_order(settings_order!(1))
             .build()
@@ -123,7 +109,6 @@ macro_rules! http2_options {
             .initial_connection_window_size(10485760)
             .enable_push(false)
             .no_rfc7540_priorities(true)
-            .headers_stream_dependency(headers_stream_dependency!(2))
             .headers_pseudo_order(headers_pseudo_order!(2))
             .settings_order(settings_order!(2))
             .build()
