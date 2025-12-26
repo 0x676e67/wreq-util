@@ -7,7 +7,7 @@
 
 #[cfg(feature = "emulation")]
 pub mod emulation;
-pub mod middleware;
+pub mod tower;
 
 #[cfg(feature = "emulation")]
 pub use self::emulation::{Emulation, EmulationOS, EmulationOption};

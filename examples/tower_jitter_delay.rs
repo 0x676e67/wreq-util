@@ -1,7 +1,7 @@
 use std::time::{Duration, Instant};
 
 use wreq::Client;
-use wreq_util::middleware::delay::{DelayLayer, JitterDelayLayer};
+use wreq_util::tower::delay::{DelayLayer, JitterDelayLayer};
 
 #[tokio::main]
 async fn main() -> Result<(), wreq::Error> {

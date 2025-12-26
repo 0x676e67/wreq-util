@@ -24,7 +24,7 @@ emulation-serde = ["dep:serde"]
 emulation-rand = ["emulation", "dep:strum_macros", "dep:strum"]
 emulation-compression = []
 
-middleware-delay = ["dep:tower", "dep:pin-project-lite", "tokio/time"]
+tower-delay = ["dep:tower", "dep:pin-project-lite", "tokio/time"]
 
 [dependencies]
 wreq = { version = "6.0.0-rc.23", default-features = false }
@@ -99,11 +99,11 @@ path = "examples/emulation_option.rs"
 required-features = ["emulation"]
 
 [[example]]
-name = "middleware_delay"
-path = "examples/middleware_delay.rs"
-required-features = ["middleware-delay"]
+name = "tower_delay"
+path = "examples/tower_delay.rs"
+required-features = ["tower-delay"]
 
 [[example]]
-name = "middleware_jitter_delay"
-path = "examples/middleware_jitter_delay.rs"
-required-features = ["middleware-delay"]
+name = "tower_jitter_delay"
+path = "examples/tower_jitter_delay.rs"
+required-features = ["tower-delay"]
