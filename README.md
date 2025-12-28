@@ -5,7 +5,7 @@ A collection of utilities to do common things with [wreq](https://github.com/0x6
 
 [![Crates.io](https://img.shields.io/crates/v/wreq-util.svg?logo=rust)](https://crates.io/crates/wreq-util)
 [![Documentation](https://docs.rs/wreq-util/badge.svg)](https://docs.rs/wreq-util)
-[![License: LGPL-3.0](https://img.shields.io/badge/license-LGPL3.0-blue.svg)](./LICENSE)
+[![Crates.io License](https://img.shields.io/crates/l/wreq-util)](https://github.com/0x676e67/wreq-util/blob/main/LICENSE)
 
 See the [crate documentation](https://docs.rs/wreq-util/latest/wreq_util) for more details.
 
