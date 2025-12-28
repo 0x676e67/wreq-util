@@ -7,7 +7,7 @@ keywords = ["http", "client", "emulation", "ja3", "ja4"]
 authors = ["0x676e67 <gngppz@gmail.com>"]
 version = "3.0.0-rc.8"
 readme = "README.md"
-license = "GPL-3.0"
+license = "LGPL-3.0"
 edition = "2024"
 rust-version = "1.85"
 

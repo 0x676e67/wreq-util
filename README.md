@@ -28,4 +28,4 @@ Contributions are welcome! Please open submit pull requests on the [GitHub repos
 
 ## License
 
-**wreq-util** © [0x676e67](https://github.com/0x676e67), Released under the [GPL-3.0](https://github.com/0x676e67/wreq-util/blob/main/LICENSE) License.
+**wreq-util** © [0x676e67](https://github.com/0x676e67), Released under the [LGPL-3.0](https://github.com/0x676e67/wreq-util/blob/main/LICENSE) License.
