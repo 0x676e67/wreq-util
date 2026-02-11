@@ -129,6 +129,8 @@ define_enum!(
     Chrome141 => ("chrome_141", v141::emulation),
     Chrome142 => ("chrome_142", v142::emulation),
     Chrome143 => ("chrome_143", v143::emulation),
+    Chrome144 => ("chrome_144", v144::emulation),
+    Chrome145 => ("chrome_145", v145::emulation),
 
     // Edge versions
     Edge101 => ("edge_101", edge101::emulation),
@@ -144,12 +146,33 @@ define_enum!(
     Edge140 => ("edge_140", edge140::emulation),
     Edge141 => ("edge_141", edge141::emulation),
     Edge142 => ("edge_142", edge142::emulation),
+    Edge143 => ("edge_143", edge143::emulation),
+    Edge144 => ("edge_144", edge144::emulation),
+    Edge145 => ("edge_145", edge145::emulation),
 
     // Opera versions
     Opera116 => ("opera_116", opera116::emulation),
     Opera117 => ("opera_117", opera117::emulation),
     Opera118 => ("opera_118", opera118::emulation),
     Opera119 => ("opera_119", opera119::emulation),
+
+    // Firefox versions
+    Firefox109 => ("firefox_109", ff109::emulation),
+    Firefox117 => ("firefox_117", ff117::emulation),
+    Firefox128 => ("firefox_128", ff128::emulation),
+    Firefox133 => ("firefox_133", ff133::emulation),
+    Firefox135 => ("firefox_135", ff135::emulation),
+    FirefoxPrivate135 => ("firefox_private_135", ff_private_135::emulation),
+    FirefoxAndroid135 => ("firefox_android_135", ff_android_135::emulation),
+    Firefox136 => ("firefox_136", ff136::emulation),
+    FirefoxPrivate136 => ("firefox_private_136", ff_private_136::emulation),
+    Firefox139 => ("firefox_139", ff139::emulation),
+    Firefox142 => ("firefox_142", ff142::emulation),
+    Firefox143 => ("firefox_143", ff143::emulation),
+    Firefox144 => ("firefox_144", ff144::emulation),
+    Firefox145 => ("firefox_145", ff145::emulation),
+    Firefox146 => ("firefox_146", ff146::emulation),
+    Firefox147 => ("firefox_147", ff147::emulation),
 
     // Safari versions
     SafariIos17_2 => ("safari_ios_17.2", safari_ios_17_2::emulation),
@@ -179,23 +202,6 @@ define_enum!(
     SafariIpad26_2 => ("safari_ipad_26.2", safari_ipad_26_2::emulation),
     SafariIos26 => ("safari_ios_26", safari_ios_26::emulation),
     SafariIos26_2 => ("safari_ios_26.2", safari_ios_26_2::emulation),
-
-    // Firefox versions
-    Firefox109 => ("firefox_109", ff109::emulation),
-    Firefox117 => ("firefox_117", ff117::emulation),
-    Firefox128 => ("firefox_128", ff128::emulation),
-    Firefox133 => ("firefox_133", ff133::emulation),
-    Firefox135 => ("firefox_135", ff135::emulation),
-    FirefoxPrivate135 => ("firefox_private_135", ff_private_135::emulation),
-    FirefoxAndroid135 => ("firefox_android_135", ff_android_135::emulation),
-    Firefox136 => ("firefox_136", ff136::emulation),
-    FirefoxPrivate136 => ("firefox_private_136", ff_private_136::emulation),
-    Firefox139 => ("firefox_139", ff139::emulation),
-    Firefox142 => ("firefox_142", ff142::emulation),
-    Firefox143 => ("firefox_143", ff143::emulation),
-    Firefox144 => ("firefox_144", ff144::emulation),
-    Firefox145 => ("firefox_145", ff145::emulation),
-    Firefox146 => ("firefox_146", ff146::emulation),
 
     // OkHttp versions
     OkHttp3_9 => ("okhttp_3.9", okhttp3_9::emulation),
