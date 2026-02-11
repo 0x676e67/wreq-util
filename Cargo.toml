@@ -86,17 +86,7 @@ path = "tests/emulation_safari.rs"
 [[example]]
 name = "emulation"
 path = "examples/emulation.rs"
-required-features = ["emulation"]
-
-[[example]]
-name = "emulation_rand"
-path = "examples/emulation_rand.rs"
 required-features = ["emulation", "emulation-rand"]
-
-[[example]]
-name = "emulation_option"
-path = "examples/emulation_option.rs"
-required-features = ["emulation"]
 
 [[example]]
 name = "tower_delay"
