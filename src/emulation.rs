@@ -6,7 +6,9 @@ use device::{chrome::*, firefox::*, okhttp::*, opera::*, safari::*};
 #[cfg(feature = "emulation-serde")]
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "emulation-rand")]
-pub use strum_macros::VariantArray;
+use strum_macros::VariantArray;
+#[cfg(feature = "emulation-rand")]
+pub use strum::VariantArray;
 use typed_builder::TypedBuilder;
 
 macro_rules! define_enum {
