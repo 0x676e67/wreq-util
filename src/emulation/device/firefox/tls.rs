@@ -11,50 +11,49 @@ macro_rules! tls_options {
             .curves_list($curves)
     };
 
-    (1, $cipher_list:expr, $curves:expr) => {
+    (1, $cipher_list:expr, $curves:expr, $key_shares:expr) => {
         tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
             .enable_ech_grease(true)
             .pre_shared_key(true)
             .psk_skip_session_tickets(true)
-            .key_shares_limit(3)
+            .key_shares($key_shares)
             .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM))
     };
     (2, $cipher_list:expr, $curves:expr) => {
-        tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
-            .key_shares_limit(2))
+        tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves))
     };
-    (3, $cipher_list:expr, $curves:expr) => {
+    (3, $cipher_list:expr, $curves:expr, $key_shares:expr) => {
         tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
             .session_ticket(false)
             .enable_ech_grease(true)
             .psk_dhe_ke(false)
-            .key_shares_limit(2))
+            .key_shares($key_shares))
     };
-    (4, $cipher_list:expr, $curves:expr) => {
+    (4, $cipher_list:expr, $curves:expr, $key_shares:expr) => {
         tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
             .enable_ech_grease(true)
             .enable_signed_cert_timestamps(true)
             .session_ticket(true)
             .pre_shared_key(true)
             .psk_skip_session_tickets(true)
-            .key_shares_limit(3)
+            .key_shares($key_shares)
             .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM))
     };
-    (5, $cipher_list:expr, $curves:expr) => {
+    (5, $cipher_list:expr, $curves:expr, $key_shares:expr) => {
         tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
             .enable_ech_grease(true)
             .pre_shared_key(true)
             .psk_skip_session_tickets(true)
-            .key_shares_limit(2)
+            .key_shares($key_shares)
             .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM))
     };
-    (6, $cipher_list:expr, $curves:expr) => {
+    (6, $cipher_list:expr, $curves:expr, $key_shares:expr) => {
         tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
             .enable_ech_grease(true)
             .enable_signed_cert_timestamps(true)
             .session_ticket(false)
             .psk_dhe_ke(false)
-            .key_shares_limit(3)
+            .key_shares($key_shares)
             .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM))
     };
 }
@@ -68,6 +67,7 @@ pub const CURVES_1: &str = join!(
     "ffdhe2048",
     "ffdhe3072"
 );
+
 pub const CURVES_2: &str = join!(
     ":",
     "X25519MLKEM768",
@@ -78,6 +78,11 @@ pub const CURVES_2: &str = join!(
     "ffdhe2048",
     "ffdhe3072"
 );
+
+pub const KEY_SHARES_1: &[KeyShare] = &[KeyShare::X25519, KeyShare::P256];
+
+pub const KEY_SHARES_2: &[KeyShare] =
+    &[KeyShare::X25519_MLKEM768, KeyShare::X25519, KeyShare::P256];
 
 pub const CIPHER_LIST_1: &str = join!(
     ":",
@@ -99,6 +104,7 @@ pub const CIPHER_LIST_1: &str = join!(
     "TLS_RSA_WITH_AES_128_CBC_SHA",
     "TLS_RSA_WITH_AES_256_CBC_SHA"
 );
+
 pub const CIPHER_LIST_2: &str = join!(
     ":",
     "TLS_AES_128_GCM_SHA256",
@@ -180,6 +186,9 @@ pub struct FirefoxTlsConfig {
     #[builder(setter(into))]
     curves_list: &'static str,
 
+    #[builder(default, setter(into))]
+    key_shares: Option<&'static [KeyShare]>,
+
     #[builder(default = true)]
     session_ticket: bool,
 
@@ -200,9 +209,6 @@ pub struct FirefoxTlsConfig {
 
     #[builder(default = RECORD_SIZE_LIMIT, setter(into))]
     record_size_limit: u16,
-
-    #[builder(default, setter(into))]
-    key_shares_limit: Option<u8>,
 
     #[builder(default = true, setter(into))]
     psk_dhe_ke: bool,
@@ -229,7 +235,6 @@ impl From<FirefoxTlsConfig> for TlsOptions {
             .alpn_protocols([AlpnProtocol::HTTP2, AlpnProtocol::HTTP1])
             .min_tls_version(TlsVersion::TLS_1_2)
             .max_tls_version(TlsVersion::TLS_1_3)
-            .key_shares_limit(val.key_shares_limit)
             .pre_shared_key(val.pre_shared_key)
             .psk_skip_session_ticket(val.psk_skip_session_tickets)
             .psk_dhe_ke(val.psk_dhe_ke)
@@ -237,6 +242,10 @@ impl From<FirefoxTlsConfig> for TlsOptions {
             .extension_permutation(val.extension_permutation)
             .aes_hw_override(true)
             .random_aes_hw_override(true);
+
+        if let Some(key_shares) = val.key_shares {
+            builder = builder.key_shares(key_shares)
+        }
 
         if let Some(cert_compression_algorithms) = val.certificate_compression_algorithms {
             builder = builder.certificate_compression_algorithms(cert_compression_algorithms)

@@ -19,8 +19,8 @@ pub use wreq::{
         StreamDependency, StreamId,
     },
     tls::{
-        AlpnProtocol, AlpsProtocol, CertificateCompressionAlgorithm, ExtensionType, TlsOptions,
-        TlsVersion,
+        AlpnProtocol, AlpsProtocol, CertificateCompressionAlgorithm, ExtensionType, KeyShare,
+        TlsOptions, TlsVersion,
     },
 };
 

@@ -6,7 +6,7 @@ async fn main() -> Result<(), wreq::Error> {
     // Example 1: Basic emulation - Safari26
     println!("=== Example 1: Basic Safari26 Emulation ===");
     let client1 = Client::builder()
-        .emulation(Emulation::Safari26)
+        .emulation(Emulation::Chrome145)
         .cert_verification(false)
         .build()?;
 
