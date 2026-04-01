@@ -136,8 +136,8 @@ pub const SIGALGS_LIST_2: &str = join!(
     "rsa_pkcs1_sha1"
 );
 
-pub const CERT_COMPRESSION_ALGORITHM: &[CertificateCompressionAlgorithm] =
-    &[CertificateCompressionAlgorithm::ZLIB];
+pub const CERT_COMPRESSION_ALGORITHM: &[&'static dyn CertificateCompressor] =
+    &[&ZlibCompressor];
 
 #[derive(TypedBuilder)]
 pub struct SafariTlsConfig {
@@ -172,7 +172,7 @@ impl From<SafariTlsConfig> for TlsOptions {
             .cipher_list(val.cipher_list)
             .min_tls_version(val.min_tls_version)
             .max_tls_version(val.max_tls_version)
-            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM)
+            .certificate_compressors(CERT_COMPRESSION_ALGORITHM)
             .build()
     }
 }

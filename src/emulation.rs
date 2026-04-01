@@ -1,3 +1,4 @@
+mod certificate;
 mod device;
 #[cfg(feature = "emulation-rand")]
 mod rand;
@@ -216,13 +217,13 @@ define_enum!(
 );
 
 /// ======== Emulation impls ========
-impl wreq::EmulationFactory for Emulation {
+impl wreq::IntoEmulation for Emulation {
     #[inline]
-    fn emulation(self) -> wreq::Emulation {
+    fn into_emulation(self) -> wreq::Emulation {
         EmulationOption::builder()
             .emulation(self)
             .build()
-            .emulation()
+            .into_emulation()
     }
 }
 
@@ -302,9 +303,9 @@ pub struct EmulationOption {
 }
 
 /// ======== EmulationOption impls ========
-impl wreq::EmulationFactory for EmulationOption {
+impl wreq::IntoEmulation for EmulationOption {
     #[inline]
-    fn emulation(self) -> wreq::Emulation {
+    fn into_emulation(self) -> wreq::Emulation {
         self.emulation.into_emulation(self)
     }
 }
