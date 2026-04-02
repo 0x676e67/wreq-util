@@ -24,6 +24,15 @@ pub use wreq::{
     },
 };
 
+#[cfg(feature = "http3")]
+pub use std::borrow::Cow;
+#[cfg(feature = "http3")]
+pub use wreq::http3::{
+    Http3Options, PseudoId as H3PseudoId, PseudoOrder as H3PseudoOrder,
+    SettingId as H3SettingId, TransportParameterConfig, TransportParameterId,
+    TransportParameterKind, VersionEntry, VersionInformation,
+};
+
 pub use crate::emulation::{
     EmulationOS, EmulationOption,
     certificate::{BrotliCompressor, ZlibCompressor, ZstdCompressor},

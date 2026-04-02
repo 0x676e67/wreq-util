@@ -1,11 +1,24 @@
 #[macro_use]
 mod http2;
+#[cfg(feature = "http3")]
+#[macro_use]
+mod http3;
 #[macro_use]
 mod tls;
 mod header;
 
+// No-op fallback so mod_generator! compiles when http3 is off
+#[cfg(not(feature = "http3"))]
+#[allow(unused_macros)]
+macro_rules! http3_options {
+    ($($tt:tt)*) => { () };
+}
+
 use header::*;
 use tls::*;
+
+#[cfg(feature = "http3")]
+use http3::*;
 
 use super::*;
 
@@ -1731,7 +1744,9 @@ mod_generator!(
 
 mod_generator!(
     v146,
-    v132::build_emulation,
+    tls_options!(7, CURVES_3),
+    http2_options!(3),
+    http3_options!(1, CURVES_3),
     header_initializer_with_zstd_priority,
     [
         (

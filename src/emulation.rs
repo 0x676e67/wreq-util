@@ -298,6 +298,11 @@ pub struct EmulationOption {
     #[builder(default = false)]
     skip_http2: bool,
 
+    /// Whether to skip HTTP/3.
+    #[cfg(feature = "http3")]
+    #[builder(default = false)]
+    skip_http3: bool,
+
     /// Whether to skip headers.
     #[builder(default = false)]
     skip_headers: bool,

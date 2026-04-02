@@ -23,6 +23,7 @@ emulation = ["dep:typed-builder"]
 emulation-serde = ["dep:serde"]
 emulation-rand = ["emulation", "dep:strum_macros", "dep:strum"]
 emulation-compression = []
+http3 = ["wreq/http3"]
 
 tower-delay = ["dep:tower", "dep:pin-project-lite", "tokio/time"]
 
