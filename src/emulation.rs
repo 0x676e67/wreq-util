@@ -1,3 +1,4 @@
+mod certificate;
 mod device;
 #[cfg(feature = "emulation-rand")]
 mod rand;
@@ -131,6 +132,7 @@ define_enum!(
     Chrome143 => ("chrome_143", v143::emulation),
     Chrome144 => ("chrome_144", v144::emulation),
     Chrome145 => ("chrome_145", v145::emulation),
+    Chrome146 => ("chrome_146", v146::emulation),
 
     // Edge versions
     Edge101 => ("edge_101", edge101::emulation),
@@ -216,13 +218,13 @@ define_enum!(
 );
 
 /// ======== Emulation impls ========
-impl wreq::EmulationFactory for Emulation {
+impl wreq::IntoEmulation for Emulation {
     #[inline]
-    fn emulation(self) -> wreq::Emulation {
+    fn into_emulation(self) -> wreq::Emulation {
         EmulationOption::builder()
             .emulation(self)
             .build()
-            .emulation()
+            .into_emulation()
     }
 }
 
@@ -296,15 +298,20 @@ pub struct EmulationOption {
     #[builder(default = false)]
     skip_http2: bool,
 
+    /// Whether to skip HTTP/3.
+    #[cfg(feature = "http3")]
+    #[builder(default = false)]
+    skip_http3: bool,
+
     /// Whether to skip headers.
     #[builder(default = false)]
     skip_headers: bool,
 }
 
 /// ======== EmulationOption impls ========
-impl wreq::EmulationFactory for EmulationOption {
+impl wreq::IntoEmulation for EmulationOption {
     #[inline]
-    fn emulation(self) -> wreq::Emulation {
+    fn into_emulation(self) -> wreq::Emulation {
         self.emulation.into_emulation(self)
     }
 }

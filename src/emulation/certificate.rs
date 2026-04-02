@@ -1,0 +1,70 @@
+use brotli::{CompressorWriter, Decompressor};
+use flate2::{read::ZlibDecoder, write::ZlibEncoder, Compression};
+use std::io::{self, Write};
+use wreq::tls::compress::{CertificateCompressionAlgorithm, CertificateCompressor};
+use zstd::stream::{Decoder as ZstdDecoder, Encoder as ZstdEncoder};
+
+#[derive(Debug)]
+pub struct BrotliCompressor;
+
+impl CertificateCompressor for BrotliCompressor {
+    fn compress(&self, input: &[u8], output: &mut dyn io::Write) -> io::Result<()> {
+        let mut writer = CompressorWriter::new(output, input.len(), 11, 22);
+        writer.write_all(input)?;
+        writer.flush()
+    }
+
+    fn decompress(&self, input: &[u8], output: &mut dyn io::Write) -> io::Result<()> {
+        let mut reader = Decompressor::new(input, 4096);
+        io::copy(&mut reader, output)?;
+        Ok(())
+    }
+
+    fn algorithm(&self) -> CertificateCompressionAlgorithm {
+        CertificateCompressionAlgorithm::BROTLI
+    }
+}
+
+#[derive(Debug)]
+pub struct ZlibCompressor;
+
+impl CertificateCompressor for ZlibCompressor {
+    fn compress(&self, input: &[u8], output: &mut dyn io::Write) -> io::Result<()> {
+        let mut encoder = ZlibEncoder::new(output, Compression::default());
+        encoder.write_all(input)?;
+        encoder.finish()?;
+        Ok(())
+    }
+
+    fn decompress(&self, input: &[u8], output: &mut dyn io::Write) -> io::Result<()> {
+        let mut reader = ZlibDecoder::new(input);
+        io::copy(&mut reader, output)?;
+        Ok(())
+    }
+
+    fn algorithm(&self) -> CertificateCompressionAlgorithm {
+        CertificateCompressionAlgorithm::ZLIB
+    }
+}
+
+#[derive(Debug)]
+pub struct ZstdCompressor;
+
+impl CertificateCompressor for ZstdCompressor {
+    fn compress(&self, input: &[u8], output: &mut dyn io::Write) -> io::Result<()> {
+        let mut encoder = ZstdEncoder::new(output, 0)?;
+        encoder.write_all(input)?;
+        encoder.finish()?;
+        Ok(())
+    }
+
+    fn decompress(&self, input: &[u8], output: &mut dyn io::Write) -> io::Result<()> {
+        let mut reader = ZstdDecoder::new(input)?;
+        io::copy(&mut reader, output)?;
+        Ok(())
+    }
+
+    fn algorithm(&self) -> CertificateCompressionAlgorithm {
+        CertificateCompressionAlgorithm::ZSTD
+    }
+}

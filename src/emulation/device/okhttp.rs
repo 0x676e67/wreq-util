@@ -5,7 +5,7 @@ macro_rules! mod_generator {
         pub(crate) mod $mod_name {
             use super::*;
             pub fn emulation(option: EmulationOption) -> Emulation {
-                build_emulation(option, $cipher, $ua)
+                build_emulation(option, $cipher, $ua, stringify!($mod_name))
             }
         }
     };
@@ -75,6 +75,7 @@ fn build_emulation(
     option: EmulationOption,
     cipher_list: &'static str,
     user_agent: &'static str,
+    group_name: &'static str,
 ) -> Emulation {
     let mut builder = Emulation::builder().tls_options(
         OkHttpTlsConfig::builder()
@@ -133,7 +134,7 @@ fn build_emulation(
         builder = builder.headers(headers);
     }
 
-    builder.build()
+    builder.build(Group::named(group_name))
 }
 
 mod_generator!(

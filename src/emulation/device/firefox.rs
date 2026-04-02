@@ -56,7 +56,7 @@ macro_rules! mod_generator {
                     builder = builder.headers(headers);
                 }
 
-                builder.build()
+                builder.build(Group::named(stringify!($mod_name)))
             }
         }
     };
@@ -96,7 +96,7 @@ macro_rules! mod_generator {
 
 mod_generator!(
     ff109,
-    tls_options!(2, CIPHER_LIST_1, CURVES_1),
+    tls_options!(2, CIPHER_LIST_1, CURVES_1, KEY_SHARES_1),
     http2_options!(2),
     header_initializer,
     [
@@ -153,7 +153,7 @@ mod_generator!(
 
 mod_generator!(
     ff128,
-    tls_options!(3, CIPHER_LIST_2, CURVES_1),
+    tls_options!(3, CIPHER_LIST_2, CURVES_1, KEY_SHARES_1),
     http2_options!(3),
     header_initializer_with_zstd,
     [
@@ -182,7 +182,7 @@ mod_generator!(
 
 mod_generator!(
     ff133,
-    tls_options!(1, CIPHER_LIST_1, CURVES_2),
+    tls_options!(1, CIPHER_LIST_1, CURVES_2, KEY_SHARES_2),
     http2_options!(1),
     header_initializer_with_zstd,
     [
@@ -211,7 +211,7 @@ mod_generator!(
 
 mod_generator!(
     ff135,
-    tls_options!(4, CIPHER_LIST_1, CURVES_2),
+    tls_options!(4, CIPHER_LIST_1, CURVES_2, KEY_SHARES_2),
     http2_options!(1),
     header_initializer_with_zstd,
     [
@@ -232,7 +232,7 @@ mod_generator!(
 
 mod_generator!(
     ff_private_135,
-    tls_options!(6, CIPHER_LIST_1, CURVES_2),
+    tls_options!(6, CIPHER_LIST_1, CURVES_2, KEY_SHARES_2),
     http2_options!(1),
     header_initializer_with_zstd,
     [
@@ -253,7 +253,7 @@ mod_generator!(
 
 mod_generator!(
     ff_android_135,
-    tls_options!(5, CIPHER_LIST_1, CURVES_1),
+    tls_options!(5, CIPHER_LIST_1, CURVES_1, KEY_SHARES_1),
     http2_options!(4),
     header_initializer_with_zstd,
     [(
