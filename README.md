@@ -23,7 +23,8 @@ See the [crate documentation](https://docs.rs/wreq-util/latest/wreq_util) for mo
 
 ## Contributing
 
-Contributions are welcome! Please open submit pull requests on the [GitHub repository](https://github.com/0x676e67/wreq-util/pulls).
+Contributions are welcome! Please submit pull requests on the [GitHub repository](https://github.com/0x676e67/wreq-util/pulls).  
+Issues may be submitted in the [`wreq`](https://github.com/0x676e67/wreq) repository.
 
 ## License
 
