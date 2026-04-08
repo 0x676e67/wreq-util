@@ -19,9 +19,12 @@ pub use wreq::{
         StreamDependency, StreamId,
     },
     tls::{
-        AlpnProtocol, AlpsProtocol, CertificateCompressionAlgorithm, ExtensionType, KeyShare,
-        TlsOptions, TlsVersion,
+        AlpnProtocol, AlpsProtocol, ExtensionType, KeyShare, TlsOptions, TlsVersion,
+        compress::CertificateCompressor,
     },
 };
 
-pub use crate::emulation::{EmulationOS, EmulationOption};
+pub use super::{
+    EmulationOS, EmulationOption,
+    compress::{BrotliCompressor, ZlibCompressor, ZstdCompressor},
+};

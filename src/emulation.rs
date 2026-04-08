@@ -1,3 +1,4 @@
+mod compress;
 mod device;
 #[cfg(feature = "emulation-rand")]
 mod rand;
@@ -37,7 +38,7 @@ macro_rules! define_enum {
         }
 
         impl $name {
-            pub fn into_emulation(self, opt: EmulationOption) -> wreq::Emulation {
+            pub fn match_emulation(self, opt: EmulationOption) -> wreq::Emulation {
                 match self {
                     $(
                         $name::$variant => $emulation_fn(opt),
@@ -215,14 +216,13 @@ define_enum!(
 
 );
 
-/// ======== Emulation impls ========
-impl wreq::EmulationFactory for Emulation {
+impl wreq::IntoEmulation for Emulation {
     #[inline]
-    fn emulation(self) -> wreq::Emulation {
+    fn into_emulation(self) -> wreq::Emulation {
         EmulationOption::builder()
             .emulation(self)
             .build()
-            .emulation()
+            .into_emulation()
     }
 }
 
@@ -248,7 +248,6 @@ define_enum!(
     IOS => "ios"
 );
 
-/// ======== EmulationOS impls ========
 impl EmulationOS {
     #[inline]
     const fn platform(&self) -> &'static str {
@@ -301,10 +300,9 @@ pub struct EmulationOption {
     skip_headers: bool,
 }
 
-/// ======== EmulationOption impls ========
-impl wreq::EmulationFactory for EmulationOption {
+impl wreq::IntoEmulation for EmulationOption {
     #[inline]
-    fn emulation(self) -> wreq::Emulation {
-        self.emulation.into_emulation(self)
+    fn into_emulation(self) -> wreq::Emulation {
+        self.emulation.match_emulation(self)
     }
 }

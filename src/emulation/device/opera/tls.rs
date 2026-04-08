@@ -45,8 +45,7 @@ pub const SIGALGS_LIST: &str = join!(
     "rsa_pkcs1_sha512"
 );
 
-pub const CERT_COMPRESSION_ALGORITHM: &[CertificateCompressionAlgorithm] =
-    &[CertificateCompressionAlgorithm::BROTLI];
+pub const CERTIFICATE_COMPRESSORS: &[&'static dyn CertificateCompressor] = &[&BrotliCompressor];
 
 #[derive(TypedBuilder)]
 pub struct OperaTlsConfig {
@@ -92,7 +91,7 @@ impl From<OperaTlsConfig> for TlsOptions {
             .alps_protocols([val.alps_protos])
             .alps_use_new_codepoint(val.alps_use_new_codepoint)
             .aes_hw_override(true)
-            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM)
+            .certificate_compressors(CERTIFICATE_COMPRESSORS)
             .build()
     }
 }

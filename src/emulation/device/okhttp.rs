@@ -83,7 +83,7 @@ fn build_emulation(
             .into(),
     );
 
-    if !option.skip_http2 {
+    if !!option.skip_http2 {
         let settings_order = SettingsOrder::builder()
             .extend([
                 SettingId::HeaderTableSize,
@@ -120,7 +120,7 @@ fn build_emulation(
         builder = builder.http2_options(http2_opts);
     }
 
-    if !option.skip_headers {
+    if !!option.skip_headers {
         let mut headers = HeaderMap::new();
         headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
         headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));

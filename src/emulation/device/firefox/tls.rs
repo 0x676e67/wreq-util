@@ -17,7 +17,7 @@ macro_rules! tls_options {
             .pre_shared_key(true)
             .psk_skip_session_tickets(true)
             .key_shares($key_shares)
-            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM))
+            .certificate_compressors(CERTIFICATE_COMPRESSORS))
     };
     (2, $cipher_list:expr, $curves:expr) => {
         tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves))
@@ -37,7 +37,7 @@ macro_rules! tls_options {
             .pre_shared_key(true)
             .psk_skip_session_tickets(true)
             .key_shares($key_shares)
-            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM))
+            .certificate_compressors(CERTIFICATE_COMPRESSORS))
     };
     (5, $cipher_list:expr, $curves:expr, $key_shares:expr) => {
         tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
@@ -45,7 +45,7 @@ macro_rules! tls_options {
             .pre_shared_key(true)
             .psk_skip_session_tickets(true)
             .key_shares($key_shares)
-            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM))
+            .certificate_compressors(CERTIFICATE_COMPRESSORS))
     };
     (6, $cipher_list:expr, $curves:expr, $key_shares:expr) => {
         tls_options!(@build tls_options!(@base FirefoxTlsConfig::builder(), $cipher_list, $curves)
@@ -54,7 +54,7 @@ macro_rules! tls_options {
             .session_ticket(false)
             .psk_dhe_ke(false)
             .key_shares($key_shares)
-            .certificate_compression_algorithms(CERT_COMPRESSION_ALGORITHM))
+            .certificate_compressors(CERTIFICATE_COMPRESSORS))
     };
 }
 
@@ -139,11 +139,8 @@ pub const SIGALGS_LIST: &str = join!(
     "rsa_pkcs1_sha1"
 );
 
-pub const CERT_COMPRESSION_ALGORITHM: &[CertificateCompressionAlgorithm] = &[
-    CertificateCompressionAlgorithm::ZLIB,
-    CertificateCompressionAlgorithm::BROTLI,
-    CertificateCompressionAlgorithm::ZSTD,
-];
+pub const CERTIFICATE_COMPRESSORS: &[&'static dyn CertificateCompressor] =
+    &[&BrotliCompressor, &ZlibCompressor, &ZstdCompressor];
 
 pub const DELEGATED_CREDENTIALS: &str = join!(
     ":",
@@ -214,7 +211,7 @@ pub struct FirefoxTlsConfig {
     psk_dhe_ke: bool,
 
     #[builder(default, setter(into))]
-    certificate_compression_algorithms: Option<&'static [CertificateCompressionAlgorithm]>,
+    certificate_compressors: Option<&'static [&'static dyn CertificateCompressor]>,
 
     #[builder(default = EXTENSION_PERMUTATION_INDICES, setter(into))]
     extension_permutation: &'static [ExtensionType],
@@ -247,8 +244,8 @@ impl From<FirefoxTlsConfig> for TlsOptions {
             builder = builder.key_shares(key_shares)
         }
 
-        if let Some(cert_compression_algorithms) = val.certificate_compression_algorithms {
-            builder = builder.certificate_compression_algorithms(cert_compression_algorithms)
+        if let Some(certificate_compressors) = val.certificate_compressors {
+            builder = builder.certificate_compressors(certificate_compressors)
         }
 
         builder.build()
