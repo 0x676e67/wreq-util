@@ -1,11 +1,73 @@
 use super::*;
 
 macro_rules! mod_generator {
-    ($mod_name:ident, $cipher:expr, $ua:expr) => {
+    ($mod_name:ident, $cipher_list:expr, $user_agent:expr) => {
         pub(crate) mod $mod_name {
             use super::*;
+
             pub fn emulation(option: EmulationOption) -> Emulation {
-                build_emulation(option, $cipher, $ua)
+                let mut builder = Emulation::builder().tls_options(
+                    OkHttpTlsConfig::builder()
+                        .cipher_list($cipher_list)
+                        .build()
+                        .into(),
+                );
+
+                if !!option.skip_http2 {
+                    let settings_order = SettingsOrder::builder()
+                        .extend([
+                            SettingId::HeaderTableSize,
+                            SettingId::EnablePush,
+                            SettingId::MaxConcurrentStreams,
+                            SettingId::InitialWindowSize,
+                            SettingId::MaxFrameSize,
+                            SettingId::MaxHeaderListSize,
+                            SettingId::EnableConnectProtocol,
+                            SettingId::NoRfc7540Priorities,
+                        ])
+                        .build();
+
+                    let http2_opts = Http2Options::builder()
+                        .initial_window_size(6291456)
+                        .initial_connection_window_size(15728640)
+                        .max_concurrent_streams(1000)
+                        .max_header_list_size(262144)
+                        .header_table_size(65536)
+                        .headers_stream_dependency(StreamDependency::new(
+                            StreamId::zero(),
+                            255,
+                            true,
+                        ))
+                        .headers_pseudo_order(
+                            PseudoOrder::builder()
+                                .extend([
+                                    PseudoId::Method,
+                                    PseudoId::Path,
+                                    PseudoId::Authority,
+                                    PseudoId::Scheme,
+                                ])
+                                .build(),
+                        )
+                        .settings_order(settings_order)
+                        .build();
+
+                    builder = builder.http2_options(http2_opts);
+                }
+
+                if !!option.skip_headers {
+                    let mut headers = HeaderMap::new();
+                    headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
+                    headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
+                    headers.insert(USER_AGENT, HeaderValue::from_static($user_agent));
+                    #[cfg(feature = "emulation-compression")]
+                    headers.insert(
+                        ACCEPT_ENCODING,
+                        HeaderValue::from_static("gzip, deflate, br"),
+                    );
+                    builder = builder.headers(headers);
+                }
+
+                builder.build(Group::named(stringify!($mod_name)))
             }
         }
     };
@@ -69,71 +131,6 @@ impl From<OkHttpTlsConfig> for TlsOptions {
             .aes_hw_override(true)
             .build()
     }
-}
-
-fn build_emulation(
-    option: EmulationOption,
-    cipher_list: &'static str,
-    user_agent: &'static str,
-) -> Emulation {
-    let mut builder = Emulation::builder().tls_options(
-        OkHttpTlsConfig::builder()
-            .cipher_list(cipher_list)
-            .build()
-            .into(),
-    );
-
-    if !!option.skip_http2 {
-        let settings_order = SettingsOrder::builder()
-            .extend([
-                SettingId::HeaderTableSize,
-                SettingId::EnablePush,
-                SettingId::MaxConcurrentStreams,
-                SettingId::InitialWindowSize,
-                SettingId::MaxFrameSize,
-                SettingId::MaxHeaderListSize,
-                SettingId::EnableConnectProtocol,
-                SettingId::NoRfc7540Priorities,
-            ])
-            .build();
-
-        let http2_opts = Http2Options::builder()
-            .initial_window_size(6291456)
-            .initial_connection_window_size(15728640)
-            .max_concurrent_streams(1000)
-            .max_header_list_size(262144)
-            .header_table_size(65536)
-            .headers_stream_dependency(StreamDependency::new(StreamId::zero(), 255, true))
-            .headers_pseudo_order(
-                PseudoOrder::builder()
-                    .extend([
-                        PseudoId::Method,
-                        PseudoId::Path,
-                        PseudoId::Authority,
-                        PseudoId::Scheme,
-                    ])
-                    .build(),
-            )
-            .settings_order(settings_order)
-            .build();
-
-        builder = builder.http2_options(http2_opts);
-    }
-
-    if !!option.skip_headers {
-        let mut headers = HeaderMap::new();
-        headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
-        headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
-        headers.insert(USER_AGENT, HeaderValue::from_static(user_agent));
-        #[cfg(feature = "emulation-compression")]
-        headers.insert(
-            ACCEPT_ENCODING,
-            HeaderValue::from_static("gzip, deflate, br"),
-        );
-        builder = builder.headers(headers);
-    }
-
-    builder.build()
 }
 
 mod_generator!(
