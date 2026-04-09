@@ -16,11 +16,6 @@ See the [crate documentation](https://docs.rs/wreq-util/latest/wreq_util) for mo
 - **Emulation** various mainstream browsers (Chrome, Firefox, Safari, Opera, OkHttp) and their versions.
 - **Delay/JitterDelay**: Add fixed or jittered delays to HTTP [request](https://docs.rs/http/latest/http/request/index.html) with customizable strategies and predicates.
 
-## Compatibility
-
-- Integrates with the [tower-service](https://github.com/tower-rs/tower) ecosystem and can be combined with other [tower](https://github.com/tower-rs/tower) middleware.
-- Suitable for [wreq](https://github.com/0x676e67/wreq) HTTP client project.
-
 ## Contributing
 
 Contributions are welcome! Please submit pull requests on the [GitHub repository](https://github.com/0x676e67/wreq-util/pulls).  

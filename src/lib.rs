@@ -6,8 +6,8 @@
 #![doc = include_str!("../README.md")]
 
 #[cfg(feature = "emulation")]
-pub mod emulation;
+mod emulate;
 pub mod tower;
 
 #[cfg(feature = "emulation")]
-pub use self::emulation::{Emulation, EmulationOS, EmulationOption};
+pub use self::emulate::{Emulation, EmulationOS, EmulationOption};
