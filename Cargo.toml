@@ -99,8 +99,3 @@ required-features = ["emulation", "emulation-rand"]
 name = "tower_delay"
 path = "examples/tower_delay.rs"
 required-features = ["tower-delay"]
-
-[[example]]
-name = "tower_jitter_delay"
-path = "examples/tower_jitter_delay.rs"
-required-features = ["tower-delay"]
