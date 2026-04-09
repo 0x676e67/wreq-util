@@ -147,7 +147,7 @@ macro_rules! mod_generator {
                     builder = builder.headers(headers);
                 }
 
-                builder.build()
+                builder.build(Group::named(stringify!($mod_name)))
             }
         }
     };

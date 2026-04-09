@@ -56,7 +56,7 @@ macro_rules! mod_generator {
                     builder = builder.headers(headers);
                 }
 
-                builder.build()
+                builder.build(Group::named(stringify!($mod_name)))
             }
         }
     };
@@ -153,7 +153,7 @@ mod_generator!(
 
 mod_generator!(
     ff128,
-    tls_options!(3, CIPHER_LIST_2, CURVES_1),
+    tls_options!(3, CIPHER_LIST_2, CURVES_1, KEY_SHARES_1),
     http2_options!(3),
     header_initializer_with_zstd,
     [
@@ -182,7 +182,7 @@ mod_generator!(
 
 mod_generator!(
     ff133,
-    tls_options!(1, CIPHER_LIST_1, CURVES_2),
+    tls_options!(1, CIPHER_LIST_1, CURVES_2, KEY_SHARES_2),
     http2_options!(1),
     header_initializer_with_zstd,
     [
@@ -211,7 +211,7 @@ mod_generator!(
 
 mod_generator!(
     ff135,
-    tls_options!(4, CIPHER_LIST_1, CURVES_2),
+    tls_options!(4, CIPHER_LIST_1, CURVES_2, KEY_SHARES_2),
     http2_options!(1),
     header_initializer_with_zstd,
     [
@@ -232,7 +232,7 @@ mod_generator!(
 
 mod_generator!(
     ff_private_135,
-    tls_options!(6, CIPHER_LIST_1, CURVES_2),
+    tls_options!(6, CIPHER_LIST_1, CURVES_2, KEY_SHARES_2),
     http2_options!(1),
     header_initializer_with_zstd,
     [
@@ -253,7 +253,7 @@ mod_generator!(
 
 mod_generator!(
     ff_android_135,
-    tls_options!(5, CIPHER_LIST_1, CURVES_1),
+    tls_options!(5, CIPHER_LIST_1, CURVES_1, KEY_SHARES_1),
     http2_options!(4),
     header_initializer_with_zstd,
     [(
@@ -486,6 +486,62 @@ mod_generator!(
         (
             IOS,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/147.0 Mobile/15E148 Safari/605.1.15"
+        )
+    ]
+);
+
+mod_generator!(
+    ff148,
+    ff135::build_emulation,
+    header_initializer_with_zstd,
+    [
+        (
+            Windows,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0"
+        ),
+        (
+            MacOS,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) Gecko/20100101 Firefox/148.0"
+        ),
+        (
+            Linux,
+            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0"
+        ),
+        (
+            Android,
+            "Mozilla/5.0 (Android 13; Mobile; rv:148.0) Gecko/148.0 Firefox/148.0"
+        ),
+        (
+            IOS,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/148.0 Mobile/15E148 Safari/605.1.15"
+        )
+    ]
+);
+
+mod_generator!(
+    ff149,
+    ff135::build_emulation,
+    header_initializer_with_zstd,
+    [
+        (
+            Windows,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0"
+        ),
+        (
+            MacOS,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:149.0) Gecko/20100101 Firefox/149.0"
+        ),
+        (
+            Linux,
+            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:149.0) Gecko/20100101 Firefox/149.0"
+        ),
+        (
+            Android,
+            "Mozilla/5.0 (Android 13; Mobile; rv:149.0) Gecko/149.0 Firefox/149.0"
+        ),
+        (
+            IOS,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/149.0 Mobile/15E148 Safari/605.1.15"
         )
     ]
 );

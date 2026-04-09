@@ -3,6 +3,10 @@ mod support;
 
 use wreq_util::Emulation;
 
+// Enabling certain extensions(ECH) will change the length during encryption. This is because TLS will
+// automatically use padding to fill the data and add a padding extension. At this time, the ja4
+// fingerprint will change.
+
 test_emulation!(
     test_firefox_109,
     Emulation::Firefox109,

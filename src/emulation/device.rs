@@ -12,16 +12,19 @@ pub use typed_builder::TypedBuilder;
 #[cfg(feature = "emulation-compression")]
 pub use wreq::header::ACCEPT_ENCODING;
 pub use wreq::{
-    Emulation,
+    Emulation, Group,
     header::{ACCEPT, ACCEPT_LANGUAGE, HeaderMap, HeaderName, HeaderValue, USER_AGENT},
     http2::{
         Http2Options, Priorities, Priority, PseudoId, PseudoOrder, SettingId, SettingsOrder,
         StreamDependency, StreamId,
     },
     tls::{
-        AlpnProtocol, AlpsProtocol, CertificateCompressionAlgorithm, ExtensionType, TlsOptions,
-        TlsVersion,
+        AlpnProtocol, AlpsProtocol, ExtensionType, KeyShare, TlsOptions, TlsVersion,
+        compress::CertificateCompressor,
     },
 };
 
-pub use crate::emulation::{EmulationOS, EmulationOption};
+pub use super::{
+    EmulationOS, EmulationOption,
+    compress::{BrotliCompressor, ZlibCompressor, ZstdCompressor},
+};
