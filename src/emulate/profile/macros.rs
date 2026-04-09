@@ -108,15 +108,15 @@ macro_rules! mod_generator {
         pub(crate) mod $mod_name {
             use super::*;
 
-            pub fn emulation(option: EmulationOption) -> Emulation {
-                let default_headers = if option.headers {
+            pub fn emulation(emulation: Emulation) -> wreq::Emulation {
+                let default_headers = if emulation.headers {
                     #[allow(unreachable_patterns)]
-                    let default_headers = match option.platform {
+                    let default_headers = match emulation.platform {
                         $(
                             Platform::$other_os => $header_initializer(
                                 $other_sec_ch_ua,
                                 $other_ua,
-                                option.platform,
+                                emulation.platform,
                             ),
                         )*
                         _ => $header_initializer(
@@ -130,16 +130,16 @@ macro_rules! mod_generator {
                     None
                 };
 
-                build_emulation(option, default_headers)
+                build_emulation(emulation, default_headers)
             }
 
             pub fn build_emulation(
-                option: EmulationOption,
+                emulation: Emulation,
                 default_headers: Option<HeaderMap>
-            ) -> Emulation {
-                let mut builder = Emulation::builder().tls_options($tls_options);
+            ) -> wreq::Emulation {
+                let mut builder = wreq::Emulation::builder().tls_options($tls_options);
 
-                if option.http2 {
+                if emulation.http2 {
                     builder = builder.http2_options($http2_options);
                 }
 
@@ -160,15 +160,15 @@ macro_rules! mod_generator {
         pub(crate) mod $mod_name {
             use super::*;
 
-            pub fn emulation(option: EmulationOption) -> Emulation {
-                let default_headers = if option.headers {
+            pub fn emulation(emulation: Emulation) -> wreq::Emulation {
+                let default_headers = if emulation.headers {
                     #[allow(unreachable_patterns)]
-                    let default_headers = match option.platform {
+                    let default_headers = match emulation.platform {
                         $(
                             Platform::$other_os => $header_initializer(
                                 $other_sec_ch_ua,
                                 $other_ua,
-                                option.platform,
+                                emulation.platform,
                             ),
                         )*
                         _ => $header_initializer(
@@ -182,7 +182,7 @@ macro_rules! mod_generator {
                     None
                 };
 
-                $build_emulation(option, default_headers)
+                $build_emulation(emulation, default_headers)
             }
         }
     };

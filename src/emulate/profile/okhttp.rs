@@ -5,8 +5,8 @@ macro_rules! mod_generator {
         pub(crate) mod $mod_name {
             use super::*;
 
-            pub fn emulation(option: EmulationOption) -> Emulation {
-                build_emulation(stringify!($mod_name), option, $cipher, $ua)
+            pub fn emulation(emulation: Emulation) -> wreq::Emulation {
+                build_emulation(stringify!($mod_name), emulation, $cipher, $ua)
             }
         }
     };
@@ -74,18 +74,18 @@ impl From<OkHttpTlsConfig> for TlsOptions {
 
 fn build_emulation(
     group: &'static str,
-    option: EmulationOption,
+    emulation: Emulation,
     cipher_list: &'static str,
     user_agent: &'static str,
-) -> Emulation {
-    let mut builder = Emulation::builder().tls_options(
+) -> wreq::Emulation {
+    let mut builder = wreq::Emulation::builder().tls_options(
         OkHttpTlsConfig::builder()
             .cipher_list(cipher_list)
             .build()
             .into(),
     );
 
-    if !option.http2 {
+    if emulation.http2 {
         let settings_order = SettingsOrder::builder()
             .extend([
                 SettingId::HeaderTableSize,
@@ -122,7 +122,7 @@ fn build_emulation(
         builder = builder.http2_options(http2_opts);
     }
 
-    if !option.headers {
+    if emulation.headers {
         let mut headers = HeaderMap::new();
         headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
         headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));

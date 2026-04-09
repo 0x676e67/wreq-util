@@ -270,10 +270,10 @@ impl Platform {
     }
 }
 
-/// Represents the configuration options for emulating a browser and operating system.
+/// Represents the configuration options for emulating a client profile and platform.
 ///
-/// The `Emulation` struct allows you to configure various aspects of browser and OS
-/// emulation, including the browser version, operating system, and whether to skip certain features
+/// The `Emulation` struct allows you to configure various aspects of profile and platform
+/// emulation, including the profile, platform, and whether to enable certain features
 /// like HTTP/2 or headers.
 #[derive(Default, Clone, TypedBuilder)]
 pub struct Emulation {
@@ -285,11 +285,11 @@ pub struct Emulation {
     #[builder(default)]
     platform: Platform,
 
-    /// Whether to skip HTTP/2.
+    /// Whether to enable HTTP/2.
     #[builder(default = true)]
     http2: bool,
 
-    /// Whether to skip headers.
+    /// Whether to include default headers.
     #[builder(default = true)]
     headers: bool,
 }

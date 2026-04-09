@@ -12,7 +12,7 @@ use typed_builder::TypedBuilder;
 #[cfg(feature = "emulation-compression")]
 use wreq::header::ACCEPT_ENCODING;
 use wreq::{
-    Emulation, Group,
+    Group,
     header::{ACCEPT, ACCEPT_LANGUAGE, HeaderMap, HeaderName, HeaderValue, USER_AGENT},
     http2::{
         Http2Options, Priorities, Priority, PseudoId, PseudoOrder, SettingId, SettingsOrder,
@@ -25,6 +25,6 @@ use wreq::{
 };
 
 use super::{
-    Emulation as EmulationOption, Platform,
+    Emulation, Platform,
     compress::{BrotliCompressor, ZlibCompressor, ZstdCompressor},
 };
