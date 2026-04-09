@@ -24,12 +24,11 @@ async fn main() -> Result<(), wreq::Error> {
     let emulation = Emulation::builder()
         .profile(Profile::OkHttp5)
         .platform(Platform::Windows)
-        .http2(true)
+        .http2(false)
         .build();
 
     let client = Client::builder()
         .emulation(emulation)
-        .http1_only()
         .tls_cert_verification(false)
         .build()?;
 
