@@ -1,3 +1,5 @@
+#[macro_use]
+mod macros;
 mod compress;
 mod profile;
 #[cfg(feature = "emulation-rand")]
@@ -9,80 +11,6 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "emulation-rand")]
 use strum_macros::VariantArray;
 use typed_builder::TypedBuilder;
-
-macro_rules! define_enum {
-    (
-        $(#[$meta:meta])*
-        with_dispatch,
-        $name:ident, $default_variant:ident,
-        $const_target:ident,
-        $(
-            $variant:ident => ($rename:expr, $emulation_fn:path)
-        ),* $(,)?
-    ) => {
-        $(#[$meta])*
-        #[non_exhaustive]
-        #[derive(Clone, Copy, Hash, Debug, PartialEq, Eq)]
-        #[cfg_attr(feature = "emulation-rand", derive(VariantArray))]
-        #[cfg_attr(feature = "emulation-serde", derive(Deserialize, Serialize))]
-        pub enum $name {
-            $(
-                #[cfg_attr(feature = "emulation-serde", serde(rename = $rename))]
-                $variant,
-            )*
-        }
-
-        impl Default for $name {
-            fn default() -> Self {
-                $name::$default_variant
-            }
-        }
-
-        impl $name {
-            pub fn match_emulation(self, opt: $const_target) -> wreq::Emulation {
-                match self {
-                    $(
-                        $name::$variant => $emulation_fn(opt),
-                    )*
-                }
-            }
-        }
-
-        #[allow(non_upper_case_globals)]
-        impl $const_target {
-            $(
-                pub const $variant: $name = $name::$variant;
-            )*
-        }
-    };
-
-    (
-        $(#[$meta:meta])*
-        plain,
-        $name:ident, $default_variant:ident,
-        $(
-            $variant:ident => $rename:expr
-        ),* $(,)?
-    ) => {
-        $(#[$meta])*
-        #[non_exhaustive]
-        #[derive(Clone, Copy, Hash, Debug, PartialEq, Eq)]
-        #[cfg_attr(feature = "emulation-rand", derive(VariantArray))]
-        #[cfg_attr(feature = "emulation-serde", derive(Deserialize, Serialize))]
-        pub enum $name {
-            $(
-                #[cfg_attr(feature = "emulation-serde", serde(rename = $rename))]
-                $variant,
-            )*
-        }
-
-        impl Default for $name {
-            fn default() -> Self {
-                $name::$default_variant
-            }
-        }
-    };
-}
 
 define_enum!(
     /// Selects which client profile the request should look like.

@@ -1,17 +1,5 @@
 use super::*;
 
-macro_rules! mod_generator {
-    ($mod_name:ident, $cipher:expr, $ua:expr) => {
-        pub(crate) mod $mod_name {
-            use super::*;
-
-            pub fn emulation(emulation: Emulation) -> wreq::Emulation {
-                build_emulation(stringify!($mod_name), emulation, $cipher, $ua)
-            }
-        }
-    };
-}
-
 const CURVES: &str = join!(":", "X25519", "P-256", "P-384");
 
 const SIGALGS_LIST: &str = join!(
@@ -70,6 +58,18 @@ impl From<OkHttpTlsConfig> for TlsOptions {
             .aes_hw_override(true)
             .build()
     }
+}
+
+macro_rules! mod_generator {
+    ($mod_name:ident, $cipher:expr, $ua:expr) => {
+        pub(crate) mod $mod_name {
+            use super::*;
+
+            pub fn emulation(emulation: Emulation) -> wreq::Emulation {
+                build_emulation(stringify!($mod_name), emulation, $cipher, $ua)
+            }
+        }
+    };
 }
 
 fn build_emulation(

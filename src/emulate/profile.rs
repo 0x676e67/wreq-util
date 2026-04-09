@@ -1,7 +1,5 @@
 //! Emulation for different browsers.
 
-#[macro_use]
-mod macros;
 pub mod chrome;
 pub mod firefox;
 pub mod okhttp;
@@ -29,7 +27,7 @@ use super::{
     compress::{BrotliCompressor, ZlibCompressor, ZstdCompressor},
 };
 
-pub(super) fn build_standard_emulation(
+fn build_standard_emulation(
     group: &'static str,
     tls_options: TlsOptions,
     http2_options: Option<Http2Options>,
