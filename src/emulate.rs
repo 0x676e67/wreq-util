@@ -1,9 +1,9 @@
 mod compress;
-mod device;
+mod profile;
 #[cfg(feature = "emulation-rand")]
 mod rand;
 
-use device::{chrome::*, firefox::*, okhttp::*, opera::*, safari::*};
+use profile::{chrome::*, firefox::*, okhttp::*, opera::*, safari::*};
 #[cfg(feature = "emulation-serde")]
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "emulation-rand")]
@@ -15,6 +15,7 @@ macro_rules! define_enum {
         $(#[$meta:meta])*
         with_dispatch,
         $name:ident, $default_variant:ident,
+        $const_target:ident,
         $(
             $variant:ident => ($rename:expr, $emulation_fn:path)
         ),* $(,)?
@@ -38,13 +39,20 @@ macro_rules! define_enum {
         }
 
         impl $name {
-            pub fn match_emulation(self, opt: EmulationOption) -> wreq::Emulation {
+            pub fn match_emulation(self, opt: $const_target) -> wreq::Emulation {
                 match self {
                     $(
                         $name::$variant => $emulation_fn(opt),
                     )*
                 }
             }
+        }
+
+        #[allow(non_upper_case_globals)]
+        impl $const_target {
+            $(
+                pub const $variant: $name = $name::$variant;
+            )*
         }
     };
 
@@ -77,22 +85,15 @@ macro_rules! define_enum {
 }
 
 define_enum!(
-    /// Represents different browser versions for emulation.
+    /// Selects which client profile the request should look like.
     ///
-    /// The `Emulation` enum provides variants for different browser versions that can be used
-    /// to emulation HTTP requests. Each variant corresponds to a specific browser version.
-    ///
-    /// # Naming Convention
-    ///
-    /// The naming convention for the variants follows the pattern `browser_version`, where
-    /// `browser` is the name of the browser (e.g., `chrome`, `firefox`, `safari`) and `version`
-    /// is the version number. For example, `Chrome100` represents Chrome version 100.
-    ///
-    /// The serialized names of the variants use underscores to separate the browser name and
-    /// version number, following the pattern `browser_version`. For example, `Chrome100` is
-    /// serialized as `"chrome_100"`.
+    /// This controls the built-in TLS, HTTP/2, and header presets used for the
+    /// request. Variants cover browser-style profiles as well as other clients,
+    /// such as OkHttp.
     with_dispatch,
-    Emulation, Chrome100,
+    Profile,
+    Chrome100,
+    Emulation,
 
     // Chrome versions
     Chrome100 => ("chrome_100", v100::emulation),
@@ -229,31 +230,21 @@ define_enum!(
 
 );
 
-impl wreq::IntoEmulation for Emulation {
+impl wreq::IntoEmulation for Profile {
     #[inline]
     fn into_emulation(self) -> wreq::Emulation {
-        EmulationOption::builder()
-            .emulation(self)
-            .build()
-            .into_emulation()
+        Emulation::builder().profile(self).build().into_emulation()
     }
 }
 
 define_enum!(
-    /// Represents different operating systems for emulation.
+    /// Selects which platform the client should look like.
     ///
-    /// The `EmulationOS` enum provides variants for different operating systems that can be used
-    /// to emulation HTTP requests. Each variant corresponds to a specific operating system.
-    ///
-    /// # Naming Convention
-    ///
-    /// The naming convention for the variants follows the pattern `os_name`, where
-    /// `os_name` is the name of the operating system (e.g., `windows`, `macos`, `linux`, `android`, `ios`).
-    ///
-    /// The serialized names of the variants use lowercase letters to represent the operating system names.
-    /// For example, `Windows` is serialized as `"windows"`.
+    /// This mainly affects platform-specific headers and user-agent details.
+    /// In most cases you can keep the default unless you need to match a
+    /// specific Windows, macOS, Linux, Android, or iOS profile.
     plain,
-    EmulationOS, MacOS,
+    Platform, MacOS,
     Windows => "windows",
     MacOS => "macos",
     Linux => "linux",
@@ -261,61 +252,51 @@ define_enum!(
     IOS => "ios"
 );
 
-impl EmulationOS {
+impl Platform {
     #[inline]
     const fn platform(&self) -> &'static str {
         match self {
-            EmulationOS::MacOS => "\"macOS\"",
-            EmulationOS::Linux => "\"Linux\"",
-            EmulationOS::Windows => "\"Windows\"",
-            EmulationOS::Android => "\"Android\"",
-            EmulationOS::IOS => "\"iOS\"",
+            Platform::MacOS => "\"macOS\"",
+            Platform::Linux => "\"Linux\"",
+            Platform::Windows => "\"Windows\"",
+            Platform::Android => "\"Android\"",
+            Platform::IOS => "\"iOS\"",
         }
     }
 
     #[inline]
     const fn is_mobile(&self) -> bool {
-        matches!(self, EmulationOS::Android | EmulationOS::IOS)
+        matches!(self, Platform::Android | Platform::IOS)
     }
 }
 
-/// Represents the configuration options for emulating a browser and operating system.
+/// Represents the configuration options for emulating a client profile and platform.
 ///
-/// The `EmulationOption` struct allows you to configure various aspects of browser and OS
-/// emulation, including the browser version, operating system, and whether to skip certain features
+/// The `Emulation` struct allows you to configure various aspects of profile and platform
+/// emulation, including the profile, platform, and whether to enable certain features
 /// like HTTP/2 or headers.
-///
-/// This struct is typically used to build an `EmulationProvider` that can be applied to HTTP
-/// clients for making requests that mimic specific browser and OS configurations.
-///
-/// # Fields
-///
-/// - `emulation`: The browser version to emulate. Defaults to `Emulation::default()`.
-/// - `emulation_os`: The operating system to emulate. Defaults to `EmulationOS::default()`.
-/// - `skip_http2`: Whether to skip HTTP/2 support. Defaults to `false`.
-/// - `skip_headers`: Whether to skip adding default headers. Defaults to `false`.
 #[derive(Default, Clone, TypedBuilder)]
-pub struct EmulationOption {
-    /// The browser version to emulation.
+pub struct Emulation {
+    /// Whether to change the profile (browser/okhttp) information.
     #[builder(default)]
-    emulation: Emulation,
+    profile: Profile,
 
-    /// The operating system.
+    /// Platform details to expose in headers and related client metadata.
     #[builder(default)]
-    emulation_os: EmulationOS,
+    platform: Platform,
 
-    /// Whether to skip HTTP/2.
-    #[builder(default = false)]
-    skip_http2: bool,
+    /// Whether to enable HTTP/2.
+    #[builder(default = true)]
+    http2: bool,
 
-    /// Whether to skip headers.
-    #[builder(default = false)]
-    skip_headers: bool,
+    /// Whether to include default headers.
+    #[builder(default = true)]
+    headers: bool,
 }
 
-impl wreq::IntoEmulation for EmulationOption {
+impl wreq::IntoEmulation for Emulation {
     #[inline]
     fn into_emulation(self) -> wreq::Emulation {
-        self.emulation.match_emulation(self)
+        self.profile.match_emulation(self)
     }
 }

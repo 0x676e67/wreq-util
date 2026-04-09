@@ -4,7 +4,7 @@ use super::*;
 pub fn header_initializer_with_zstd_priority(
     sec_ch_ua: &'static str,
     ua: &'static str,
-    emulation_os: EmulationOS,
+    emulation_os: Platform,
 ) -> HeaderMap {
     let mut headers = HeaderMap::new();
     header_chrome_sec_ch_ua!(

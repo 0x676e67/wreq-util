@@ -10,4 +10,4 @@ mod emulate;
 pub mod tower;
 
 #[cfg(feature = "emulation")]
-pub use self::emulate::{Emulation, EmulationOS, EmulationOption};
+pub use self::emulate::{Emulation, Platform, Profile};

@@ -1,5 +1,5 @@
 use wreq::Client;
-use wreq_util::{Emulation, EmulationOS, EmulationOption};
+use wreq_util::{Emulation, Platform, Profile};
 
 #[tokio::main]
 async fn main() -> Result<(), wreq::Error> {
@@ -10,53 +10,52 @@ async fn main() -> Result<(), wreq::Error> {
         .tls_cert_verification(false)
         .build()?;
 
-    let text1 = client1
+    let text = client1
         .get("https://tls.browserleaks.com/")
         .send()
         .await?
         .text()
         .await?;
 
-    println!("{}\n", text1);
+    println!("{}\n", text);
 
-    // Example 2: Advanced emulation with options - Firefox128
+    // Example 2: Advanced emulation with options - OkHttp5
     println!("=== Example 2: Firefox128 with Custom Options ===");
-    let emulation2 = EmulationOption::builder()
-        .emulation(Emulation::Firefox128)
-        .emulation_os(EmulationOS::Windows)
-        .skip_http2(true)
+    let emulation = Emulation::builder()
+        .profile(Profile::OkHttp5)
+        .platform(Platform::Windows)
+        .http2(false)
         .build();
 
-    let client2 = Client::builder()
-        .emulation(emulation2)
-        .http1_only()
+    let client = Client::builder()
+        .emulation(emulation)
         .tls_cert_verification(false)
         .build()?;
 
-    let text2 = client2
+    let text = client
         .get("https://tls.peet.ws/api/all")
         .send()
         .await?
         .text()
         .await?;
 
-    println!("{}\n", text2);
+    println!("{}\n", text);
 
     // Example 3: Random device emulation
-    println!("=== Example 3: Random Device Emulation ===");
-    let client3 = Client::builder()
+    println!("=== Example 3: Random Profile Emulation ===");
+    let client = Client::builder()
         .emulation(Emulation::random())
         .tls_cert_verification(false)
         .build()?;
 
-    let text3 = client3
+    let text = client
         .get("https://tls.peet.ws/api/all")
         .send()
         .await?
         .text()
         .await?;
 
-    println!("{}", text3);
+    println!("{}", text);
 
     Ok(())
 }
