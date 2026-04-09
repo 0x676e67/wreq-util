@@ -11,52 +11,18 @@ use super::*;
 
 macro_rules! mod_generator {
     ($mod_name:ident, $tls_options:expr, $http2_options:expr, $header_initializer:ident, $ua:expr) => {
-        pub(crate) mod $mod_name {
-            use super::*;
-
-            pub fn emulation(emulation: Emulation) -> wreq::Emulation {
-                let default_headers = if emulation.headers {
-                    Some($header_initializer($ua))
-                } else {
-                    None
-                };
-
-                build_emulation(emulation, default_headers)
-            }
-
-            pub fn build_emulation(
-                emulation: Emulation,
-                default_headers: Option<HeaderMap>,
-            ) -> wreq::Emulation {
-                let mut builder = wreq::Emulation::builder().tls_options($tls_options);
-
-                if emulation.http2 {
-                    builder = builder.http2_options($http2_options);
-                }
-
-                if let Some(headers) = default_headers {
-                    builder = builder.headers(headers);
-                }
-
-                builder.build(Group::named(stringify!($mod_name)))
-            }
-        }
+        standard_mod_generator!(
+            $mod_name,
+            $tls_options,
+            $http2_options,
+            |_emulation: &Emulation| Some($header_initializer($ua))
+        );
     };
 
     ($mod_name:ident, $build_emulation:expr, $header_initializer:ident, $ua:expr) => {
-        pub(crate) mod $mod_name {
-            use super::*;
-
-            pub fn emulation(emulation: Emulation) -> wreq::Emulation {
-                let default_headers = if emulation.headers {
-                    Some($header_initializer($ua))
-                } else {
-                    None
-                };
-
-                $build_emulation(emulation, default_headers)
-            }
-        }
+        standard_mod_generator!($mod_name, $build_emulation, |_emulation: &Emulation| Some(
+            $header_initializer($ua)
+        ));
     };
 }
 

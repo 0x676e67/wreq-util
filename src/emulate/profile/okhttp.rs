@@ -78,14 +78,7 @@ fn build_emulation(
     cipher_list: &'static str,
     user_agent: &'static str,
 ) -> wreq::Emulation {
-    let mut builder = wreq::Emulation::builder().tls_options(
-        OkHttpTlsConfig::builder()
-            .cipher_list(cipher_list)
-            .build()
-            .into(),
-    );
-
-    if emulation.http2 {
+    let http2_options = if emulation.http2 {
         let settings_order = SettingsOrder::builder()
             .extend([
                 SettingId::HeaderTableSize,
@@ -119,10 +112,12 @@ fn build_emulation(
             .settings_order(settings_order)
             .build();
 
-        builder = builder.http2_options(http2_opts);
-    }
+        Some(http2_opts)
+    } else {
+        None
+    };
 
-    if emulation.headers {
+    let default_headers = if emulation.headers {
         let mut headers = HeaderMap::new();
         headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
         headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
@@ -132,10 +127,20 @@ fn build_emulation(
             ACCEPT_ENCODING,
             HeaderValue::from_static("gzip, deflate, br"),
         );
-        builder = builder.headers(headers);
-    }
+        Some(headers)
+    } else {
+        None
+    };
 
-    builder.build(Group::named(group))
+    build_standard_emulation(
+        group,
+        OkHttpTlsConfig::builder()
+            .cipher_list(cipher_list)
+            .build()
+            .into(),
+        http2_options,
+        default_headers,
+    )
 }
 
 mod_generator!(

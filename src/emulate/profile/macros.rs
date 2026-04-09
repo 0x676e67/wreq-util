@@ -97,6 +97,91 @@ macro_rules! join {
     };
 }
 
+macro_rules! standard_mod_generator {
+    ($mod_name:ident, $tls_options:expr, $http2_options:expr, $headers:expr) => {
+        pub(crate) mod $mod_name {
+            use super::*;
+
+            pub fn emulation(emulation: Emulation) -> wreq::Emulation {
+                let default_headers = if emulation.headers {
+                    ($headers)(&emulation)
+                } else {
+                    None
+                };
+
+                build_emulation(emulation.http2, default_headers)
+            }
+
+            pub fn build_emulation(
+                http2: bool,
+                default_headers: Option<HeaderMap>,
+            ) -> wreq::Emulation {
+                build_standard_emulation(
+                    stringify!($mod_name),
+                    $tls_options,
+                    http2.then(|| $http2_options),
+                    default_headers,
+                )
+            }
+        }
+    };
+    ($mod_name:ident, $build_emulation:expr, $headers:expr) => {
+        pub(crate) mod $mod_name {
+            use super::*;
+
+            pub fn emulation(emulation: Emulation) -> wreq::Emulation {
+                let default_headers = if emulation.headers {
+                    ($headers)(&emulation)
+                } else {
+                    None
+                };
+
+                $build_emulation(emulation.http2, default_headers)
+            }
+        }
+    };
+}
+
+macro_rules! platform_headers {
+    (
+        $emulation:expr,
+        $header_initializer:ident,
+        [($default_os:ident, $default_sec_ch_ua:tt, $default_ua:tt) $(, ($other_os:ident, $other_sec_ch_ua:tt, $other_ua:tt))*]
+    ) => {{
+        #[allow(unreachable_patterns)]
+        let default_headers = match $emulation.platform {
+            $(
+                Platform::$other_os => $header_initializer(
+                    $other_sec_ch_ua,
+                    $other_ua,
+                    $emulation.platform,
+                ),
+            )*
+            _ => $header_initializer(
+                $default_sec_ch_ua,
+                $default_ua,
+                Platform::$default_os,
+            ),
+        };
+
+        Some(default_headers)
+    }};
+}
+
+macro_rules! firefox_platform_headers {
+    ($emulation:expr, $header_initializer:ident, [($default_os:ident, $default_ua:tt) $(, ($other_os:ident, $other_ua:tt))*]) => {{
+        #[allow(unreachable_patterns)]
+        let default_headers = match $emulation.platform {
+            $(
+                Platform::$other_os => $header_initializer($other_ua),
+            )*
+            _ => $header_initializer($default_ua),
+        };
+
+        Some(default_headers)
+    }};
+}
+
 macro_rules! mod_generator {
     (
         $mod_name:ident,
@@ -105,51 +190,18 @@ macro_rules! mod_generator {
         $header_initializer:ident,
         [($default_os:ident, $default_sec_ch_ua:tt, $default_ua:tt) $(, ($other_os:ident, $other_sec_ch_ua:tt, $other_ua:tt))*]
     ) => {
-        pub(crate) mod $mod_name {
-            use super::*;
-
-            pub fn emulation(emulation: Emulation) -> wreq::Emulation {
-                let default_headers = if emulation.headers {
-                    #[allow(unreachable_patterns)]
-                    let default_headers = match emulation.platform {
-                        $(
-                            Platform::$other_os => $header_initializer(
-                                $other_sec_ch_ua,
-                                $other_ua,
-                                emulation.platform,
-                            ),
-                        )*
-                        _ => $header_initializer(
-                            $default_sec_ch_ua,
-                            $default_ua,
-                            Platform::$default_os,
-                        ),
-                    };
-                    Some(default_headers)
-                } else {
-                    None
-                };
-
-                build_emulation(emulation, default_headers)
+        standard_mod_generator!(
+            $mod_name,
+            $tls_options,
+            $http2_options,
+            |emulation: &Emulation| {
+                platform_headers!(
+                    emulation,
+                    $header_initializer,
+                    [($default_os, $default_sec_ch_ua, $default_ua) $(, ($other_os, $other_sec_ch_ua, $other_ua))*]
+                )
             }
-
-            pub fn build_emulation(
-                emulation: Emulation,
-                default_headers: Option<HeaderMap>
-            ) -> wreq::Emulation {
-                let mut builder = wreq::Emulation::builder().tls_options($tls_options);
-
-                if emulation.http2 {
-                    builder = builder.http2_options($http2_options);
-                }
-
-                if let Some(headers) = default_headers {
-                    builder = builder.headers(headers);
-                }
-
-                builder.build(Group::named(stringify!($mod_name)))
-            }
-        }
+        );
     };
     (
         $mod_name:ident,
@@ -157,33 +209,16 @@ macro_rules! mod_generator {
         $header_initializer:ident,
         [($default_os:ident, $default_sec_ch_ua:tt, $default_ua:tt) $(, ($other_os:ident, $other_sec_ch_ua:tt, $other_ua:tt))*]
     ) => {
-        pub(crate) mod $mod_name {
-            use super::*;
-
-            pub fn emulation(emulation: Emulation) -> wreq::Emulation {
-                let default_headers = if emulation.headers {
-                    #[allow(unreachable_patterns)]
-                    let default_headers = match emulation.platform {
-                        $(
-                            Platform::$other_os => $header_initializer(
-                                $other_sec_ch_ua,
-                                $other_ua,
-                                emulation.platform,
-                            ),
-                        )*
-                        _ => $header_initializer(
-                            $default_sec_ch_ua,
-                            $default_ua,
-                            Platform::$default_os,
-                        ),
-                    };
-                    Some(default_headers)
-                } else {
-                    None
-                };
-
-                $build_emulation(emulation, default_headers)
+        standard_mod_generator!(
+            $mod_name,
+            $build_emulation,
+            |emulation: &Emulation| {
+                platform_headers!(
+                    emulation,
+                    $header_initializer,
+                    [($default_os, $default_sec_ch_ua, $default_ua) $(, ($other_os, $other_sec_ch_ua, $other_ua))*]
+                )
             }
-        }
+        );
     };
 }
