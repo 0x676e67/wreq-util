@@ -5,12 +5,12 @@ use wreq_util::{Emulation, Platform, Profile};
 async fn main() -> Result<(), wreq::Error> {
     // Example 1: Basic emulation - Safari26
     println!("=== Example 1: Basic Safari26 Emulation ===");
-    let client1 = Client::builder()
+    let client = Client::builder()
         .emulation(Emulation::Chrome145)
         .tls_cert_verification(false)
         .build()?;
 
-    let text = client1
+    let text = client
         .get("https://tls.browserleaks.com/")
         .send()
         .await?
