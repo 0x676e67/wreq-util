@@ -3,7 +3,7 @@ mod support;
 
 use support::server;
 use wreq::Client;
-use wreq_util::{Emulation, EmulationOS, EmulationOption};
+use wreq_util::{Emulation, Platform};
 
 #[tokio::test]
 async fn test_client_emulation_device() {
@@ -34,10 +34,10 @@ async fn test_client_emulation_device() {
     let url = format!("http://{}/ua", server.addr());
     let res = Client::builder()
         .emulation(
-            EmulationOption::builder()
-                .emulation(Emulation::Chrome133)
-                .emulation_os(EmulationOS::Linux)
-                .skip_http2(true)
+            Emulation::builder()
+                .profile(Emulation::Chrome133)
+                .platform(Platform::Linux)
+                .http2(true)
                 .build(),
         )
         .build()

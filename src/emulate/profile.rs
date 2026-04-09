@@ -8,10 +8,10 @@ pub mod okhttp;
 pub mod opera;
 pub mod safari;
 
-pub use typed_builder::TypedBuilder;
+use typed_builder::TypedBuilder;
 #[cfg(feature = "emulation-compression")]
-pub use wreq::header::ACCEPT_ENCODING;
-pub use wreq::{
+use wreq::header::ACCEPT_ENCODING;
+use wreq::{
     Emulation, Group,
     header::{ACCEPT, ACCEPT_LANGUAGE, HeaderMap, HeaderName, HeaderValue, USER_AGENT},
     http2::{
@@ -24,7 +24,7 @@ pub use wreq::{
     },
 };
 
-pub use super::{
-    EmulationOS, EmulationOption,
+use super::{
+    Emulation as EmulationOption, Platform,
     compress::{BrotliCompressor, ZlibCompressor, ZstdCompressor},
 };

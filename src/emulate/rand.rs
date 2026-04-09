@@ -7,7 +7,7 @@ use std::{
 
 use strum::VariantArray;
 
-use super::{Emulation, EmulationOS, EmulationOption};
+use super::{Emulation, Platform, Profile};
 
 // from: https://github.com/seanmonstar/reqwest/blob/44ac897f1ab35ba24a195927043d185d5cbb6912/src/util.rs#L27
 fn fast_random() -> u64 {
@@ -42,10 +42,10 @@ fn fast_random() -> u64 {
 }
 
 impl Emulation {
-    /// Returns a random variant of the `Emulation` enum.
+    /// Returns a random variant of the `Profile` enum.
     ///
     /// This method uses a fast random number generator to select a random variant
-    /// from the `Emulation::VARIANTS` array. The random number generator is based
+    /// from the `Profile::VARIANTS` array. The random number generator is based
     /// on the XOR-Shift algorithm, which is efficient and suitable for use in
     /// multi-threaded environments.
     ///
@@ -60,15 +60,15 @@ impl Emulation {
     ///
     /// # Panics
     ///
-    /// This method will panic if the `Emulation::VARIANTS` array is empty.
+    /// This method will panic if the `Profile::VARIANTS` array is empty.
     #[inline]
-    pub fn random() -> EmulationOption {
-        let emulation = Emulation::VARIANTS;
-        let emulation_os = EmulationOS::VARIANTS;
+    pub fn random() -> Emulation {
+        let profile = Profile::VARIANTS;
+        let platform = Platform::VARIANTS;
         let rand = fast_random() as usize;
-        EmulationOption::builder()
-            .emulation(emulation[rand % emulation.len()])
-            .emulation_os(emulation_os[rand % emulation_os.len()])
+        Emulation::builder()
+            .profile(profile[rand % profile.len()])
+            .platform(platform[rand % platform.len()])
             .build()
     }
 }

@@ -1,5 +1,5 @@
 use wreq::Client;
-use wreq_util::{Emulation, EmulationOS, EmulationOption};
+use wreq_util::{Emulation, Platform, Profile};
 
 #[tokio::main]
 async fn main() -> Result<(), wreq::Error> {
@@ -21,14 +21,14 @@ async fn main() -> Result<(), wreq::Error> {
 
     // Example 2: Advanced emulation with options - Firefox128
     println!("=== Example 2: Firefox128 with Custom Options ===");
-    let emulation2 = EmulationOption::builder()
-        .emulation(Emulation::Firefox128)
-        .emulation_os(EmulationOS::Windows)
-        .skip_http2(true)
+    let emulation = Emulation::builder()
+        .profile(Profile::Firefox128)
+        .platform(Platform::Windows)
+        .http2(true)
         .build();
 
     let client2 = Client::builder()
-        .emulation(emulation2)
+        .emulation(emulation)
         .http1_only()
         .tls_cert_verification(false)
         .build()?;
@@ -43,7 +43,7 @@ async fn main() -> Result<(), wreq::Error> {
     println!("{}\n", text2);
 
     // Example 3: Random device emulation
-    println!("=== Example 3: Random Device Emulation ===");
+    println!("=== Example 3: Random Profile Emulation ===");
     let client3 = Client::builder()
         .emulation(Emulation::random())
         .tls_cert_verification(false)

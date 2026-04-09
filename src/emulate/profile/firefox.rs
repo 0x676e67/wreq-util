@@ -21,11 +21,11 @@ macro_rules! mod_generator {
             use super::*;
 
             pub fn emulation(option: EmulationOption) -> Emulation {
-                let default_headers = if !option.skip_headers {
+                let default_headers = if option.headers {
                     #[allow(unreachable_patterns)]
-                    let default_headers = match option.emulation_os {
+                    let default_headers = match option.platform {
                         $(
-                            EmulationOS::$other_os => {
+                            Platform::$other_os => {
                                 $header_initializer($other_ua)
                             }
                         ),*
@@ -48,7 +48,7 @@ macro_rules! mod_generator {
             ) -> Emulation {
                 let mut builder = Emulation::builder().tls_options($tls_options);
 
-                if !option.skip_http2 {
+                if option.http2 {
                     builder = builder.http2_options($http2_options);
                 }
 
@@ -70,11 +70,11 @@ macro_rules! mod_generator {
             use super::*;
 
             pub fn emulation(option: EmulationOption) -> Emulation {
-                let default_headers = if !option.skip_headers {
+                let default_headers = if option.headers {
                     #[allow(unreachable_patterns)]
-                    let default_headers = match option.emulation_os {
+                    let default_headers = match option.platform {
                         $(
-                            EmulationOS::$other_os => {
+                            Platform::$other_os => {
                                 $header_initializer($other_ua)
                             }
                         ),*

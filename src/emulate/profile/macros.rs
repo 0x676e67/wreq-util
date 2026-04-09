@@ -109,20 +109,20 @@ macro_rules! mod_generator {
             use super::*;
 
             pub fn emulation(option: EmulationOption) -> Emulation {
-                let default_headers = if !option.skip_headers {
+                let default_headers = if option.headers {
                     #[allow(unreachable_patterns)]
-                    let default_headers = match option.emulation_os {
+                    let default_headers = match option.platform {
                         $(
-                            EmulationOS::$other_os => $header_initializer(
+                            Platform::$other_os => $header_initializer(
                                 $other_sec_ch_ua,
                                 $other_ua,
-                                option.emulation_os,
+                                option.platform,
                             ),
                         )*
                         _ => $header_initializer(
                             $default_sec_ch_ua,
                             $default_ua,
-                            EmulationOS::$default_os,
+                            Platform::$default_os,
                         ),
                     };
                     Some(default_headers)
@@ -139,7 +139,7 @@ macro_rules! mod_generator {
             ) -> Emulation {
                 let mut builder = Emulation::builder().tls_options($tls_options);
 
-                if !option.skip_http2 {
+                if option.http2 {
                     builder = builder.http2_options($http2_options);
                 }
 
@@ -161,20 +161,20 @@ macro_rules! mod_generator {
             use super::*;
 
             pub fn emulation(option: EmulationOption) -> Emulation {
-                let default_headers = if !option.skip_headers {
+                let default_headers = if option.headers {
                     #[allow(unreachable_patterns)]
-                    let default_headers = match option.emulation_os {
+                    let default_headers = match option.platform {
                         $(
-                            EmulationOS::$other_os => $header_initializer(
+                            Platform::$other_os => $header_initializer(
                                 $other_sec_ch_ua,
                                 $other_ua,
-                                option.emulation_os,
+                                option.platform,
                             ),
                         )*
                         _ => $header_initializer(
                             $default_sec_ch_ua,
                             $default_ua,
-                            EmulationOS::$default_os,
+                            Platform::$default_os,
                         ),
                     };
                     Some(default_headers)
