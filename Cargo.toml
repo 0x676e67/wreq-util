@@ -74,25 +74,25 @@ name = "client"
 path = "tests/client.rs"
 
 [[test]]
-name = "emulation_chrome"
-path = "tests/emulation_chrome.rs"
+name = "emulate_chrome"
+path = "tests/emulate_chrome.rs"
 
 [[test]]
-name = "emulation_okhttp"
-path = "tests/emulation_okhttp.rs"
+name = "emulate_okhttp"
+path = "tests/emulate_okhttp.rs"
 
 [[test]]
-name = "emulation_firefox"
-path = "tests/emulation_firefox.rs"
+name = "emulate_firefox"
+path = "tests/emulate_firefox.rs"
 
 [[test]]
-name = "emulation_safari"
-path = "tests/emulation_safari.rs"
+name = "emulate_safari"
+path = "tests/emulate_safari.rs"
 
 
 [[example]]
-name = "emulation"
-path = "examples/emulation.rs"
+name = "emulate"
+path = "examples/emulate.rs"
 required-features = ["emulation", "emulation-rand"]
 
 [[example]]
