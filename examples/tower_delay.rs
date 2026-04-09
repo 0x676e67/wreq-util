@@ -8,7 +8,7 @@ async fn main() -> Result<(), wreq::Error> {
     // Build a client with a 1 second delay between requests
     let client = Client::builder()
         .layer(DelayLayer::new(Duration::from_secs(1)))
-        .cert_verification(false)
+        .tls_cert_verification(false)
         .build()?;
 
     let url = "https://httpbin.io/get";

@@ -28,7 +28,7 @@ async fn basic_jitter_delay() -> Result<(), wreq::Error> {
     // Build a client with jittered delay: base 1s ± 50% (range: 0.5s to 1.5s)
     let client = Client::builder()
         .layer(JitterDelayLayer::new(Duration::from_secs(1), 0.5))
-        .cert_verification(false)
+        .tls_cert_verification(false)
         .build()?;
 
     let url = "https://httpbin.io/get";
@@ -81,7 +81,7 @@ async fn conditional_jitter_delay() -> Result<(), wreq::Error> {
                 req.method() == http::Method::POST
             },
         ))
-        .cert_verification(false)
+        .tls_cert_verification(false)
         .build()?;
 
     const BASE_URL: &str = "https://httpbin.io";
@@ -130,7 +130,7 @@ async fn conditional_fixed_delay() -> Result<(), wreq::Error> {
                 req.uri().path().starts_with("/delay")
             }),
         )
-        .cert_verification(false)
+        .tls_cert_verification(false)
         .build()?;
 
     const BASE_URL: &str = "https://httpbin.io";

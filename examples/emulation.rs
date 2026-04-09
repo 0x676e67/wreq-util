@@ -7,7 +7,7 @@ async fn main() -> Result<(), wreq::Error> {
     println!("=== Example 1: Basic Safari26 Emulation ===");
     let client1 = Client::builder()
         .emulation(Emulation::Chrome145)
-        .cert_verification(false)
+        .tls_cert_verification(false)
         .build()?;
 
     let text1 = client1
@@ -30,7 +30,7 @@ async fn main() -> Result<(), wreq::Error> {
     let client2 = Client::builder()
         .emulation(emulation2)
         .http1_only()
-        .cert_verification(false)
+        .tls_cert_verification(false)
         .build()?;
 
     let text2 = client2
@@ -46,7 +46,7 @@ async fn main() -> Result<(), wreq::Error> {
     println!("=== Example 3: Random Device Emulation ===");
     let client3 = Client::builder()
         .emulation(Emulation::random())
-        .cert_verification(false)
+        .tls_cert_verification(false)
         .build()?;
 
     let text3 = client3
