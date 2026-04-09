@@ -6,7 +6,7 @@
 #![doc = include_str!("../README.md")]
 
 #[cfg(feature = "emulation")]
-pub mod emulate;
+mod emulate;
 pub mod tower;
 
 #[cfg(feature = "emulation")]
