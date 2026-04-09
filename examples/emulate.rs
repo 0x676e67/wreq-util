@@ -19,10 +19,10 @@ async fn main() -> Result<(), wreq::Error> {
 
     println!("{}\n", text);
 
-    // Example 2: Advanced emulation with options - Firefox128
+    // Example 2: Advanced emulation with options - OkHttp5
     println!("=== Example 2: Firefox128 with Custom Options ===");
     let emulation = Emulation::builder()
-        .profile(Profile::Firefox128)
+        .profile(Profile::OkHttp5)
         .platform(Platform::Windows)
         .http2(true)
         .build();
