@@ -12,6 +12,66 @@ macro_rules! mod_generator {
     };
 }
 
+const CURVES: &str = join!(":", "X25519", "P-256", "P-384");
+
+const SIGALGS_LIST: &str = join!(
+    ":",
+    "ecdsa_secp256r1_sha256",
+    "rsa_pss_rsae_sha256",
+    "rsa_pkcs1_sha256",
+    "ecdsa_secp384r1_sha384",
+    "rsa_pss_rsae_sha384",
+    "rsa_pkcs1_sha384",
+    "rsa_pss_rsae_sha512",
+    "rsa_pkcs1_sha512",
+    "rsa_pkcs1_sha1"
+);
+
+const CIPHER_LIST: &str = join!(
+    ":",
+    "TLS_AES_128_GCM_SHA256",
+    "TLS_AES_256_GCM_SHA384",
+    "TLS_CHACHA20_POLY1305_SHA256",
+    "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+    "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+    "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+    "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+    "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
+    "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256",
+    "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+    "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+    "TLS_RSA_WITH_AES_128_GCM_SHA256",
+    "TLS_RSA_WITH_AES_256_GCM_SHA384",
+    "TLS_RSA_WITH_AES_128_CBC_SHA",
+    "TLS_RSA_WITH_AES_256_CBC_SHA",
+    "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
+);
+
+#[derive(TypedBuilder)]
+struct OkHttpTlsConfig {
+    #[builder(default = CURVES)]
+    curves: &'static str,
+
+    #[builder(default = SIGALGS_LIST)]
+    sigalgs_list: &'static str,
+
+    cipher_list: &'static str,
+}
+
+impl From<OkHttpTlsConfig> for TlsOptions {
+    fn from(val: OkHttpTlsConfig) -> Self {
+        TlsOptions::builder()
+            .enable_ocsp_stapling(true)
+            .curves_list(val.curves)
+            .sigalgs_list(val.sigalgs_list)
+            .cipher_list(val.cipher_list)
+            .min_tls_version(TlsVersion::TLS_1_2)
+            .max_tls_version(TlsVersion::TLS_1_3)
+            .aes_hw_override(true)
+            .build()
+    }
+}
+
 fn build_emulation(
     group: &'static str,
     option: EmulationOption,
@@ -76,66 +136,6 @@ fn build_emulation(
     }
 
     builder.build(Group::named(group))
-}
-
-const CURVES: &str = join!(":", "X25519", "P-256", "P-384");
-
-const SIGALGS_LIST: &str = join!(
-    ":",
-    "ecdsa_secp256r1_sha256",
-    "rsa_pss_rsae_sha256",
-    "rsa_pkcs1_sha256",
-    "ecdsa_secp384r1_sha384",
-    "rsa_pss_rsae_sha384",
-    "rsa_pkcs1_sha384",
-    "rsa_pss_rsae_sha512",
-    "rsa_pkcs1_sha512",
-    "rsa_pkcs1_sha1"
-);
-
-const CIPHER_LIST: &str = join!(
-    ":",
-    "TLS_AES_128_GCM_SHA256",
-    "TLS_AES_256_GCM_SHA384",
-    "TLS_CHACHA20_POLY1305_SHA256",
-    "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
-    "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
-    "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
-    "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
-    "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
-    "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256",
-    "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
-    "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
-    "TLS_RSA_WITH_AES_128_GCM_SHA256",
-    "TLS_RSA_WITH_AES_256_GCM_SHA384",
-    "TLS_RSA_WITH_AES_128_CBC_SHA",
-    "TLS_RSA_WITH_AES_256_CBC_SHA",
-    "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
-);
-
-#[derive(TypedBuilder)]
-struct OkHttpTlsConfig {
-    #[builder(default = CURVES)]
-    curves: &'static str,
-
-    #[builder(default = SIGALGS_LIST)]
-    sigalgs_list: &'static str,
-
-    cipher_list: &'static str,
-}
-
-impl From<OkHttpTlsConfig> for TlsOptions {
-    fn from(val: OkHttpTlsConfig) -> Self {
-        TlsOptions::builder()
-            .enable_ocsp_stapling(true)
-            .curves_list(val.curves)
-            .sigalgs_list(val.sigalgs_list)
-            .cipher_list(val.cipher_list)
-            .min_tls_version(TlsVersion::TLS_1_2)
-            .max_tls_version(TlsVersion::TLS_1_3)
-            .aes_hw_override(true)
-            .build()
-    }
 }
 
 mod_generator!(
