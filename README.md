@@ -9,7 +9,7 @@ A collection of utilities to do common things with [wreq](https://github.com/0x6
 
 See the [crate documentation](https://docs.rs/wreq-util/latest/wreq_util) for more details.
 
-## Overview
+## Features
 
 **wreq-util** offers a set of [tower](https://github.com/tower-rs/tower) middleware and utilities designed specifically for the [wreq](https://github.com/0x676e67/wreq) HTTP client:
 
