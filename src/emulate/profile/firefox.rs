@@ -9,47 +9,6 @@ use tls::*;
 
 use super::*;
 
-macro_rules! mod_generator {
-    (
-        $mod_name:ident,
-        $tls_options:expr,
-        $http2_options:expr,
-        $header_initializer:ident,
-        [($default_os:ident, $default_ua:tt) $(, ($other_os:ident, $other_ua:tt))*]
-    ) => {
-        standard_mod_generator!(
-            $mod_name,
-            $tls_options,
-            $http2_options,
-            |emulation: &Emulation| {
-                firefox_platform_headers!(
-                    emulation,
-                    $header_initializer,
-                    [($default_os, $default_ua) $(, ($other_os, $other_ua))*]
-                )
-            }
-        );
-    };
-    (
-        $mod_name:ident,
-        $build_emulation:expr,
-        $header_initializer:ident,
-        [($default_os:ident, $default_ua:tt) $(, ($other_os:ident, $other_ua:tt))*]
-    ) => {
-        standard_mod_generator!(
-            $mod_name,
-            $build_emulation,
-            |emulation: &Emulation| {
-                firefox_platform_headers!(
-                    emulation,
-                    $header_initializer,
-                    [($default_os, $default_ua) $(, ($other_os, $other_ua))*]
-                )
-            }
-        );
-    };
-}
-
 mod_generator!(
     ff109,
     tls_options!(2, CIPHER_LIST_1, CURVES_1),

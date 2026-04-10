@@ -78,7 +78,12 @@ fn build_emulation(
     cipher_list: &'static str,
     user_agent: &'static str,
 ) -> wreq::Emulation {
-    let http2_options = if emulation.http2 {
+    let tls_options = OkHttpTlsConfig::builder()
+        .cipher_list(cipher_list)
+        .build()
+        .into();
+
+    let http2_options = emulation.http2.then(|| {
         let settings_order = SettingsOrder::builder()
             .extend([
                 SettingId::HeaderTableSize,
@@ -92,7 +97,7 @@ fn build_emulation(
             ])
             .build();
 
-        let http2_opts = Http2Options::builder()
+        Http2Options::builder()
             .initial_window_size(6291456)
             .initial_connection_window_size(15728640)
             .max_concurrent_streams(1000)
@@ -110,14 +115,10 @@ fn build_emulation(
                     .build(),
             )
             .settings_order(settings_order)
-            .build();
+            .build()
+    });
 
-        Some(http2_opts)
-    } else {
-        None
-    };
-
-    let default_headers = if emulation.headers {
+    let headers = emulation.headers.then(|| {
         let mut headers = HeaderMap::new();
         headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
         headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
@@ -127,20 +128,10 @@ fn build_emulation(
             ACCEPT_ENCODING,
             HeaderValue::from_static("gzip, deflate, br"),
         );
-        Some(headers)
-    } else {
-        None
-    };
+        headers
+    });
 
-    build_standard_emulation(
-        group,
-        OkHttpTlsConfig::builder()
-            .cipher_list(cipher_list)
-            .build()
-            .into(),
-        http2_options,
-        default_headers,
-    )
+    build_standard_emulation(group, tls_options, http2_options, headers)
 }
 
 mod_generator!(
