@@ -4,7 +4,7 @@ use wreq_util::{Emulation, Platform, Profile};
 async fn main() -> Result<(), wreq::Error> {
     // Example 1: Basic emulation - Safari26
     let text = wreq::get("https://tls.browserleaks.com/")
-        .emulation(Emulation::Chrome145)
+        .emulation(Emulation::Safari26)
         .send()
         .await?
         .text()
