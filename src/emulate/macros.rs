@@ -1,7 +1,7 @@
 macro_rules! define_enum {
     (
         $(#[$meta:meta])*
-        with_dispatch,
+        dispatch,
         $name:ident, $default_variant:ident,
         $const_target:ident,
         $(

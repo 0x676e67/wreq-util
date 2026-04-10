@@ -18,9 +18,8 @@ define_enum!(
     /// This controls the built-in TLS, HTTP/2, and header presets used for the
     /// request. Variants cover browser-style profiles as well as other clients,
     /// such as OkHttp.
-    with_dispatch,
-    Profile,
-    Chrome100,
+    dispatch,
+    Profile, Chrome100,
     Emulation,
 
     // Chrome versions
@@ -213,7 +212,7 @@ pub struct Emulation {
     #[builder(default)]
     profile: Profile,
 
-    /// Platform details to expose in headers and related client metadata.
+    /// Whether to change the platform (Windows/macOS/Linux/Android/iOS) information.
     #[builder(default)]
     platform: Platform,
 
