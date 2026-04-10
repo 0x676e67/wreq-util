@@ -268,3 +268,31 @@ test_emulation!(
     ["t13d1516h2_8daaf6152771_d8a2da3f94cd"],
     "52d84b11737d980aef856699f885ca86"
 );
+
+test_emulation!(
+    test_chrome146,
+    Emulation::Chrome146,
+    ["t13d1516h2_8daaf6152771_d8a2da3f94cd"],
+    "52d84b11737d980aef856699f885ca86"
+);
+
+test_emulation!(
+    test_chrome147,
+    Emulation::Chrome147,
+    ["t13d1516h2_8daaf6152771_d8a2da3f94cd"],
+    "52d84b11737d980aef856699f885ca86"
+);
+
+test_emulation!(
+    test_edge146,
+    Emulation::Edge146,
+    ["t13d1516h2_8daaf6152771_d8a2da3f94cd"],
+    "52d84b11737d980aef856699f885ca86"
+);
+
+test_emulation!(
+    test_edge147,
+    Emulation::Edge147,
+    ["t13d1516h2_8daaf6152771_d8a2da3f94cd"],
+    "52d84b11737d980aef856699f885ca86"
+);
