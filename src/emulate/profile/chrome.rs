@@ -1889,7 +1889,7 @@ mod_generator!(
         (
             IOS,
             r#""Microsoft Edge";v="147", "Not.A/Brand";v="8", "Chromium";v="147""#,
-            "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 EdgiOS/147.3912.51 Mobile/15E148 Safari/605.1.15"
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 EdgiOS/147.0.3912.51 Mobile/15E148 Safari/605.1.15"
         )
     ]
 );
