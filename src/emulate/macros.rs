@@ -176,14 +176,9 @@ macro_rules! standard_mod_generator {
         pub(crate) mod $mod_name {
             use super::*;
 
+            #[inline]
             pub fn emulation(emulation: Emulation) -> wreq::Emulation {
-                let default_headers = if emulation.headers {
-                    ($headers)(&emulation)
-                } else {
-                    None
-                };
-
-                build_emulation(emulation.http2, default_headers)
+                build_emulation(emulation.http2, ($headers)(&emulation))
             }
 
             pub fn build_emulation(
@@ -203,16 +198,17 @@ macro_rules! standard_mod_generator {
         pub(crate) mod $mod_name {
             use super::*;
 
+            #[inline]
             pub fn emulation(emulation: Emulation) -> wreq::Emulation {
-                let default_headers = if emulation.headers {
-                    ($headers)(&emulation)
-                } else {
-                    None
-                };
-
-                $build_emulation(emulation.http2, default_headers)
+                $build_emulation(emulation.http2, ($headers)(&emulation))
             }
         }
+    };
+}
+
+macro_rules! fixed_headers {
+    ($emulation:expr, $header_initializer:ident, $ua:expr) => {
+        $emulation.headers.then(|| $header_initializer($ua))
     };
 }
 
@@ -223,36 +219,36 @@ macro_rules! platform_headers {
         [($default_os:ident, $default_sec_ch_ua:tt, $default_ua:tt) $(, ($other_os:ident, $other_sec_ch_ua:tt, $other_ua:tt))*]
     ) => {{
         #[allow(unreachable_patterns)]
-        let default_headers = match $emulation.platform {
-            $(
-                Platform::$other_os => $header_initializer(
-                    $other_sec_ch_ua,
-                    $other_ua,
-                    $emulation.platform,
+        $emulation.headers.then(|| {
+            match $emulation.platform {
+                $(
+                    Platform::$other_os => $header_initializer(
+                        $other_sec_ch_ua,
+                        $other_ua,
+                        $emulation.platform,
+                    ),
+                )*
+                _ => $header_initializer(
+                    $default_sec_ch_ua,
+                    $default_ua,
+                    Platform::$default_os,
                 ),
-            )*
-            _ => $header_initializer(
-                $default_sec_ch_ua,
-                $default_ua,
-                Platform::$default_os,
-            ),
-        };
-
-        Some(default_headers)
+            }
+        })
     }};
 }
 
 macro_rules! firefox_platform_headers {
     ($emulation:expr, $header_initializer:ident, [($default_os:ident, $default_ua:tt) $(, ($other_os:ident, $other_ua:tt))*]) => {{
         #[allow(unreachable_patterns)]
-        let default_headers = match $emulation.platform {
-            $(
-                Platform::$other_os => $header_initializer($other_ua),
-            )*
-            _ => $header_initializer($default_ua),
-        };
-
-        Some(default_headers)
+        $emulation.headers.then(|| {
+            match $emulation.platform {
+                $(
+                    Platform::$other_os => $header_initializer($other_ua),
+                )*
+                _ => $header_initializer($default_ua),
+            }
+        })
     }};
 }
 
@@ -279,6 +275,40 @@ macro_rules! mod_generator {
     };
     (
         $mod_name:ident,
+        $tls_options:expr,
+        $http2_options:expr,
+        $header_initializer:ident,
+        [($default_os:ident, $default_ua:tt) $(, ($other_os:ident, $other_ua:tt))*]
+    ) => {
+        standard_mod_generator!(
+            $mod_name,
+            $tls_options,
+            $http2_options,
+            |emulation: &Emulation| {
+                firefox_platform_headers!(
+                    emulation,
+                    $header_initializer,
+                    [($default_os, $default_ua) $(, ($other_os, $other_ua))*]
+                )
+            }
+        );
+    };
+    (
+        $mod_name:ident,
+        $tls_options:expr,
+        $http2_options:expr,
+        $header_initializer:ident,
+        $ua:expr
+    ) => {
+        standard_mod_generator!(
+            $mod_name,
+            $tls_options,
+            $http2_options,
+            |emulation: &Emulation| fixed_headers!(emulation, $header_initializer, $ua)
+        );
+    };
+    (
+        $mod_name:ident,
         $build_emulation:expr,
         $header_initializer:ident,
         [($default_os:ident, $default_sec_ch_ua:tt, $default_ua:tt) $(, ($other_os:ident, $other_sec_ch_ua:tt, $other_ua:tt))*]
@@ -293,6 +323,36 @@ macro_rules! mod_generator {
                     [($default_os, $default_sec_ch_ua, $default_ua) $(, ($other_os, $other_sec_ch_ua, $other_ua))*]
                 )
             }
+        );
+    };
+    (
+        $mod_name:ident,
+        $build_emulation:expr,
+        $header_initializer:ident,
+        [($default_os:ident, $default_ua:tt) $(, ($other_os:ident, $other_ua:tt))*]
+    ) => {
+        standard_mod_generator!(
+            $mod_name,
+            $build_emulation,
+            |emulation: &Emulation| {
+                firefox_platform_headers!(
+                    emulation,
+                    $header_initializer,
+                    [($default_os, $default_ua) $(, ($other_os, $other_ua))*]
+                )
+            }
+        );
+    };
+    (
+        $mod_name:ident,
+        $build_emulation:expr,
+        $header_initializer:ident,
+        $ua:expr
+    ) => {
+        standard_mod_generator!(
+            $mod_name,
+            $build_emulation,
+            |emulation: &Emulation| fixed_headers!(emulation, $header_initializer, $ua)
         );
     };
 }
