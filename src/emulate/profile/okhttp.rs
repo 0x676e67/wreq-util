@@ -78,8 +78,6 @@ fn build_emulation(
     cipher_list: &'static str,
     user_agent: &'static str,
 ) -> wreq::Emulation {
-    dbg!(&emulation.http2);
-
     let tls_options = OkHttpTlsConfig::builder()
         .cipher_list(cipher_list)
         .build()
