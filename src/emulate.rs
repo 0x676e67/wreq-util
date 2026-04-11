@@ -2,14 +2,10 @@
 mod macros;
 mod compress;
 mod profile;
-#[cfg(feature = "emulation-rand")]
-mod rand;
 
 use profile::{chrome::*, firefox::*, okhttp::*, opera::*, safari::*};
 #[cfg(feature = "emulation-serde")]
 use serde::{Deserialize, Serialize};
-#[cfg(feature = "emulation-rand")]
-use strum_macros::VariantArray;
 use typed_builder::TypedBuilder;
 
 define_enum!(
@@ -223,6 +219,33 @@ pub struct Emulation {
     /// Whether to include default headers.
     #[builder(default = true)]
     headers: bool,
+}
+
+impl Emulation {
+    /// Returns a random variant of the `Profile` enum.
+    ///
+    /// This method uses a fast random number generator to select a random variant
+    /// from the `Profile::VARIANTS` array. The random number generator is based
+    /// on the XOR-Shift algorithm, which is efficient and suitable for use in
+    /// multi-threaded environments.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use wreq_util::Emulation;
+    ///
+    /// let random_emulation = Emulation::random();
+    /// println!("{:?}", random_emulation);
+    /// ```
+    pub fn random() -> Emulation {
+        let profile = Profile::VARIANTS;
+        let platform = Platform::VARIANTS;
+        let rand = crate::rand::fast_random() as usize;
+        Emulation::builder()
+            .profile(profile[rand % profile.len()])
+            .platform(platform[rand % platform.len()])
+            .build()
+    }
 }
 
 impl wreq::IntoEmulation for Emulation {
