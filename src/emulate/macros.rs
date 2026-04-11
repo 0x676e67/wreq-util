@@ -11,7 +11,6 @@ macro_rules! define_enum {
         $(#[$meta])*
         #[non_exhaustive]
         #[derive(Clone, Copy, Hash, Debug, PartialEq, Eq)]
-        #[cfg_attr(feature = "emulation-rand", derive(VariantArray))]
         #[cfg_attr(feature = "emulation-serde", derive(Deserialize, Serialize))]
         pub enum $name {
             $(
@@ -20,19 +19,25 @@ macro_rules! define_enum {
             )*
         }
 
-        impl Default for $name {
-            fn default() -> Self {
-                $name::$default_variant
-            }
-        }
-
         impl $name {
+            pub const VARIANTS: &[$name] = &[
+                $(
+                    $name::$variant,
+                )*
+            ];
+
             pub fn match_emulation(self, opt: $const_target) -> wreq::Emulation {
                 match self {
                     $(
                         $name::$variant => $emulation_fn(opt),
                     )*
                 }
+            }
+        }
+
+        impl Default for $name {
+            fn default() -> Self {
+                $name::$default_variant
             }
         }
 
@@ -55,13 +60,20 @@ macro_rules! define_enum {
         $(#[$meta])*
         #[non_exhaustive]
         #[derive(Clone, Copy, Hash, Debug, PartialEq, Eq)]
-        #[cfg_attr(feature = "emulation-rand", derive(VariantArray))]
         #[cfg_attr(feature = "emulation-serde", derive(Deserialize, Serialize))]
         pub enum $name {
             $(
                 #[cfg_attr(feature = "emulation-serde", serde(rename = $rename))]
                 $variant,
             )*
+        }
+
+        impl $name {
+            pub const VARIANTS: &[$name] = &[
+                $(
+                    $name::$variant,
+                )*
+            ];
         }
 
         impl Default for $name {
