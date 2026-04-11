@@ -90,7 +90,7 @@ path = "tests/emulate_safari.rs"
 [[example]]
 name = "emulate"
 path = "examples/emulate.rs"
-required-features = ["emulation", "emulation-rand"]
+required-features = ["emulation"]
 
 [[example]]
 name = "tower_delay"

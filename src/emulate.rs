@@ -224,11 +224,6 @@ pub struct Emulation {
 impl Emulation {
     /// Returns a random variant of the `Profile` enum.
     ///
-    /// This method uses a fast random number generator to select a random variant
-    /// from the `Profile::VARIANTS` array. The random number generator is based
-    /// on the XOR-Shift algorithm, which is efficient and suitable for use in
-    /// multi-threaded environments.
-    ///
     /// # Examples
     ///
     /// ```
@@ -238,12 +233,10 @@ impl Emulation {
     /// println!("{:?}", random_emulation);
     /// ```
     pub fn random() -> Emulation {
-        let profile = Profile::VARIANTS;
-        let platform = Platform::VARIANTS;
-        let rand = crate::rand::fast_random() as usize;
+        let rand = crate::rand::fast_random();
         Emulation::builder()
-            .profile(profile[rand % profile.len()])
-            .platform(platform[rand % platform.len()])
+            .profile(Profile::VARIANTS[(rand as usize) % Profile::VARIANTS.len()])
+            .platform(Platform::VARIANTS[((rand >> 32) as usize) % Platform::VARIANTS.len()])
             .build()
     }
 }
