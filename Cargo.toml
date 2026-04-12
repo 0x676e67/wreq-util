@@ -78,7 +78,6 @@ path = "tests/emulate_firefox.rs"
 name = "emulate_safari"
 path = "tests/emulate_safari.rs"
 
-
 [[example]]
 name = "emulate"
 path = "examples/emulate.rs"
