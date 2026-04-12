@@ -1,7 +1,7 @@
 #[macro_use]
 mod macros;
-mod compress;
-mod profile;
+pub mod compress;
+pub mod profile;
 
 use profile::{chrome::*, firefox::*, okhttp::*, opera::*, safari::*};
 #[cfg(feature = "emulation-serde")]
