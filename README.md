@@ -56,4 +56,4 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 
 ## FAQ
 
-**Issues may be submitted in the [`wreq`](https://github.com/0x676e67/wreq) repository.**
+**For all issues and feedback, please head over to the [wreq](https://github.com/0x676e67/wreq) repository.**
