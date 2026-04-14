@@ -27,13 +27,14 @@ tower-delay = ["dep:tower", "dep:pin-project-lite", "tokio/time"]
 
 [dependencies]
 wreq = { git = "https://github.com/0x676e67/wreq.git", default-features = false }
-serde = { version = "1.0.228", features = ["derive"], optional = true }
-typed-builder = { version = "0.23.2", optional = true }
-tokio = { version = "1.50.0", default-features = false, optional = true }
-tower = { version = "0.5.2", default-features = false, optional = true }
-pin-project-lite = { version = "0.2.17", optional = true }
 
 # Optional deps...
+
+serde = { version = "1.0.228", features = ["derive"], optional = true }
+tokio = { version = "1.50.0", default-features = false, optional = true }
+tower = { version = "0.5.2", default-features = false, optional = true }
+typed-builder = { version = "0.23.2", optional = true }
+pin-project-lite = { version = "0.2.17", optional = true }
 
 ## Compression algorithms
 brotli = { version = "8.0.2", optional = true }
