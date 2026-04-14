@@ -1,4 +1,3 @@
-
 # wreq-util
 
 A collection of utilities to do common things with [wreq](https://github.com/0x676e67/wreq).
@@ -16,6 +15,37 @@ See the [crate documentation](https://docs.rs/wreq-util/latest/wreq_util) for mo
 - **Emulation** various mainstream browsers (Chrome, Firefox, Safari, Opera, OkHttp) and their versions.
 - **Delay/JitterDelay**: Add fixed or jittered delays to HTTP [request](https://docs.rs/http/latest/http/request/index.html) with customizable strategies and predicates.
 
+## Example
+
+The following example uses the [Tokio](https://tokio.rs) runtime with optional features enabled by adding this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+wreq = "6.0.0-rc.28"
+wreq-util = "3.0.0-rc.10"
+```
+
+And then the code:
+
+```rust
+use wreq::Client;
+use wreq_util::Emulation;
+
+#[tokio::main]
+async fn main() -> wreq::Result<()> {
+    // Build a client
+    let client = Client::builder()
+        .emulation(Emulation::Chrome147)
+        .build()?;
+
+    // Use the API you're already familiar with
+    let resp = client.get("https://www.google.com").send().await?;
+    println!("{}", resp.text().await?);
+    Ok(())
+}
+```
+
 ## Contributing
 
 Contributions are welcome! Please submit pull requests on the [GitHub repository](https://github.com/0x676e67/wreq-util/pulls).  
@@ -23,4 +53,5 @@ Issues may be submitted in the [`wreq`](https://github.com/0x676e67/wreq) reposi
 
 ## License
 
-**wreq-util** © [0x676e67](https://github.com/0x676e67), Released under the [LGPL-3.0](https://github.com/0x676e67/wreq-util/blob/main/LICENSE) License.
+Licensed under either of Apache License, Version 2.0 ([LICENSE](./LICENSE) or http://www.apache.org/licenses/LICENSE-2.0).
+
