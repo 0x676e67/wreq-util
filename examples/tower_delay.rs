@@ -1,4 +1,5 @@
 use std::time::{Duration, Instant};
+
 use wreq::Client;
 use wreq_util::tower::delay::{DelayLayer, JitterDelayLayer};
 

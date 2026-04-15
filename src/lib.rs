@@ -5,6 +5,8 @@
 #![cfg_attr(not(test), warn(unused_crate_dependencies))]
 #![doc = include_str!("../README.md")]
 
+#[cfg(feature = "cookies")]
+pub mod cookie;
 #[cfg(feature = "emulation")]
 pub mod emulate;
 mod rand;

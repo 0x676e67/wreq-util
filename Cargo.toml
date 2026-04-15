@@ -17,13 +17,17 @@ rustdoc-args = ["--cfg", "docsrs"]
 targets = ["x86_64-unknown-linux-gnu"]
 
 [features]
-default = ["emulation"]
+default = ["emulation", "cookies"]
 
 emulation = ["dep:typed-builder", "dep:brotli", "dep:flate2", "dep:zstd"]
 emulation-serde = ["dep:serde"]
 emulation-compression = []
 
+# Enable tower-delay support.
 tower-delay = ["dep:tower", "dep:pin-project-lite", "tokio/time"]
+
+# Enable cookies store support.
+cookies = ["dep:cookie", "dep:serde_json", "dep:http", "wreq/cookies"]
 
 [dependencies]
 wreq = { git = "https://github.com/0x676e67/wreq.git", default-features = false }
@@ -31,12 +35,17 @@ wreq = { git = "https://github.com/0x676e67/wreq.git", default-features = false 
 # Optional deps...
 
 serde = { version = "1.0.228", features = ["derive"], optional = true }
-tokio = { version = "1.50.0", default-features = false, optional = true }
+tokio = { version = "1.52.0", default-features = false, optional = true }
+http = { version = "1.4.0", optional = true }
 tower = { version = "0.5.2", default-features = false, optional = true }
 typed-builder = { version = "0.23.2", optional = true }
 pin-project-lite = { version = "0.2.17", optional = true }
 
-## Compression algorithms
+## cookie 
+cookie = { version = "0.18.1", optional = true }
+serde_json = { version = "1", optional = true }
+
+## compression algorithms
 brotli = { version = "8.0.2", optional = true }
 flate2 = { version = "1.1.9", optional = true }
 zstd = { version = "0.13.3", optional = true }
@@ -88,3 +97,8 @@ required-features = ["emulation"]
 name = "tower_delay"
 path = "examples/tower_delay.rs"
 required-features = ["tower-delay"]
+
+[[example]]
+name = "cookie"
+path = "examples/cookie.rs"
+required-features = ["cookies"]
