@@ -3,8 +3,12 @@
 A collection of utilities to do common things with [wreq](https://github.com/0x676e67/wreq).
 
 [![Crates.io](https://img.shields.io/crates/v/wreq-util.svg?logo=rust)](https://crates.io/crates/wreq-util)
+[![GitHub License](https://img.shields.io/github/license/0x676e67/wreq-util)](https://github.com/0x676e67/wreq-util/blob/main/LICENSE)
 [![Documentation](https://docs.rs/wreq-util/badge.svg)](https://docs.rs/wreq-util)
-[![Crates.io License](https://img.shields.io/crates/l/wreq-util)](https://github.com/0x676e67/wreq-util/blob/main/LICENSE)
+[![Discord chat][discord-badge]][discord-url]
+
+[discord-badge]: https://img.shields.io/discord/1486741856397164788.svg?logo=discord
+[discord-url]: https://discord.gg/rfbvyFkgq3
 
 See the [crate documentation](https://docs.rs/wreq-util/latest/wreq_util) for more details.
 
