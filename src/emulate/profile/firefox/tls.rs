@@ -140,7 +140,7 @@ pub const SIGALGS_LIST: &str = join!(
 );
 
 pub const CERTIFICATE_COMPRESSORS: &[&'static dyn CertificateCompressor] =
-    &[&BrotliCompressor, &ZlibCompressor, &ZstdCompressor];
+    &[&ZlibCompressor, &BrotliCompressor, &ZstdCompressor];
 
 pub const DELEGATED_CREDENTIALS: &str = join!(
     ":",
