@@ -219,27 +219,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="107", "Google Chrome";v="107", "Not;A=Brand";v="99""#,
+            r#""Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="107", "Google Chrome";v="107", "Not;A=Brand";v="99""#,
+            r#""Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="107", "Google Chrome";v="107", "Not;A=Brand";v="99""#,
+            r#""Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="107", "Google Chrome";v="107", "Not;A=Brand";v="99""#,
+            r#""Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="107", "Google Chrome";v="107", "Not;A=Brand";v="99""#,
+            r#""Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 15_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/107.0.5304.66 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -252,22 +252,22 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Not?A_Brand";v="108", "Chromium";v="108", "Google Chrome";v="108""#,
+            r#""Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Not?A_Brand";v="108", "Chromium";v="108", "Google Chrome";v="108""#,
+            r#""Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Not?A_Brand";v="108", "Chromium";v="108", "Google Chrome";v="108""#,
+            r#""Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Not?A_Brand";v="108", "Chromium";v="108", "Google Chrome";v="108""#,
+            r#""Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
         ),
         (
@@ -285,27 +285,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="109", "Google Chrome";v="109", "Not;A=Brand";v="99""#,
+            r#""Not_A Brand";v="99", "Google Chrome";v="109", "Chromium";v="109""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="109", "Google Chrome";v="109", "Not;A=Brand";v="99""#,
+            r#""Not_A Brand";v="99", "Google Chrome";v="109", "Chromium";v="109""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="109", "Google Chrome";v="109", "Not;A=Brand";v="99""#,
+            r#""Not_A Brand";v="99", "Google Chrome";v="109", "Chromium";v="109""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="109", "Google Chrome";v="109", "Not;A=Brand";v="99""#,
+            r#""Not_A Brand";v="99", "Google Chrome";v="109", "Chromium";v="109""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="109", "Google Chrome";v="109", "Not;A=Brand";v="99""#,
+            r#""Not_A Brand";v="99", "Google Chrome";v="109", "Chromium";v="109""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/109.0.5414.112 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -318,27 +318,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="110", "Google Chrome";v="110", "Not;A=Brand";v="99""#,
+            r#""Chromium";v="110", "Not A(Brand";v="24", "Google Chrome";v="110""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Not?A_Brand";v="110", "Chromium";v="110", "Google Chrome";v="110""#,
+            r#""Chromium";v="110", "Not A(Brand";v="24", "Google Chrome";v="110""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Not?A_Brand";v="110", "Chromium";v="110", "Google Chrome";v="110""#,
+            r#""Chromium";v="110", "Not A(Brand";v="24", "Google Chrome";v="110""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Not?A_Brand";v="110", "Chromium";v="110", "Google Chrome";v="110""#,
+            r#""Chromium";v="110", "Not A(Brand";v="24", "Google Chrome";v="110""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Not?A_Brand";v="110", "Chromium";v="110", "Google Chrome";v="110""#,
+            r#""Chromium";v="110", "Not A(Brand";v="24", "Google Chrome";v="110""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/110.0.5481.104 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -351,22 +351,22 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="114", "Google Chrome";v="114", "Not;A=Brand";v="99""#,
+            r#""Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="114", "Google Chrome";v="114", "Not;A=Brand";v="99""#,
+            r#""Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="114", "Google Chrome";v="114", "Not;A=Brand";v="99""#,
+            r#""Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="114", "Google Chrome";v="114", "Not;A=Brand";v="99""#,
+            r#""Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         )
     ]
@@ -380,27 +380,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="116", "Google Chrome";v="116", "Not;A=Brand";v="99""#,
+            r#""Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="116", "Google Chrome";v="116", "Not;A=Brand";v="99""#,
+            r#""Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="116", "Google Chrome";v="116", "Not;A=Brand";v="99""#,
+            r#""Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="116", "Google Chrome";v="116", "Not;A=Brand";v="99""#,
+            r#""Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="116", "Google Chrome";v="116", "Not;A=Brand";v="99""#,
+            r#""Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/116.0.5845.103 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -447,27 +447,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
+            r#""Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
+            r#""Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
+            r#""Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
+            r#""Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="120", "Google Chrome";v="120", "Not?A_Brand";v="99""#,
+            r#""Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/120.0.6099.119 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -514,22 +514,22 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Google Chrome";v="123", "Not;A=Brand";v="8", "Chromium";v="123""#,
+            r#""Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Google Chrome";v="123", "Not;A=Brand";v="8", "Chromium";v="123""#,
+            r#""Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Google Chrome";v="123", "Not;A=Brand";v="8", "Chromium";v="123""#,
+            r#""Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Google Chrome";v="123", "Not;A=Brand";v="8", "Chromium";v="123""#,
+            r#""Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
         )
     ]
@@ -576,27 +576,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="119", "Google Chrome";v="119", "Not=A?Brand";v="99""#,
+            r#""Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="119", "Google Chrome";v="119", "Not=A?Brand";v="99""#,
+            r#""Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="119", "Google Chrome";v="119", "Not=A?Brand";v="99""#,
+            r#""Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="119", "Google Chrome";v="119", "Not=A?Brand";v="99""#,
+            r#""Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="119", "Google Chrome";v="119", "Not=A?Brand";v="99""#,
+            r#""Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/119.0.6045.109 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -643,27 +643,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="126", "Google Chrome";v="126", "Not-A.Brand";v="99""#,
+            r#""Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="126", "Google Chrome";v="126", "Not-A.Brand";v="99""#,
+            r#""Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="126", "Google Chrome";v="126", "Not-A.Brand";v="99""#,
+            r#""Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="126", "Google Chrome";v="126", "Not-A.Brand";v="99""#,
+            r#""Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="126", "Google Chrome";v="126", "Not-A.Brand";v="99""#,
+            r#""Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 17_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/126.0.6478.153 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -676,27 +676,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Not/A)Brand";v="8", "Chromium";v="127", "Google Chrome";v="127""#,
+            r#""Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Not/A)Brand";v="8", "Chromium";v="127", "Google Chrome";v="127""#,
+            r#""Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Not/A)Brand";v="8", "Chromium";v="127", "Google Chrome";v="127""#,
+            r#""Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Not/A)Brand";v="8", "Chromium";v="127", "Google Chrome";v="127""#,
+            r#""Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Not/A)Brand";v="8", "Chromium";v="127", "Google Chrome";v="127""#,
+            r#""Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 17_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/127.0.6533.77 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -743,27 +743,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="128", "Google Chrome";v="128", "Not?A_Brand";v="99""#,
+            r#""Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="128", "Google Chrome";v="128", "Not?A_Brand";v="99""#,
+            r#""Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="128", "Google Chrome";v="128", "Not?A_Brand";v="99""#,
+            r#""Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="128", "Google Chrome";v="128", "Not?A_Brand";v="99""#,
+            r#""Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="128", "Google Chrome";v="128", "Not?A_Brand";v="99""#,
+            r#""Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 17_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/128.0.6613.98 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -776,27 +776,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Google Chrome";v="129", "Chromium";v="129", "Not_A Brand";v="24""#,
+            r#""Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Google Chrome";v="129", "Chromium";v="129", "Not_A Brand";v="24""#,
+            r#""Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Google Chrome";v="129", "Chromium";v="129", "Not_A Brand";v="24""#,
+            r#""Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129""#,
             "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
         ),
         (
             Windows,
-            r#""Google Chrome";v="129", "Chromium";v="129", "Not_A Brand";v="24""#,
+            r#""Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Google Chrome";v="129", "Chromium";v="129", "Not_A Brand";v="24""#,
+            r#""Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/129.0.6668.46 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -1274,27 +1274,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="135", "Not:A-Brand";v="24", "Google Chrome";v="135""#,
+            r#""Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="135", "Not:A-Brand";v="24", "Google Chrome";v="135""#,
+            r#""Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="135", "Not:A-Brand";v="24", "Google Chrome";v="135""#,
+            r#""Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135""#,
             "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="135", "Not:A-Brand";v="24", "Google Chrome";v="135""#,
+            r#""Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="135", "Not:A-Brand";v="24", "Google Chrome";v="135""#,
+            r#""Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/135.0.0.0 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -1307,27 +1307,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="136", "Not:A-Brand";v="24", "Google Chrome";v="136""#,
+            r#""Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="136", "Not:A-Brand";v="24", "Google Chrome";v="136""#,
+            r#""Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="136", "Not:A-Brand";v="24", "Google Chrome";v="136""#,
+            r#""Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99""#,
             "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="136", "Not:A-Brand";v="24", "Google Chrome";v="136""#,
+            r#""Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="136", "Not:A-Brand";v="24", "Google Chrome";v="136""#,
+            r#""Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.0.0 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -1373,27 +1373,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="138", "Not=A?Brand";v="24", "Google Chrome";v="138""#,
+            r#""Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="138", "Not=A?Brand";v="24", "Google Chrome";v="138""#,
+            r#""Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="138", "Not=A?Brand";v="24", "Google Chrome";v="138""#,
+            r#""Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138""#,
             "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="138", "Not=A?Brand";v="24", "Google Chrome";v="138""#,
+            r#""Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="138", "Not=A?Brand";v="24", "Google Chrome";v="138""#,
+            r#""Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/138.0.0.0 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -1406,27 +1406,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="139", "Not=A?Brand";v="24", "Google Chrome";v="139""#,
+            r#""Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="139", "Not=A?Brand";v="24", "Google Chrome";v="139""#,
+            r#""Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="139", "Not=A?Brand";v="24", "Google Chrome";v="139""#,
+            r#""Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139""#,
             "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="139", "Not=A?Brand";v="24", "Google Chrome";v="139""#,
+            r#""Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="139", "Not=A?Brand";v="24", "Google Chrome";v="139""#,
+            r#""Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/139.0.0.0 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -1571,27 +1571,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="143", "Google Chrome";v="143", "Not_A Brand";v="99""#,
+            r#""Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="143", "Google Chrome";v="143", "Not_A Brand";v="99""#,
+            r#""Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="143", "Google Chrome";v="143", "Not_A Brand";v="99""#,
+            r#""Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24""#,
             "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="143", "Google Chrome";v="143", "Not_A Brand";v="99""#,
+            r#""Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="143", "Google Chrome";v="143", "Not_A Brand";v="99""#,
+            r#""Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/143.0.0.0 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -1637,27 +1637,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="145", "Not;A=Brand";v="24", "Google Chrome";v="145""#,
+            r#""Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="145", "Not;A=Brand";v="24", "Google Chrome";v="145""#,
+            r#""Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="145", "Not;A=Brand";v="24", "Google Chrome";v="145""#,
+            r#""Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145""#,
             "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="145", "Not;A=Brand";v="24", "Google Chrome";v="145""#,
+            r#""Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="145", "Not;A=Brand";v="24", "Google Chrome";v="145""#,
+            r#""Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 18_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/145.0.0.0 Mobile/15E148 Safari/604.1"
         )
     ]
@@ -1670,27 +1670,27 @@ mod_generator!(
     [
         (
             MacOS,
-            r#""Chromium";v="146", "Not(A:Brand";v="24", "Google Chrome";v="146""#,
+            r#""Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146""#,
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
         ),
         (
             Linux,
-            r#""Chromium";v="146", "Not(A:Brand";v="24", "Google Chrome";v="146""#,
+            r#""Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146""#,
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
         ),
         (
             Android,
-            r#""Chromium";v="146", "Not(A:Brand";v="24", "Google Chrome";v="146""#,
+            r#""Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146""#,
             "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.7680.164 Mobile Safari/537.36"
         ),
         (
             Windows,
-            r#""Chromium";v="146", "Not(A:Brand";v="24", "Google Chrome";v="146""#,
+            r#""Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146""#,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
         ),
         (
             IOS,
-            r#""Chromium";v="146", "Not(A:Brand";v="24", "Google Chrome";v="146""#,
+            r#""Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146""#,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/146.0.7680.164 Mobile/15E148 Safari/604.1"
         )
     ]
