@@ -131,6 +131,8 @@ define_enum!(
     Chrome143 => ("chrome_143", v143::emulation),
     Chrome144 => ("chrome_144", v144::emulation),
     Chrome145 => ("chrome_145", v145::emulation),
+    Chrome146 => ("chrome_146", v146::emulation),
+    Chrome147 => ("chrome_147", v147::emulation),
 
     // Edge versions
     Edge101 => ("edge_101", edge101::emulation),
@@ -149,12 +151,25 @@ define_enum!(
     Edge143 => ("edge_143", edge143::emulation),
     Edge144 => ("edge_144", edge144::emulation),
     Edge145 => ("edge_145", edge145::emulation),
+    Edge146 => ("edge_146", edge146::emulation),
+    Edge147 => ("edge_147", edge147::emulation),
 
     // Opera versions
     Opera116 => ("opera_116", opera116::emulation),
     Opera117 => ("opera_117", opera117::emulation),
     Opera118 => ("opera_118", opera118::emulation),
     Opera119 => ("opera_119", opera119::emulation),
+    Opera120 => ("opera_120", opera120::emulation),
+    Opera121 => ("opera_121", opera121::emulation),
+    Opera122 => ("opera_122", opera122::emulation),
+    Opera123 => ("opera_123", opera123::emulation),
+    Opera124 => ("opera_124", opera124::emulation),
+    Opera125 => ("opera_125", opera125::emulation),
+    Opera126 => ("opera_126", opera126::emulation),
+    Opera127 => ("opera_127", opera127::emulation),
+    Opera128 => ("opera_128", opera128::emulation),
+    Opera129 => ("opera_129", opera129::emulation),
+    Opera130 => ("opera_130", opera130::emulation),
 
     // Firefox versions
     Firefox109 => ("firefox_109", ff109::emulation),
@@ -173,6 +188,8 @@ define_enum!(
     Firefox145 => ("firefox_145", ff145::emulation),
     Firefox146 => ("firefox_146", ff146::emulation),
     Firefox147 => ("firefox_147", ff147::emulation),
+    Firefox148 => ("firefox_148", ff148::emulation),
+    Firefox149 => ("firefox_149", ff149::emulation),
 
     // Safari versions
     SafariIos17_2 => ("safari_ios_17.2", safari_ios_17_2::emulation),
