@@ -201,6 +201,20 @@ mod_generator!(
 );
 
 mod_generator!(
+    safari26_3,
+    safari18_5::build_emulation,
+    header_initializer_for_18,
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15"
+);
+
+mod_generator!(
+    safari26_4,
+    safari18_5::build_emulation,
+    header_initializer_for_18,
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15"
+);
+
+mod_generator!(
     safari_ipad_26_2,
     safari26::build_emulation,
     header_initializer_for_18,

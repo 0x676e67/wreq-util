@@ -279,3 +279,21 @@ mod_generator!(
         )
     ]
 );
+
+mod_generator!(
+    opera131,
+    opera116::build_emulation,
+    header_initializer_with_zstd_priority,
+    [
+        (
+            MacOS,
+            r#""Opera";v="131", "Not.A/Brand";v="8", "Chromium";v="147""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 OPR/131.0.0.0"
+        ),
+        (
+            Windows,
+            r#""Opera";v="131", "Not.A/Brand";v="8", "Chromium";v="147""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 OPR/131.0.0.0"
+        )
+    ]
+);
