@@ -460,3 +460,59 @@ mod_generator!(
         )
     ]
 );
+
+mod_generator!(
+    ff150,
+    ff135::build_emulation,
+    header_initializer_with_zstd,
+    [
+        (
+            Windows,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0"
+        ),
+        (
+            MacOS,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:150.0) Gecko/20100101 Firefox/150.0"
+        ),
+        (
+            Linux,
+            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:150.0) Gecko/20100101 Firefox/150.0"
+        ),
+        (
+            Android,
+            "Mozilla/5.0 (Android 13; Mobile; rv:150.0) Gecko/150.0 Firefox/150.0"
+        ),
+        (
+            IOS,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/150.0 Mobile/15E148 Safari/605.1.15"
+        )
+    ]
+);
+
+mod_generator!(
+    ff151,
+    ff135::build_emulation,
+    header_initializer_with_zstd,
+    [
+        (
+            Windows,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+        ),
+        (
+            MacOS,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:151.0) Gecko/20100101 Firefox/151.0"
+        ),
+        (
+            Linux,
+            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:151.0) Gecko/20100101 Firefox/151.0"
+        ),
+        (
+            Android,
+            "Mozilla/5.0 (Android 13; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0"
+        ),
+        (
+            IOS,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/151.0 Mobile/15E148 Safari/605.1.15"
+        )
+    ]
+);
