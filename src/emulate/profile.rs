@@ -43,5 +43,5 @@ fn build_standard_emulation(
         builder = builder.headers(headers);
     }
 
-    builder.build(Group::named(group))
+    builder.build(Group::new(group))
 }
