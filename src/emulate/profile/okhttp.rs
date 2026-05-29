@@ -98,12 +98,8 @@ fn build_emulation(
             .build();
 
         Http2Options::builder()
-            .initial_window_size(6291456)
-            .initial_connection_window_size(15728640)
-            .max_concurrent_streams(1000)
-            .max_header_list_size(262144)
-            .header_table_size(65536)
-            .headers_stream_dependency(StreamDependency::new(StreamId::zero(), 255, true))
+            .initial_window_size(16777216)
+            .initial_connection_window_size(16777216)
             .headers_pseudo_order(
                 PseudoOrder::builder()
                     .extend([
@@ -124,10 +120,7 @@ fn build_emulation(
         headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
         headers.insert(USER_AGENT, HeaderValue::from_static(user_agent));
         #[cfg(feature = "emulation-compression")]
-        headers.insert(
-            ACCEPT_ENCODING,
-            HeaderValue::from_static("gzip, deflate, br"),
-        );
+        headers.insert(ACCEPT_ENCODING, HeaderValue::from_static("gzip"));
         headers
     });
 
