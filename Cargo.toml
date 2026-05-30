@@ -16,9 +16,6 @@ all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 targets = ["x86_64-unknown-linux-gnu"]
 
-[target.'cfg(doc)'.dependencies]
-wreq = { git = "https://github.com/0x676e67/wreq.git", features = ["tokio-rt"] }
-
 [features]
 default = ["emulation"]
 
