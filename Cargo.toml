@@ -19,6 +19,9 @@ targets = ["x86_64-unknown-linux-gnu"]
 [features]
 default = ["emulation"]
 
+tokio-rt = ["wreq/tokio-rt"]
+compio-rt = ["wreq/compio-rt"]
+
 emulation = ["dep:typed-builder", "dep:brotli", "dep:flate2", "dep:zstd"]
 emulation-serde = ["dep:serde"]
 emulation-compression = []
@@ -44,12 +47,12 @@ zstd = { version = "0.13.3", optional = true }
 [dev-dependencies]
 wreq = { git = "https://github.com/0x676e67/wreq.git"}
 tokio = { version = "1.48.0", features = ["full"] }
-hyper = { version = "1.8.1", default-features = false, features = [
+hyper = { version = "1.10.1", default-features = false, features = [
     "http1",
     "http2",
     "server",
 ] }
-hyper-util = { version = "0.1.16", features = [
+hyper-util = { version = "0.1.20", features = [
     "http1",
     "http2",
     "server-auto",
