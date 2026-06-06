@@ -14,7 +14,7 @@ compile_error!(
 );
 
 #[cfg(all(feature = "zstd", feature = "zstd-rust"))]
-use zstd as _;
+use ruzstd as _;
 
 #[derive(Debug)]
 pub struct BrotliCompressor;
