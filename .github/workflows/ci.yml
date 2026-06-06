@@ -53,10 +53,14 @@ jobs:
       - uses: taiki-e/install-action@v2
         with:
           tool: cargo-nextest
-      - name: Tests
+      - name: Tests (zstd)
         run: | 
           set -euxo pipefail
           cargo nextest run --workspace
+      - name: Tests (ruzstd)
+        run: |
+          set -euxo pipefail
+          cargo nextest run --workspace --no-default-features --features "tokio-rt,emulation,zstd-rust"
 
   linux:
     name: Linux

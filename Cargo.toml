@@ -22,11 +22,14 @@ default = ["emulation"]
 tokio-rt = ["wreq/tokio-rt"]
 compio-rt = ["wreq/compio-rt"]
 
-emulation = ["dep:typed-builder", "dep:brotli", "dep:flate2", "dep:zstd"]
+emulation = ["dep:typed-builder", "dep:brotli", "dep:flate2"]
 emulation-serde = ["dep:serde"]
 emulation-compression = []
 
 tower-delay = ["dep:tower", "dep:pin-project-lite", "tokio/time"]
+
+zstd = ["dep:zstd"]
+zstd-rust = ["dep:ruzstd"]
 
 [dependencies]
 wreq = { version = "6.0.0-rc", default-features = false }
@@ -43,6 +46,7 @@ pin-project-lite = { version = "0.2.17", optional = true }
 brotli = { version = "8.0.2", optional = true }
 flate2 = { version = "1.1.9", optional = true }
 zstd = { version = "0.13.3", optional = true }
+ruzstd = { version = "0.8.3", optional = true }
 
 [dev-dependencies]
 wreq = "6.0.0-rc"
