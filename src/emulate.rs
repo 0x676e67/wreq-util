@@ -246,6 +246,117 @@ impl Emulation {
             .platform(Platform::VARIANTS[((rand >> 32) as usize) % Platform::VARIANTS.len()])
             .build()
     }
+
+    /// Returns a market-share weighted random `Emulation`.
+    ///
+    /// Unlike [`Emulation::random`], selection is biased toward popular browser
+    /// families and their most recent versions, and each profile is only paired
+    /// with platforms it ships on.
+    ///
+    /// Browser family and version weights are derived from StatCounter Global
+    /// Stats data retrieved in June 2026:
+    ///
+    /// Browser market share:
+    /// <https://gs.statcounter.com/browser-market-share#monthly-202506-202606>
+    ///
+    /// Browser version market share:
+    /// <https://gs.statcounter.com/browser-version-market-share#monthly-202506-202606>
+    ///
+    /// StatCounter requests attribution for use of its data. See:
+    /// <https://creativecommons.org/licenses/by-sa/3.0/>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use wreq_util::Emulation;
+    ///
+    /// let random_emulation = Emulation::weighted_random();
+    /// println!("{:?}", random_emulation);
+    /// ```
+    pub fn weighted_random() -> Emulation {
+        use Platform::*;
+        use Profile::*;
+
+        struct Class {
+            weight: u32,
+            platforms: &'static [Platform],
+            profiles: &'static [Profile],
+        }
+
+        // Weights based on StatCounter June 2026 data.
+        //
+        // Each weight is the family's share percentage multiplied by 100 and
+        // rounded to an integer (e.g. Chrome 71.41% -> 7141, Edge 5.02% -> 502,
+        // Firefox 2.35% -> 235, Opera 1.73% -> 173). Only relative magnitudes
+        // matter, so the common x100 scale is arbitrary but keeps two decimals
+        // of precision without floats.
+        //
+        // Safari's 14.77% is split by platform using the browser-version data:
+        // iPhone 11.96% + iPad 0.44% = 12.40% mobile (-> 1240), leaving the
+        // remaining 2.37% for desktop/macOS (-> 237).
+        const CLASSES: &[Class] = &[
+            Class {
+                weight: 7141,
+                platforms: &[Windows, MacOS, Linux, Android],
+                profiles: &[
+                    Chrome148, Chrome147, Chrome146, Chrome145, Chrome144, Chrome143,
+                ],
+            },
+            Class {
+                weight: 1240,
+                platforms: &[IOS],
+                profiles: &[
+                    SafariIos26_2,
+                    SafariIos26,
+                    SafariIpad26_2,
+                    SafariIPad26,
+                    SafariIos18_1_1,
+                    SafariIPad18,
+                ],
+            },
+            Class {
+                weight: 502,
+                platforms: &[Windows, MacOS],
+                profiles: &[Edge148, Edge147, Edge146, Edge145, Edge144, Edge143],
+            },
+            Class {
+                weight: 237,
+                platforms: &[MacOS],
+                profiles: &[
+                    Safari26_4, Safari26_3, Safari26_2, Safari26_1, Safari26, Safari18_5,
+                ],
+            },
+            Class {
+                weight: 235,
+                platforms: &[Windows, MacOS, Linux],
+                profiles: &[
+                    Firefox151, Firefox150, Firefox149, Firefox148, Firefox147, Firefox146,
+                ],
+            },
+            Class {
+                weight: 173,
+                platforms: &[Windows, MacOS, Linux, Android],
+                profiles: &[Opera131, Opera130, Opera129, Opera128, Opera127, Opera126],
+            },
+        ];
+
+        let (r1, r2) = (crate::rand::fast_random(), crate::rand::fast_random());
+        let total: u32 = CLASSES.iter().map(|c| c.weight).sum();
+        let mut t = (r1 % total as u64) as u32;
+        let class = CLASSES
+            .iter()
+            .find(|c| {
+                t = t.checked_sub(c.weight).unwrap_or(u32::MAX);
+                t == u32::MAX
+            })
+            .unwrap_or(&CLASSES[0]);
+        let n = class.profiles.len();
+        let idx = ((r1 >> 32) as usize % n).min((r2 >> 32) as usize % n);
+        Emulation::builder()
+            .profile(class.profiles[idx])
+            .platform(class.platforms[(r2 as usize) % class.platforms.len()])
+            .build()
+    }
 }
 
 impl wreq::IntoEmulation for Emulation {
