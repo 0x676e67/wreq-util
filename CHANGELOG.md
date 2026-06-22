@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0-rc.13](https://github.com/0x676e67/wreq-util/compare/v3.0.0-rc.12...v3.0.0-rc.13) - 2026-06-19
+
+### Added
+
+- add Emulation::weighted_random for traffic-weighted profile selection ([#97](https://github.com/0x676e67/wreq-util/pull/97))
+
+### Other
+
+- Add Chrome 149 to emulation profiles ([#99](https://github.com/0x676e67/wreq-util/pull/99))
+
 ## [3.0.0-rc.12](https://github.com/0x676e67/wreq-util/compare/v3.0.0-rc.11...v3.0.0-rc.12) - 2026-06-03
 
 ### Added
