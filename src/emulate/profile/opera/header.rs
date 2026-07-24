@@ -13,15 +13,14 @@ pub fn header_initializer_with_zstd_priority(
         emulation_os.platform(),
         emulation_os.is_mobile()
     );
-    header_chrome_ua!(headers, ua);
-
-    headers.insert(ACCEPT, HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"));
-    #[cfg(feature = "emulation-compression")]
     headers.insert(
-        ACCEPT_ENCODING,
-        HeaderValue::from_static("gzip, deflate, br, zstd"),
+        HeaderName::from_static("upgrade-insecure-requests"),
+        HeaderValue::from_static("1"),
     );
-    headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
+    header_chrome_ua!(headers, ua);
+    header_chrome_accept!(headers);
+    header_chrome_sec_fetch!(headers);
+    header_chrome_accept_encoding!(zstd, headers);
     headers.insert(
         HeaderName::from_static("priority"),
         HeaderValue::from_static("u=0, i"),
