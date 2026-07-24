@@ -23,7 +23,7 @@ use wreq::{
 };
 
 use super::{
-    Emulation, Platform,
+    Emulation, Platform, Strategy,
     compress::{BrotliCompressor, ZlibCompressor, ZstdCompressor},
 };
 

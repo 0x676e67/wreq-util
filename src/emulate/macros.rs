@@ -240,12 +240,14 @@ macro_rules! platform_headers {
                         $other_sec_ch_ua,
                         $other_ua,
                         $emulation.platform,
+                        $emulation.strategy,
                     ),
                 )*
                 _ => $header_initializer(
                     $default_sec_ch_ua,
                     $default_ua,
                     Platform::$default_os,
+                    $emulation.strategy,
                 ),
             }
         })
