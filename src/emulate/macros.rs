@@ -130,7 +130,7 @@ macro_rules! header_chrome_accept_encoding {
             HeaderValue::from_static("gzip, deflate, br, zstd"),
         );
         $headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
-    }
+    };
 }
 
 macro_rules! header_firefox_sec_fetch {
