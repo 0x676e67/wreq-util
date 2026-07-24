@@ -87,18 +87,18 @@ macro_rules! define_enum {
 macro_rules! header_chrome_sec_ch_ua {
     ($headers:expr, $ua:expr, $platform:expr, $is_mobile:expr) => {
         let mobile = if $is_mobile { "?1" } else { "?0" };
-        $headers.insert("sec-ch-ua", HeaderValue::from_static($ua));
-        $headers.insert("sec-ch-ua-mobile", HeaderValue::from_static(mobile));
-        $headers.insert("sec-ch-ua-platform", HeaderValue::from_static($platform));
+        $headers.insert(SEC_CH_UA, HeaderValue::from_static($ua));
+        $headers.insert(SEC_CH_UA_MOBILE, HeaderValue::from_static(mobile));
+        $headers.insert(SEC_CH_UA_PLATFORM, HeaderValue::from_static($platform));
     };
 }
 
 macro_rules! header_chrome_sec_fetch {
     ($headers:expr) => {
-        $headers.insert("sec-fetch-site", HeaderValue::from_static("none"));
-        $headers.insert("sec-fetch-mode", HeaderValue::from_static("navigate"));
-        $headers.insert("sec-fetch-user", HeaderValue::from_static("?1"));
-        $headers.insert("sec-fetch-dest", HeaderValue::from_static("document"));
+        $headers.insert(SEC_FETCH_SITE, HeaderValue::from_static("none"));
+        $headers.insert(SEC_FETCH_MODE, HeaderValue::from_static("navigate"));
+        $headers.insert(SEC_FETCH_USER, HeaderValue::from_static("?1"));
+        $headers.insert(SEC_FETCH_DEST, HeaderValue::from_static("document"));
     };
 }
 
@@ -135,10 +135,10 @@ macro_rules! header_chrome_accept_encoding {
 
 macro_rules! header_firefox_sec_fetch {
     ($headers:expr) => {
-        $headers.insert("sec-fetch-dest", HeaderValue::from_static("document"));
-        $headers.insert("sec-fetch-mode", HeaderValue::from_static("navigate"));
-        $headers.insert("sec-fetch-site", HeaderValue::from_static("none"));
-        $headers.insert("sec-fetch-user", HeaderValue::from_static("?1"));
+        $headers.insert(SEC_FETCH_DEST, HeaderValue::from_static("document"));
+        $headers.insert(SEC_FETCH_MODE, HeaderValue::from_static("navigate"));
+        $headers.insert(SEC_FETCH_SITE, HeaderValue::from_static("none"));
+        $headers.insert(SEC_FETCH_USER, HeaderValue::from_static("?1"));
     };
 }
 

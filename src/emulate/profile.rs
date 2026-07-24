@@ -27,6 +27,17 @@ use super::{
     compress::{BrotliCompressor, ZlibCompressor, ZstdCompressor},
 };
 
+const SEC_CH_UA: HeaderName = HeaderName::from_static("sec-ch-ua");
+const SEC_CH_UA_MOBILE: HeaderName = HeaderName::from_static("sec-ch-ua-mobile");
+const SEC_CH_UA_PLATFORM: HeaderName = HeaderName::from_static("sec-ch-ua-platform");
+const UPGRADE_INSECURE_REQUESTS: HeaderName = HeaderName::from_static("upgrade-insecure-requests");
+const SEC_FETCH_SITE: HeaderName = HeaderName::from_static("sec-fetch-site");
+const SEC_FETCH_MODE: HeaderName = HeaderName::from_static("sec-fetch-mode");
+const SEC_FETCH_USER: HeaderName = HeaderName::from_static("sec-fetch-user");
+const SEC_FETCH_DEST: HeaderName = HeaderName::from_static("sec-fetch-dest");
+const PRIORITY: HeaderName = HeaderName::from_static("priority");
+const TE: HeaderName = HeaderName::from_static("te");
+
 fn build_standard_emulation(
     group: &'static str,
     tls_options: TlsOptions,

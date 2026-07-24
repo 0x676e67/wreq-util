@@ -17,7 +17,7 @@ pub fn header_initializer(
                 emulation_os.is_mobile()
             );
             headers.insert(
-                HeaderName::from_static("upgrade-insecure-requests"),
+                UPGRADE_INSECURE_REQUESTS,
                 HeaderValue::from_static("1"),
             );
             header_chrome_ua!(headers, ua);
@@ -36,14 +36,14 @@ pub fn header_initializer(
             ]) {
                 match name {
                     "sec-ch-ua" => {
-                        headers.insert("sec-ch-ua", HeaderValue::from_static(sec_ch_ua));
+                        headers.insert(SEC_CH_UA, HeaderValue::from_static(sec_ch_ua));
                     }
                     "sec-ch-ua-mobile" => {
-                        headers.insert("sec-ch-ua-mobile", HeaderValue::from_static(mobile));
+                        headers.insert(SEC_CH_UA_MOBILE, HeaderValue::from_static(mobile));
                     }
                     "sec-ch-ua-platform" => {
                         headers.insert(
-                            "sec-ch-ua-platform",
+                            SEC_CH_UA_PLATFORM,
                             HeaderValue::from_static(platform),
                         );
                     }
@@ -54,9 +54,9 @@ pub fn header_initializer(
                 }
             }
             headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
-            headers.insert("sec-fetch-site", HeaderValue::from_static("none"));
-            headers.insert("sec-fetch-mode", HeaderValue::from_static("cors"));
-            headers.insert("sec-fetch-dest", HeaderValue::from_static("empty"));
+            headers.insert(SEC_FETCH_SITE, HeaderValue::from_static("none"));
+            headers.insert(SEC_FETCH_MODE, HeaderValue::from_static("cors"));
+            headers.insert(SEC_FETCH_DEST, HeaderValue::from_static("empty"));
             header_chrome_accept_encoding!(headers);
         }
     }
@@ -79,7 +79,7 @@ pub fn header_initializer_with_zstd(
                 emulation_os.is_mobile()
             );
             headers.insert(
-                HeaderName::from_static("upgrade-insecure-requests"),
+                UPGRADE_INSECURE_REQUESTS,
                 HeaderValue::from_static("1"),
             );
             header_chrome_ua!(headers, ua);
@@ -98,14 +98,14 @@ pub fn header_initializer_with_zstd(
             ]) {
                 match name {
                     "sec-ch-ua" => {
-                        headers.insert("sec-ch-ua", HeaderValue::from_static(sec_ch_ua));
+                        headers.insert(SEC_CH_UA, HeaderValue::from_static(sec_ch_ua));
                     }
                     "sec-ch-ua-mobile" => {
-                        headers.insert("sec-ch-ua-mobile", HeaderValue::from_static(mobile));
+                        headers.insert(SEC_CH_UA_MOBILE, HeaderValue::from_static(mobile));
                     }
                     "sec-ch-ua-platform" => {
                         headers.insert(
-                            "sec-ch-ua-platform",
+                            SEC_CH_UA_PLATFORM,
                             HeaderValue::from_static(platform),
                         );
                     }
@@ -116,9 +116,9 @@ pub fn header_initializer_with_zstd(
                 }
             }
             headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
-            headers.insert("sec-fetch-site", HeaderValue::from_static("none"));
-            headers.insert("sec-fetch-mode", HeaderValue::from_static("cors"));
-            headers.insert("sec-fetch-dest", HeaderValue::from_static("empty"));
+            headers.insert(SEC_FETCH_SITE, HeaderValue::from_static("none"));
+            headers.insert(SEC_FETCH_MODE, HeaderValue::from_static("cors"));
+            headers.insert(SEC_FETCH_DEST, HeaderValue::from_static("empty"));
             header_chrome_accept_encoding!(zstd, headers);
         }
     }
@@ -141,7 +141,7 @@ pub fn header_initializer_with_zstd_priority(
                 emulation_os.is_mobile()
             );
             headers.insert(
-                HeaderName::from_static("upgrade-insecure-requests"),
+                UPGRADE_INSECURE_REQUESTS,
                 HeaderValue::from_static("1"),
             );
             header_chrome_ua!(headers, ua);
@@ -149,7 +149,7 @@ pub fn header_initializer_with_zstd_priority(
             header_chrome_sec_fetch!(headers);
             header_chrome_accept_encoding!(zstd, headers);
             headers.insert(
-                HeaderName::from_static("priority"),
+                PRIORITY,
                 HeaderValue::from_static("u=0, i"),
             );
         }
@@ -164,14 +164,14 @@ pub fn header_initializer_with_zstd_priority(
             ]) {
                 match name {
                     "sec-ch-ua" => {
-                        headers.insert("sec-ch-ua", HeaderValue::from_static(sec_ch_ua));
+                        headers.insert(SEC_CH_UA, HeaderValue::from_static(sec_ch_ua));
                     }
                     "sec-ch-ua-mobile" => {
-                        headers.insert("sec-ch-ua-mobile", HeaderValue::from_static(mobile));
+                        headers.insert(SEC_CH_UA_MOBILE, HeaderValue::from_static(mobile));
                     }
                     "sec-ch-ua-platform" => {
                         headers.insert(
-                            "sec-ch-ua-platform",
+                            SEC_CH_UA_PLATFORM,
                             HeaderValue::from_static(platform),
                         );
                     }
@@ -182,12 +182,12 @@ pub fn header_initializer_with_zstd_priority(
                 }
             }
             headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
-            headers.insert("sec-fetch-site", HeaderValue::from_static("none"));
-            headers.insert("sec-fetch-mode", HeaderValue::from_static("cors"));
-            headers.insert("sec-fetch-dest", HeaderValue::from_static("empty"));
+            headers.insert(SEC_FETCH_SITE, HeaderValue::from_static("none"));
+            headers.insert(SEC_FETCH_MODE, HeaderValue::from_static("cors"));
+            headers.insert(SEC_FETCH_DEST, HeaderValue::from_static("empty"));
             header_chrome_accept_encoding!(zstd, headers);
             headers.insert(
-                HeaderName::from_static("priority"),
+                PRIORITY,
                 HeaderValue::from_static("u=1, i"),
             );
         }
