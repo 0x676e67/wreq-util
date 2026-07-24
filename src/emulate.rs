@@ -2,6 +2,7 @@
 mod macros;
 pub mod compress;
 pub mod profile;
+pub(crate) mod wtf_hash;
 
 use profile::{chrome::*, firefox::*, okhttp::*, opera::*, safari::*};
 #[cfg(feature = "emulation-serde")]
@@ -187,6 +188,13 @@ define_enum!(
     IOS => "ios"
 );
 
+define_enum!(
+    plain,
+    Strategy, Navigate,
+    Navigate => "navigate",
+    Fetch => "fetch"
+);
+
 impl Platform {
     #[inline]
     const fn platform(&self) -> &'static str {
@@ -227,6 +235,9 @@ pub struct Emulation {
     /// Whether to include default headers.
     #[builder(default = true)]
     headers: bool,
+
+    #[builder(default)]
+    strategy: Strategy,
 }
 
 impl Emulation {
