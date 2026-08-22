@@ -5,4 +5,4 @@ release_always = false
 publish = false
 git_release_enable = false
 git_tag_enable = true
-git_tag_name = "wreq-util-v{{ version }}"
+git_tag_name = "v{{ version }}"
