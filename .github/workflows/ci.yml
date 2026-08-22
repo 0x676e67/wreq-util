@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    tags: ["v*"]
+    tags: ["v*", "wreq-util-v*"]
   pull_request:
   workflow_dispatch:
 

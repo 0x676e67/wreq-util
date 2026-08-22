@@ -5,11 +5,11 @@ repository = "https://github.com/0x676e67/wreq-util"
 documentation = "https://docs.rs/wreq-util"
 keywords = ["http", "client", "emulation", "ja3", "ja4"]
 authors = ["0x676e67 <gngppz@gmail.com>"]
-version = "3.0.0-rc.14"
+version = "0.1.0"
 readme = "README.md"
 license = "Apache-2.0"
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.98"
 
 [package.metadata.docs.rs]
 all-features = true
@@ -29,7 +29,7 @@ emulation-compression = []
 tower-delay = ["dep:tower", "dep:pin-project-lite", "tokio/time"]
 
 [dependencies]
-wreq = { version = "6.0.0-rc", default-features = false }
+wreq = { version = "0.16.0", default-features = false }
 
 # Optional deps...
 
@@ -45,7 +45,7 @@ flate2 = { version = "1.1.9", optional = true }
 zstd = { version = "0.13.3", optional = true }
 
 [dev-dependencies]
-wreq = "6.0.0-rc"
+wreq = "0.16.0"
 tokio = { version = "1.48.0", features = ["full"] }
 hyper = { version = "1.10.1", default-features = false, features = [
     "http1",

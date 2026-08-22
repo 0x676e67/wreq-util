@@ -1,2 +1,8 @@
 [workspace]
 publish_features = ["tokio-rt"]
+release_always = false
+# Tag CI runs the full checks before publishing to crates.io.
+publish = false
+git_release_enable = false
+git_tag_enable = true
+git_tag_name = "wreq-util-v{{ version }}"
