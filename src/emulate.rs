@@ -63,6 +63,7 @@ define_enum!(
     Chrome150 => ("chrome_150", v150::emulation),
     Chrome151 => ("chrome_151", v151::emulation),
     Chrome152 => ("chrome_152", v152::emulation),
+    Chrome153 => ("chrome_153", v153::emulation),
 
     // Edge versions
     Edge101 => ("edge_101", edge101::emulation),
