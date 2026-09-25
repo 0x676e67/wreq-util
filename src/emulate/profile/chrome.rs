@@ -2036,7 +2036,7 @@ mod_generator!(
         (
             MacOS,
             r#""Chromium";v="146", "Not(A:Brand";v="24", "Microsoft Edge";v="146""#,
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.3856.109"
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0"
         ),
         (
             Android,
@@ -2046,12 +2046,12 @@ mod_generator!(
         (
             Windows,
             r#""Chromium";v="146", "Not(A:Brand";v="24", "Microsoft Edge";v="146""#,
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.3856.109"
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0"
         ),
         (
             Linux,
             r#""Chromium";v="146", "Not(A:Brand";v="24", "Microsoft Edge";v="146""#,
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.3856.109"
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0"
         ),
         (
             IOS,
@@ -2069,7 +2069,7 @@ mod_generator!(
         (
             MacOS,
             r#""Microsoft Edge";v="147", "Not.A/Brand";v="8", "Chromium";v="147""#,
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.3912.51"
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0"
         ),
         (
             Android,
@@ -2079,12 +2079,12 @@ mod_generator!(
         (
             Windows,
             r#""Microsoft Edge";v="147", "Not.A/Brand";v="8", "Chromium";v="147""#,
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.3912.51"
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0"
         ),
         (
             Linux,
             r#""Microsoft Edge";v="147", "Not.A/Brand";v="8", "Chromium";v="147""#,
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.3912.51"
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0"
         ),
         (
             IOS,
