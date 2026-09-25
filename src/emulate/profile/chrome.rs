@@ -197,7 +197,7 @@ mod_generator!(
         (
             Android,
             r#""Chromium";v="106", "Google Chrome";v="106", "Not;A=Brand";v="99""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -230,7 +230,7 @@ mod_generator!(
         (
             Android,
             r#""Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -263,7 +263,7 @@ mod_generator!(
         (
             Android,
             r#""Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -296,7 +296,7 @@ mod_generator!(
         (
             Android,
             r#""Not_A Brand";v="99", "Google Chrome";v="109", "Chromium";v="109""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -329,7 +329,7 @@ mod_generator!(
         (
             Android,
             r#""Chromium";v="110", "Not A(Brand";v="24", "Google Chrome";v="110""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -362,7 +362,7 @@ mod_generator!(
         (
             Android,
             r#""Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -391,7 +391,7 @@ mod_generator!(
         (
             Android,
             r#""Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -425,7 +425,7 @@ mod_generator!(
         (
             Android,
             r#""Google Chrome";v="117", "Not;A=Brand";v="8", "Chromium";v="117""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -458,7 +458,7 @@ mod_generator!(
         (
             Android,
             r#""Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -525,7 +525,7 @@ mod_generator!(
         (
             Android,
             r#""Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -554,7 +554,7 @@ mod_generator!(
         (
             Android,
             r#""Chromium";v="118", "Google Chrome";v="118", "Not=A?Brand";v="99""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -587,7 +587,7 @@ mod_generator!(
         (
             Android,
             r#""Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -621,7 +621,7 @@ mod_generator!(
         (
             Android,
             r#""Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -654,7 +654,7 @@ mod_generator!(
         (
             Android,
             r#""Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -687,7 +687,7 @@ mod_generator!(
         (
             Android,
             r#""Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -754,7 +754,7 @@ mod_generator!(
         (
             Android,
             r#""Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -787,7 +787,7 @@ mod_generator!(
         (
             Android,
             r#""Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -820,7 +820,7 @@ mod_generator!(
         (
             Android,
             r#""Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
         ),
         (
             Windows,
@@ -854,7 +854,7 @@ mod_generator!(
         (
             Android,
             r#""Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24""#,
-            "Mozilla/5.0 (Linux: Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
         ),
         (
             Windows,
