@@ -50,7 +50,7 @@ jobs:
         with:
           toolchain: stable
           override: true
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@v2.85.5
         with:
           tool: cargo-nextest
       - name: Tests
