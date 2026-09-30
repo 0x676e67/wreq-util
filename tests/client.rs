@@ -146,6 +146,34 @@ async fn test_firefox_default_header_order() {
 }
 
 #[tokio::test]
+async fn test_firefox147_and_later_header_order() {
+    const HEADER_ORDER: &[&str] = &[
+        "user-agent",
+        "accept",
+        "accept-language",
+        #[cfg(feature = "emulation-compression")]
+        "accept-encoding",
+        "upgrade-insecure-requests",
+        "sec-fetch-dest",
+        "sec-fetch-mode",
+        "sec-fetch-site",
+        "sec-fetch-user",
+        "priority",
+        "te",
+    ];
+    for profile in [
+        Emulation::Firefox147,
+        Emulation::Firefox148,
+        Emulation::Firefox149,
+        Emulation::Firefox150,
+        Emulation::Firefox151,
+        Emulation::Firefox152,
+    ] {
+        assert_emulation_headers(profile, HEADER_ORDER).await;
+    }
+}
+
+#[tokio::test]
 async fn test_opera_default_header_order() {
     assert_emulation_headers(Emulation::Opera116, CHROMIUM_HEADER_ORDER).await;
 }
@@ -284,6 +312,63 @@ async fn test_firefox139_rv_matches_version() {
             ua.contains("rv:139.0) Gecko/20100101 Firefox/139.0"),
             "{platform:?}: {ua}"
         );
+    }
+}
+
+#[tokio::test]
+async fn test_firefox152_platform_headers() {
+    for (platform, expected_ua) in [
+        (
+            Platform::Windows,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0",
+        ),
+        (
+            Platform::MacOS,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:152.0) Gecko/20100101 Firefox/152.0",
+        ),
+        (
+            Platform::Linux,
+            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:152.0) Gecko/20100101 Firefox/152.0",
+        ),
+        (
+            Platform::Android,
+            "Mozilla/5.0 (Android 13; Mobile; rv:152.0) Gecko/152.0 Firefox/152.0",
+        ),
+        (
+            Platform::IOS,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/152.0 Mobile/15E148 Safari/605.1.15",
+        ),
+    ] {
+        let server = server::http(move |req| async move {
+            assert_eq!(req.headers().get("user-agent").unwrap(), expected_ua);
+            assert_eq!(
+                req.headers().get("accept-language").unwrap(),
+                "en-US,en;q=0.9"
+            );
+            #[cfg(feature = "emulation-compression")]
+            assert_eq!(
+                req.headers().get("accept-encoding").unwrap(),
+                "gzip, deflate, br, zstd"
+            );
+            #[cfg(not(feature = "emulation-compression"))]
+            assert!(!req.headers().contains_key("accept-encoding"));
+            http::Response::default()
+        });
+        let response = Client::builder()
+            .no_proxy()
+            .emulation(
+                Emulation::builder()
+                    .profile(Emulation::Firefox152)
+                    .platform(platform)
+                    .build(),
+            )
+            .build()
+            .unwrap()
+            .get(format!("http://{}/", server.addr()))
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(response.status(), wreq::StatusCode::OK);
     }
 }
 

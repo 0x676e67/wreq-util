@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- *(emulate)* Add Firefox 152 profile.
+
+### Fixed
+
+- *(emulate)* Fix Firefox 150 and 151 cipher suite lists.
+- *(emulate)* Correct Firefox 147 and later `Accept-Language` q-value to `0.9`.
+
 ## [0.2.0](https://github.com/0x676e67/wreq-util/compare/v0.1.0...v0.2.0) - 2026-08-22
 
 ### Fixed
