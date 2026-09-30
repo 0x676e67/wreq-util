@@ -60,6 +60,17 @@ macro_rules! tls_options {
             .grease_sigalgs_enabled(true)
             .alps_use_new_codepoint(true))
     };
+    (10, $curves:expr) => {
+        tls_options!(@build ChromeTlsConfig::builder()
+            .permute_extensions(true)
+            .enable_ech_grease(true)
+            .pre_shared_key(true)
+            .curves($curves)
+            .sigalgs_list(NEW_SIGALGS_LIST)
+            .trust_anchors(CHROME_SORTED_TRUST_ANCHORS)
+            .grease_sigalgs_enabled(true)
+            .alps_use_new_codepoint(true))
+    };
 }
 
 pub const CURVES_1: &str = join!(":", "X25519", "P-256", "P-384");
@@ -119,6 +130,57 @@ pub const CERTIFICATE_COMPRESSORS: &[&'static dyn CertificateCompressor] = &[&Br
 pub(super) const CHROME_TRUST_ANCHORS: &[u8] = &chromium_roots::encoded_trust_anchor_ids();
 #[cfg(not(feature = "emulation-chromium-pki"))]
 pub(super) const CHROME_TRUST_ANCHORS: &[u8] = &[];
+
+#[cfg(feature = "emulation-chromium-pki")]
+pub(super) const CHROME_SORTED_TRUST_ANCHORS: &[u8] =
+    &sorted_trust_anchors::<{ CHROME_TRUST_ANCHORS.len() }>();
+#[cfg(not(feature = "emulation-chromium-pki"))]
+pub(super) const CHROME_SORTED_TRUST_ANCHORS: &[u8] = &[];
+
+#[cfg(feature = "emulation-chromium-pki")]
+const fn sorted_trust_anchors<const N: usize>() -> [u8; N] {
+    let mut ids = chromium_roots::trust_anchor_ids();
+    let mut i = 1;
+    while i < ids.len() {
+        let mut j = i;
+        while j > 0 && trust_anchor_id_lt(ids[j], ids[j - 1]) {
+            ids.swap(j, j - 1);
+            j -= 1;
+        }
+        i += 1;
+    }
+
+    let mut encoded = [0; N];
+    let mut offset = 0;
+    let mut i = 0;
+    while i < ids.len() {
+        let id = ids[i];
+        encoded[offset] = id.len() as u8;
+        offset += 1;
+        let mut j = 0;
+        while j < id.len() {
+            encoded[offset] = id[j];
+            offset += 1;
+            j += 1;
+        }
+        i += 1;
+    }
+
+    assert!(offset == N);
+    encoded
+}
+
+#[cfg(feature = "emulation-chromium-pki")]
+const fn trust_anchor_id_lt(a: &[u8], b: &[u8]) -> bool {
+    let mut i = 0;
+    while i < a.len() && i < b.len() {
+        if a[i] != b[i] {
+            return a[i] < b[i];
+        }
+        i += 1;
+    }
+    a.len() < b.len()
+}
 
 #[derive(TypedBuilder)]
 pub struct ChromeTlsConfig {
