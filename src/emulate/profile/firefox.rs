@@ -380,7 +380,7 @@ mod_generator!(
 mod_generator!(
     ff147,
     ff135::build_emulation,
-    header_initializer_with_zstd,
+    header_initializer_with_zstd_q09,
     [
         (
             Windows,
@@ -408,7 +408,7 @@ mod_generator!(
 mod_generator!(
     ff148,
     ff135::build_emulation,
-    header_initializer_with_zstd,
+    header_initializer_with_zstd_q09,
     [
         (
             Windows,
@@ -436,7 +436,7 @@ mod_generator!(
 mod_generator!(
     ff149,
     ff135::build_emulation,
-    header_initializer_with_zstd,
+    header_initializer_with_zstd_q09,
     [
         (
             Windows,
@@ -463,8 +463,9 @@ mod_generator!(
 
 mod_generator!(
     ff150,
-    ff135::build_emulation,
-    header_initializer_with_zstd,
+    tls_options!(4, CIPHER_LIST_3, CURVES_2, KEY_SHARES_2),
+    http2_options!(1),
+    header_initializer_with_zstd_q09,
     [
         (
             Windows,
@@ -491,8 +492,8 @@ mod_generator!(
 
 mod_generator!(
     ff151,
-    ff135::build_emulation,
-    header_initializer_with_zstd,
+    ff150::build_emulation,
+    header_initializer_with_zstd_q09,
     [
         (
             Windows,
@@ -513,6 +514,34 @@ mod_generator!(
         (
             IOS,
             "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/151.0 Mobile/15E148 Safari/605.1.15"
+        )
+    ]
+);
+
+mod_generator!(
+    ff152,
+    ff150::build_emulation,
+    header_initializer_with_zstd_q09,
+    [
+        (
+            Windows,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0"
+        ),
+        (
+            MacOS,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:152.0) Gecko/20100101 Firefox/152.0"
+        ),
+        (
+            Linux,
+            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:152.0) Gecko/20100101 Firefox/152.0"
+        ),
+        (
+            Android,
+            "Mozilla/5.0 (Android 13; Mobile; rv:152.0) Gecko/152.0 Firefox/152.0"
+        ),
+        (
+            IOS,
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/152.0 Mobile/15E148 Safari/605.1.15"
         )
     ]
 );

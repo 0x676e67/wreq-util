@@ -151,32 +151,28 @@ macro_rules! header_firefox_sec_fetch {
 
 macro_rules! header_firefox_accept {
     ($headers:expr) => {
-        $headers.insert(
-            ACCEPT,
-            HeaderValue::from_static(
-                "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            ),
-        );
-        $headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.5"));
-        #[cfg(feature = "emulation-compression")]
-        $headers.insert(
-            ACCEPT_ENCODING,
-            HeaderValue::from_static("gzip, deflate, br"),
-        );
+        header_firefox_accept!(@build $headers, "en-US,en;q=0.5", "gzip, deflate, br");
     };
     (zstd, $headers:expr) => {
+        header_firefox_accept!(@build $headers, "en-US,en;q=0.5", "gzip, deflate, br, zstd");
+    };
+    // Firefox 147 changed the generated q-value from dividing 1.0 across the list to
+    // decrementing by 0.1 per entry, so a two-entry list became q=0.9 (Bugzilla 2000765,
+    // landed in 0e050ae5116d).
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=2000765
+    (zstd_q09, $headers:expr) => {
+        header_firefox_accept!(@build $headers, "en-US,en;q=0.9", "gzip, deflate, br, zstd");
+    };
+    (@build $headers:expr, $accept_language:expr, $accept_encoding:expr) => {
         $headers.insert(
             ACCEPT,
             HeaderValue::from_static(
                 "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             ),
         );
-        $headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.5"));
+        $headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static($accept_language));
         #[cfg(feature = "emulation-compression")]
-        $headers.insert(
-            ACCEPT_ENCODING,
-            HeaderValue::from_static("gzip, deflate, br, zstd"),
-        );
+        $headers.insert(ACCEPT_ENCODING, HeaderValue::from_static($accept_encoding));
     };
 }
 

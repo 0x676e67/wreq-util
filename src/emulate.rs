@@ -126,6 +126,7 @@ define_enum!(
     Firefox149 => ("firefox_149", ff149::emulation),
     Firefox150 => ("firefox_150", ff150::emulation),
     Firefox151 => ("firefox_151", ff151::emulation),
+    Firefox152 => ("firefox_152", ff152::emulation),
 
     // Safari versions
     SafariIos17_2 => ("safari_ios_17.2", safari_ios_17_2::emulation),
