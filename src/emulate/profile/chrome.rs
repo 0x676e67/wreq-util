@@ -1964,6 +1964,18 @@ mod_generator!(
 );
 
 mod_generator!(
+    v155,
+    tls_options!(9, CURVES_3, sorted_trust_anchors()),
+    http2_options!(3),
+    header_initializer_chrome155,
+    [(
+        Windows,
+        r#""Google Chrome";v="155", "Chromium";v="155", "Not(A:Brand";v="24""#,
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36"
+    )]
+);
+
+mod_generator!(
     edge143,
     v132::build_emulation,
     header_initializer_with_zstd_priority,
