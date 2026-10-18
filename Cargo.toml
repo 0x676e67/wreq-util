@@ -28,6 +28,7 @@ emulation-compression = []
 emulation-chromium-pki = ["emulation", "dep:chromium-roots", "wreq/chromium-roots"]
 
 tower-delay = ["dep:tower", "dep:pin-project-lite", "tokio/time"]
+tower-client-hints = ["dep:tower", "tower/util", "dep:pin-project-lite", "dep:http", "dep:wreq-proto", "dep:lru"]
 
 [dependencies]
 wreq = { version = "0.16.1", default-features = false }
@@ -40,6 +41,9 @@ tokio = { version = "1.52.1", default-features = false, optional = true }
 tower = { version = "0.5.2", default-features = false, optional = true }
 typed-builder = { version = "0.23.2", optional = true }
 pin-project-lite = { version = "0.2.17", optional = true }
+http = { version = "1.4.0", optional = true }
+wreq-proto = { version = "0.2.3", default-features = false, optional = true }
+lru = { version = "0.18.0", optional = true }
 
 ## Compression algorithms
 brotli = { version = "9.0.0", optional = true }
