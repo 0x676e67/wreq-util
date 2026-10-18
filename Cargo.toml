@@ -104,6 +104,11 @@ name = "tower_delay"
 path = "examples/tower_delay.rs"
 required-features = ["tower-delay"]
 
+[[example]]
+name = "tower_client_hints"
+path = "examples/tower_client_hints.rs"
+required-features = ["tower-client-hints", "emulation"]
+
 [patch.crates-io]
 wreq = { git = "https://github.com/0x676e67/wreq", rev = "cd76bcdf1307153de289d34e072528bdf0510a3b" }
 btls = { git = "https://github.com/0x676e67/btls", rev = "129887582a538b8f4dcf371d15c953335312ca37" }
