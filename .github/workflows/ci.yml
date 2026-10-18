@@ -56,7 +56,7 @@ jobs:
       - name: Tests
         run: | 
           set -euxo pipefail
-          cargo nextest run --workspace
+          cargo nextest run --workspace --features tower-client-hints
 
   linux:
     name: Linux

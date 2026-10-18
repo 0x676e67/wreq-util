@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - *(emulate)* Add Firefox 152 profile.
+- *(tower)* With `tower-client-hints`, add `ClientHintsLayer` to send the client hints an origin accepts in `Accept-CH` and restart a request for the ones in `Critical-CH`.
 
 ### Fixed
 
