@@ -1,7 +1,7 @@
-use wreq::Client;
+use wreq::{Client, redirect::Policy};
 use wreq_util::{
     Emulation, Platform, Profile,
-    tower::client_hints::{ClientHintsLayer, Hints},
+    tower::client_hints::{self, ClientHintsLayer, Hints},
 };
 
 #[tokio::main]
@@ -29,6 +29,8 @@ async fn main() -> Result<(), wreq::Error> {
     let client = Client::builder()
         .emulation(emulation)
         .layer(ClientHintsLayer::new(hints))
+        // Pick the hints again on every redirect hop
+        .redirect(client_hints::redirect(Policy::default()))
         .cookie_store(true)
         .build()?;
 

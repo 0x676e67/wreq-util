@@ -6,6 +6,9 @@ use wreq::header::{HeaderMap, HeaderName};
 
 use super::store::Accepted;
 
+pub(super) const ACCEPT_CH: HeaderName = HeaderName::from_static("accept-ch");
+pub(super) const CRITICAL_CH: HeaderName = HeaderName::from_static("critical-ch");
+
 /// The most hints listed for one origin. Chrome knows fewer than this.
 const MAX_HINTS: usize = 64;
 
@@ -152,8 +155,6 @@ mod tests {
     use wreq::header::HeaderValue;
 
     use super::*;
-
-    const ACCEPT_CH: HeaderName = HeaderName::from_static("accept-ch");
 
     fn accepted(hints: &[&'static str]) -> Accepted {
         hints.iter().copied().map(HeaderName::from_static).collect()

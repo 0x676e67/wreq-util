@@ -11,7 +11,7 @@ use wreq::{
 };
 use wreq_util::{
     Emulation, Platform, Profile,
-    tower::client_hints::{ClientHintsLayer, Hints},
+    tower::client_hints::{self, ClientHintsLayer, Hints},
 };
 
 // What a Cloudflare challenge that depends on client hints sends, legacy names included.
@@ -484,6 +484,203 @@ async fn test_records_hints_for_the_origin_a_redirect_leads_to() {
     assert!(start_requests[0].hints().is_empty());
     assert_eq!(start_requests[1].hints(), target_requests[1].hints());
     assert!(start_requests[2].hints().is_empty());
+}
+
+/// Builds a client that picks the hints of every redirect hop.
+fn per_hop(layer: ClientHintsLayer) -> Client {
+    Client::builder()
+        .emulation(chrome())
+        .layer(layer)
+        .redirect(client_hints::redirect(redirect::Policy::default()))
+        .build()
+        .expect("client")
+}
+
+// Checked against Chrome 155: each hop gets the hints of its own origin.
+#[tokio::test]
+async fn test_picks_the_hints_of_every_hop() {
+    // The two origins redirect to each other, so the start learns the target's URL later.
+    let location = Arc::new(Mutex::new(String::new()));
+    let (start, start_requests) = serve({
+        let location = location.clone();
+        move |req| match req.path.as_str() {
+            "/go" => response(
+                StatusCode::FOUND,
+                &[("location", &location.lock().unwrap())],
+            ),
+            _ => response(StatusCode::OK, &[]),
+        }
+    });
+    let start_url = format!("http://{}/", start.addr());
+    let (target, target_requests) = serve({
+        let start_url = start_url.clone();
+        move |req| match req.path.as_str() {
+            "/back" => response(StatusCode::FOUND, &[("location", &start_url)]),
+            _ => challenge(req),
+        }
+    });
+    let target_url = format!("http://{}/", target.addr());
+    location.lock().unwrap().clone_from(&target_url);
+    let client = per_hop(ClientHintsLayer::new(Hints::from_emulation(chrome())));
+
+    // Twice through a redirect to the origin that asks for hints, then back from it.
+    for _ in 0..2 {
+        let res = client
+            .get(format!("{start_url}go"))
+            .send()
+            .await
+            .expect("request");
+        assert_eq!(res.status(), StatusCode::OK);
+        assert_eq!(res.uri().to_string(), target_url);
+    }
+    let res = client
+        .get(format!("{target_url}back"))
+        .send()
+        .await
+        .expect("request");
+    assert_eq!(res.status(), StatusCode::OK);
+
+    let hinted = |requests: &Requests| -> Vec<(String, bool)> {
+        let requests = requests.lock().unwrap();
+        requests
+            .iter()
+            .map(|req| (req.path.clone(), !req.hints().is_empty()))
+            .collect()
+    };
+    // The restart sends the first hop without the hints of the origin it leads to.
+    assert_eq!(
+        hinted(&start_requests),
+        [
+            ("/go".to_owned(), false),
+            ("/go".to_owned(), false),
+            ("/go".to_owned(), false),
+            ("/".to_owned(), false),
+        ]
+    );
+    assert_eq!(
+        hinted(&target_requests),
+        [
+            ("/".to_owned(), false),
+            ("/".to_owned(), true),
+            ("/".to_owned(), true),
+            ("/back".to_owned(), true),
+        ]
+    );
+}
+
+// Checked against Chrome 155: `Accept-CH` of a redirect applies to the hop it leads to.
+#[tokio::test]
+async fn test_sends_the_hints_a_redirect_asks_for_on_the_next_hop() {
+    let (server, requests) = serve(|req| match req.path.as_str() {
+        "/start" => response(
+            StatusCode::FOUND,
+            &[("location", "/next"), ("accept-ch", "Sec-CH-UA-Bitness")],
+        ),
+        _ => response(StatusCode::OK, &[]),
+    });
+    let client = per_hop(ClientHintsLayer::new(Hints::from_emulation(chrome())));
+
+    let res = client
+        .get(format!("http://{}/start", server.addr()))
+        .send()
+        .await
+        .expect("request");
+    assert_eq!(res.status(), StatusCode::OK);
+
+    let requests = requests.lock().unwrap();
+    assert_eq!(requests.len(), 2);
+    assert!(requests[0].hints().is_empty());
+    assert_eq!(requests[1].hints(), ["sec-ch-ua-bitness"]);
+}
+
+// Checked against Chrome 155: a redirect that asks for a critical hint is not followed.
+#[tokio::test]
+async fn test_restarts_at_a_redirect_that_asks_for_critical_hints() {
+    let (server, requests) = serve(|req| match req.path.as_str() {
+        "/start" if req.header("sec-ch-ua-arch").is_none() => response(
+            StatusCode::FOUND,
+            &[
+                ("location", "/next"),
+                ("accept-ch", "Sec-CH-UA-Arch"),
+                ("critical-ch", "Sec-CH-UA-Arch"),
+            ],
+        ),
+        "/start" => response(StatusCode::FOUND, &[("location", "/next")]),
+        _ => response(StatusCode::OK, &[]),
+    });
+    let client = per_hop(ClientHintsLayer::new(Hints::from_emulation(chrome())));
+
+    let res = client
+        .get(format!("http://{}/start", server.addr()))
+        .send()
+        .await
+        .expect("request");
+    assert_eq!(res.status(), StatusCode::OK);
+
+    let requests = requests.lock().unwrap();
+    let paths: Vec<_> = requests.iter().map(|req| req.path.as_str()).collect();
+    assert_eq!(paths, ["/start", "/start", "/next"]);
+    assert!(requests[0].hints().is_empty());
+    assert_eq!(requests[1].hints(), ["sec-ch-ua-arch"]);
+    assert_eq!(requests[2].hints(), ["sec-ch-ua-arch"]);
+}
+
+#[tokio::test]
+async fn test_follows_a_critical_redirect_it_cannot_restart() {
+    let (server, requests) = serve(|req| match req.path.as_str() {
+        "/start" => response(
+            StatusCode::TEMPORARY_REDIRECT,
+            &[
+                ("location", "/next"),
+                ("accept-ch", "Sec-CH-UA-Arch"),
+                ("critical-ch", "Sec-CH-UA-Arch"),
+            ],
+        ),
+        _ => response(StatusCode::OK, &[]),
+    });
+    let client = per_hop(ClientHintsLayer::new(Hints::from_emulation(chrome())));
+
+    let res = client
+        .post(format!("http://{}/start", server.addr()))
+        .body("data")
+        .send()
+        .await
+        .expect("request");
+    assert_eq!(res.status(), StatusCode::OK);
+
+    let requests = requests.lock().unwrap();
+    let paths: Vec<_> = requests.iter().map(|req| req.path.as_str()).collect();
+    assert_eq!(paths, ["/start", "/next"]);
+    assert_eq!(requests[1].hints(), ["sec-ch-ua-arch"]);
+}
+
+#[tokio::test]
+async fn test_restarts_every_hop_without_remembering_origins() {
+    let (target, target_requests) = serve(challenge);
+    let location = format!("http://{}/", target.addr());
+    // The first hop asks for hints too, which mustn't push out the ones the target asked for.
+    let (start, start_requests) = serve(move |_| {
+        response(
+            StatusCode::FOUND,
+            &[("location", &location), ("accept-ch", "Sec-CH-UA-Bitness")],
+        )
+    });
+    let client = per_hop(ClientHintsLayer::new(Hints::from_emulation(chrome())).max_origins(0));
+
+    let res = client
+        .get(format!("http://{}/", start.addr()))
+        .send()
+        .await
+        .expect("request");
+    assert_eq!(res.status(), StatusCode::OK);
+
+    let start_requests = start_requests.lock().unwrap();
+    assert_eq!(start_requests.len(), 2);
+    assert!(start_requests.iter().all(|req| req.hints().is_empty()));
+    let target_requests = target_requests.lock().unwrap();
+    assert_eq!(target_requests.len(), 2);
+    assert!(target_requests[0].hints().is_empty());
+    assert!(!target_requests[1].hints().is_empty());
 }
 
 #[tokio::test]

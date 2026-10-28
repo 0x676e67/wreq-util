@@ -8,16 +8,17 @@
 //! Hints of a Chrome emulation:
 //!
 //! ```no_run
-//! use wreq::Client;
+//! use wreq::{Client, redirect::Policy};
 //! use wreq_util::{
 //!     Emulation,
-//!     tower::client_hints::{ClientHintsLayer, Hints},
+//!     tower::client_hints::{self, ClientHintsLayer, Hints},
 //! };
 //!
 //! let hints = Hints::from_emulation(Emulation::Chrome149);
 //! let client = Client::builder()
 //!     .emulation(Emulation::Chrome149)
 //!     .layer(ClientHintsLayer::new(hints))
+//!     .redirect(client_hints::redirect(Policy::default()))
 //!     .cookie_store(true)
 //!     .build()?;
 //! # Ok::<(), wreq::Error>(())
@@ -39,8 +40,9 @@
 //!
 //! # Notes
 //!
-//! - Hints follow the original request across redirects, where Chrome picks them per hop —
-//!   disable redirects and follow them yourself to match
+//! - Set the redirect policy with [`redirect`] so each redirect hop gets its own origin's hints,
+//!   and a redirect that asks for critical hints restarts the request — without it, the hints
+//!   picked for the first origin follow the request across redirects
 //! - A request with a streaming body is never restarted
 //! - Enable the cookie store — `Critical-CH` servers usually expect the refused response's
 //!   cookie back
@@ -51,10 +53,12 @@ mod hints;
 mod layer;
 mod order;
 mod parse;
+mod redirect;
 mod service;
 mod store;
 mod versions;
 
 pub use self::{
-    future::ResponseFuture, hints::Hints, layer::ClientHintsLayer, service::ClientHints,
+    future::ResponseFuture, hints::Hints, layer::ClientHintsLayer, redirect::redirect,
+    service::ClientHints,
 };

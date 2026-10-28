@@ -110,6 +110,6 @@ path = "examples/tower_client_hints.rs"
 required-features = ["tower-client-hints", "emulation"]
 
 [patch.crates-io]
-wreq = { git = "https://github.com/0x676e67/wreq", rev = "cd76bcdf1307153de289d34e072528bdf0510a3b" }
-btls = { git = "https://github.com/0x676e67/btls", rev = "129887582a538b8f4dcf371d15c953335312ca37" }
-btls-sys = { git = "https://github.com/0x676e67/btls", rev = "129887582a538b8f4dcf371d15c953335312ca37" }
+wreq = { git = "https://github.com/0x676e67/wreq", rev = "f89f407db9f3dd09d8913f270ad1919e57b5238d" }
+btls = { git = "https://github.com/0x676e67/btls", rev = "0f5416d1f61eb4f64a9f2f4d8b867495305d61c1" }
+btls-sys = { git = "https://github.com/0x676e67/btls", rev = "0f5416d1f61eb4f64a9f2f4d8b867495305d61c1" }

@@ -15,13 +15,10 @@ use wreq::{
 use super::{
     future::ResponseFuture,
     hints::{Hints, SEC_CH_UA},
-    order::HintOrder,
-    parse::listed,
+    parse::{ACCEPT_CH, CRITICAL_CH, listed},
+    redirect::{Hops, Report},
     store::{Accepted, Store, origin},
 };
-
-const ACCEPT_CH: HeaderName = HeaderName::from_static("accept-ch");
-const CRITICAL_CH: HeaderName = HeaderName::from_static("critical-ch");
 
 /// A Tower [`Service`] that sends the client hints an origin accepts, and restarts a request
 /// for the critical ones it lacks.
@@ -46,6 +43,8 @@ pub(super) struct Exchange<S> {
     accepted: Option<Accepted>,
     /// A copy of the request without client hints, and a service to send it again with.
     restart: Option<(S, Request<Body>)>,
+    /// What the redirect callbacks report, if the client has them.
+    report: Arc<Report>,
 }
 
 // ===== impl ClientHints =====
@@ -104,9 +103,8 @@ where
             .flatten()
             .map(Request::from);
         let mut req = Request::from(req);
-        attach(
+        let report = Hops::new(hints.clone(), self.store.clone(), copy.is_some()).attach(
             &mut req,
-            &hints,
             accepted.as_deref().unwrap_or_default(),
             false,
         );
@@ -127,6 +125,7 @@ where
             origin,
             accepted,
             restart,
+            report,
         };
         ResponseFuture::new(future, Some(exchange))
     }
@@ -140,6 +139,10 @@ impl<S> Exchange<S> {
     /// Returns the request to send in place of the one answered by `res`, with the service to
     /// send it with, if one of them asks for a critical hint that request didn't have.
     pub(super) fn on_response<B>(&mut self, res: &Response<B>) -> Option<(S, Request<Body>)> {
+        if self.report.handled() {
+            return self.restart_hops();
+        }
+
         // Redirects the client followed, each with the URI that answered and its headers.
         let redirects = res
             .extensions()
@@ -177,7 +180,33 @@ impl<S> Exchange<S> {
         if let Some(accepted) = self.store.get(&self.origin) {
             asked.extend(accepted.iter().cloned());
         }
-        attach(&mut req, &self.hints, &asked, true);
+        Hops::new(self.hints.clone(), self.store.clone(), false).attach(&mut req, &asked, true);
+        Some((service, req))
+    }
+
+    /// Returns the request to send again if a hop asked for a critical hint it didn't have.
+    ///
+    /// The redirect callbacks already remembered what every hop accepts, and pick the hints of
+    /// each hop again on the restart.
+    fn restart_hops(&mut self) -> Option<(S, Request<Body>)> {
+        let (origin, accepted) = self.report.take_critical()?;
+        let (service, mut req) = self.restart.take()?;
+
+        // Without a store to remember them, the restart only knows what the hop asked for. It
+        // must not forget that when later hops ask for hints too.
+        let store = if self.store.remembers() {
+            self.store.clone()
+        } else {
+            let store = Store::unbounded();
+            store.set(origin, &accepted);
+            store
+        };
+        let accepted = store.get(&self.origin);
+        Hops::new(self.hints.clone(), store, false).attach(
+            &mut req,
+            accepted.as_deref().unwrap_or_default(),
+            true,
+        );
         Some((service, req))
     }
 
@@ -199,22 +228,6 @@ impl<S> Exchange<S> {
                 && !sent.contains(hint)
                 && !copy.headers().contains_key(hint)
         })
-    }
-}
-
-/// Adds the hints `accepted` names to `req`, unless the request already sets them.
-fn attach(req: &mut Request<Body>, hints: &Hints, accepted: &[HeaderName], restarted: bool) {
-    let mut attached = false;
-    for (hint, value) in hints.iter() {
-        if accepted.contains(hint) && !req.headers().contains_key(hint) {
-            req.headers_mut().insert(hint.clone(), value.clone());
-            attached = true;
-        }
-    }
-
-    // The client's own header order, if it has one, replaces this further down.
-    if attached {
-        wreq_proto::ext::on_preserve_header(req, HintOrder { restarted });
     }
 }
 

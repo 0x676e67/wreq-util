@@ -28,6 +28,20 @@ impl Store {
         }
     }
 
+    /// Creates a store that never forgets an origin, for the hops of one request.
+    #[inline]
+    pub(super) fn unbounded() -> Self {
+        Store {
+            origins: Some(Arc::new(Mutex::new(LruCache::unbounded()))),
+        }
+    }
+
+    /// Returns whether the store remembers any origin.
+    #[inline]
+    pub(super) fn remembers(&self) -> bool {
+        self.origins.is_some()
+    }
+
     /// Returns the client hints `origin` asked for.
     #[inline]
     pub(super) fn get(&self, origin: &str) -> Option<Accepted> {
