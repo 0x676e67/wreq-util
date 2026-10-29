@@ -28,6 +28,7 @@ emulation-compression = []
 emulation-chromium-pki = ["emulation", "dep:chromium-roots", "wreq/chromium-roots"]
 
 tower-delay = ["dep:tower", "dep:pin-project-lite", "tokio/time"]
+tower-client-hints = ["dep:tower", "tower/util", "dep:pin-project-lite", "dep:http", "dep:wreq-proto", "dep:lru"]
 
 [dependencies]
 wreq = { version = "0.16.1", default-features = false }
@@ -40,6 +41,9 @@ tokio = { version = "1.52.1", default-features = false, optional = true }
 tower = { version = "0.5.2", default-features = false, optional = true }
 typed-builder = { version = "0.23.2", optional = true }
 pin-project-lite = { version = "0.2.17", optional = true }
+http = { version = "1.4.0", optional = true }
+wreq-proto = { version = "0.2.3", default-features = false, optional = true }
+lru = { version = "0.18.0", optional = true }
 
 ## Compression algorithms
 brotli = { version = "9.0.0", optional = true }
@@ -47,7 +51,7 @@ flate2 = { version = "1.1.9", optional = true }
 zstd = { version = "0.14.3", optional = true }
 
 [dev-dependencies]
-wreq = "0.16.1"
+wreq = { version = "0.16.1", features = ["cookies"] }
 tokio = { version = "1.48.0", features = ["full"] }
 hyper = { version = "1.10.1", default-features = false, features = [
     "http1",
@@ -85,6 +89,11 @@ path = "tests/emulate_firefox.rs"
 name = "emulate_safari"
 path = "tests/emulate_safari.rs"
 
+[[test]]
+name = "client_hints"
+path = "tests/client_hints.rs"
+required-features = ["tower-client-hints", "emulation"]
+
 [[example]]
 name = "emulate"
 path = "examples/emulate.rs"
@@ -95,7 +104,12 @@ name = "tower_delay"
 path = "examples/tower_delay.rs"
 required-features = ["tower-delay"]
 
+[[example]]
+name = "tower_client_hints"
+path = "examples/tower_client_hints.rs"
+required-features = ["tower-client-hints", "emulation"]
+
 [patch.crates-io]
-wreq = { git = "https://github.com/0x676e67/wreq", rev = "cd76bcdf1307153de289d34e072528bdf0510a3b" }
-btls = { git = "https://github.com/0x676e67/btls", rev = "129887582a538b8f4dcf371d15c953335312ca37" }
-btls-sys = { git = "https://github.com/0x676e67/btls", rev = "129887582a538b8f4dcf371d15c953335312ca37" }
+wreq = { git = "https://github.com/0x676e67/wreq", rev = "f89f407db9f3dd09d8913f270ad1919e57b5238d" }
+btls = { git = "https://github.com/0x676e67/btls", rev = "0f5416d1f61eb4f64a9f2f4d8b867495305d61c1" }
+btls-sys = { git = "https://github.com/0x676e67/btls", rev = "0f5416d1f61eb4f64a9f2f4d8b867495305d61c1" }
