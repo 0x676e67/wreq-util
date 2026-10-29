@@ -25,6 +25,12 @@ Anchor IDs and enable wreq's matching Chromium root store. A custom certificate
 store must trust the requested anchors. The bundled roots do not provide
 Chromium's complete certificate verification policy.
 
+The Chrome 156 profile targets Windows and includes a zero-byte TLS
+`server_padding` request observed in Chrome for Testing 156.0.8078.73. This
+experimental extension depends on browser configuration. The profile does not
+represent every Chrome 156 field-trial configuration, other platforms, resumed
+sessions, or HTTP/3.
+
 ## Example
 
 The following example uses the [Tokio](https://tokio.rs) runtime with optional features enabled by adding this to your `Cargo.toml`:
