@@ -96,6 +96,6 @@ path = "examples/tower_delay.rs"
 required-features = ["tower-delay"]
 
 [patch.crates-io]
-wreq = { git = "https://github.com/0x676e67/wreq", rev = "cd76bcdf1307153de289d34e072528bdf0510a3b" }
+wreq = { git = "https://github.com/0x676e67/wreq", rev = "e035a872535274933b1574a3f8bfb946d98b24dc" }
 btls = { git = "https://github.com/0x676e67/btls", rev = "129887582a538b8f4dcf371d15c953335312ca37" }
 btls-sys = { git = "https://github.com/0x676e67/btls", rev = "129887582a538b8f4dcf371d15c953335312ca37" }

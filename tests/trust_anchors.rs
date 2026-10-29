@@ -9,7 +9,12 @@ use wreq_util::Profile;
 #[tokio::test]
 async fn reused_native_emulation_retains_trust_anchors_on_new_connections() {
     let request_client = Client::builder().no_proxy().build().unwrap();
-    for profile in [Profile::Chrome152, Profile::Chrome153, Profile::Chrome154] {
+    for profile in [
+        Profile::Chrome152,
+        Profile::Chrome153,
+        Profile::Chrome154,
+        Profile::Chrome156,
+    ] {
         let native = profile.into_emulation();
         let expected = native
             .tls_options
@@ -36,9 +41,46 @@ async fn reused_native_emulation_retains_trust_anchors_on_new_connections() {
     }
 }
 
+#[tokio::test]
+async fn chrome156_server_padding_is_preserved_on_new_connections() {
+    let request_client = Client::builder().no_proxy().build().unwrap();
+    for (profile, expected) in [
+        (Profile::Chrome154, None),
+        (Profile::Chrome156, Some(vec![0, 0])),
+    ] {
+        let native = profile.into_emulation();
+        let client = Client::builder()
+            .no_proxy()
+            .emulation(native.clone())
+            .build()
+            .unwrap();
+        for _ in 0..2 {
+            assert_eq!(capture_extension(&client, None, 4832).await, expected);
+            assert_eq!(
+                capture_extension(&request_client, Some(&native), 4832).await,
+                expected
+            );
+        }
+    }
+}
+
 // Each listener forces a new connection and closes after ClientHello. No
 // certificate or external service is needed to inspect the extension bytes.
 async fn capture_trust_anchors(client: &Client, native: Option<&wreq::Emulation>) -> Vec<u8> {
+    let data = capture_extension(client, native, 51764)
+        .await
+        .expect("missing trust_anchors extension");
+    let mut data = data.as_slice();
+    let ids = take_vector(&mut data, 2).to_vec();
+    assert!(data.is_empty());
+    ids
+}
+
+async fn capture_extension(
+    client: &Client,
+    native: Option<&wreq::Emulation>,
+    wanted: u16,
+) -> Option<Vec<u8>> {
     timeout(Duration::from_secs(5), async {
         let listener = TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0))
             .await
@@ -64,7 +106,7 @@ async fn capture_trust_anchors(client: &Client, native: Option<&wreq::Emulation>
                         .iter()
                         .fold(0usize, |n, &byte| (n << 8) | usize::from(byte));
                     if handshake.len() >= length + 4 {
-                        return trust_anchors_from_client_hello(&handshake[4..length + 4]);
+                        return extension_from_client_hello(&handshake[4..length + 4], wanted);
                     }
                 }
             }
@@ -77,7 +119,7 @@ async fn capture_trust_anchors(client: &Client, native: Option<&wreq::Emulation>
     .expect("ClientHello capture timed out")
 }
 
-fn trust_anchors_from_client_hello(mut hello: &[u8]) -> Vec<u8> {
+fn extension_from_client_hello(mut hello: &[u8], wanted: u16) -> Option<Vec<u8>> {
     take(&mut hello, 2 + 32); // Legacy version and random.
     take_vector(&mut hello, 1); // Session ID.
     take_vector(&mut hello, 2); // Cipher suites.
@@ -85,14 +127,12 @@ fn trust_anchors_from_client_hello(mut hello: &[u8]) -> Vec<u8> {
     let mut extensions = take_vector(&mut hello, 2);
     while !extensions.is_empty() {
         let kind = take(&mut extensions, 2);
-        let mut data = take_vector(&mut extensions, 2);
-        if u16::from_be_bytes([kind[0], kind[1]]) == 51764 {
-            let ids = take_vector(&mut data, 2);
-            assert!(data.is_empty());
-            return ids.to_vec();
+        let data = take_vector(&mut extensions, 2);
+        if u16::from_be_bytes([kind[0], kind[1]]) == wanted {
+            return Some(data.to_vec());
         }
     }
-    panic!("missing trust_anchors extension");
+    None
 }
 
 fn take<'a>(input: &mut &'a [u8], length: usize) -> &'a [u8] {
