@@ -5,12 +5,12 @@ pub fn header_initializer(ua: &'static str) -> HeaderMap {
     header_firefox_ua!(headers, ua);
     header_firefox_accept!(headers);
     headers.insert(
-        HeaderName::from_static("upgrade-insecure-requests"),
+        UPGRADE_INSECURE_REQUESTS,
         HeaderValue::from_static("1"),
     );
     header_firefox_sec_fetch!(headers);
     headers.insert(
-        HeaderName::from_static("te"),
+        TE,
         HeaderValue::from_static("trailers"),
     );
     headers
@@ -21,16 +21,16 @@ pub fn header_initializer_with_zstd(ua: &'static str) -> HeaderMap {
     header_firefox_ua!(headers, ua);
     header_firefox_accept!(zstd, headers);
     headers.insert(
-        HeaderName::from_static("upgrade-insecure-requests"),
+        UPGRADE_INSECURE_REQUESTS,
         HeaderValue::from_static("1"),
     );
     header_firefox_sec_fetch!(headers);
     headers.insert(
-        HeaderName::from_static("priority"),
+        PRIORITY,
         HeaderValue::from_static("u=0, i"),
     );
     headers.insert(
-        HeaderName::from_static("te"),
+        TE,
         HeaderValue::from_static("trailers"),
     );
     headers
