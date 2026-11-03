@@ -36,18 +36,21 @@ macro_rules! test_emulation {
 
             assert_eq!(resp.status(), wreq::StatusCode::OK);
             let content = resp.text().await.unwrap();
+            let fingerprint: serde_json::Value = serde_json::from_str(&content)
+                .unwrap_or_else(|error| panic!("invalid fingerprint JSON: {error}\n{content}"));
 
-            let conditional = $ja4.iter().any(|&ja4| content.contains(ja4));
-            if !conditional {
-                println!("{}", content);
-            }
-            assert!(conditional);
+            let actual_ja4 = fingerprint["ja4"].as_str();
+            assert!(
+                actual_ja4.is_some_and(|value| $ja4.contains(&value)),
+                "JA4 fingerprint mismatch: expected {:?}, got {actual_ja4:?}\n{content}",
+                $ja4
+            );
 
-            let conditional = content.contains($akamai_hash);
-            if !conditional {
-                println!("{}", content);
-            }
-            assert!(conditional);
+            assert_eq!(
+                fingerprint["akamai_hash"].as_str(),
+                Some($akamai_hash),
+                "HTTP/2 fingerprint mismatch:\n{content}"
+            );
 
             tokio::time::sleep(std::time::Duration::from_millis(1000)).await;
         }

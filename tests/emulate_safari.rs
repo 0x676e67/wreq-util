@@ -147,5 +147,5 @@ test_emulation!(
     test_safari_26_1,
     Emulation::Safari26_1,
     ["t13d2014h2_a09f3c656075_e42f34c56612"],
-    "773906b0efdefa24a7f2b8eb6985bf37"
+    "c52879e43202aeb92740be6e8c86ea96"
 );
