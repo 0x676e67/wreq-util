@@ -73,6 +73,17 @@ pub fn header_initializer_with_zstd_priority(
     headers
 }
 
+// Windows Chrome 155 navigation headers; TLS/H2 parameters are shared with 154.
+pub fn header_initializer_chrome155(
+    sec_ch_ua: &'static str,
+    ua: &'static str,
+    emulation_os: Platform,
+) -> HeaderMap {
+    let mut headers = header_initializer_with_zstd_priority(sec_ch_ua, ua, emulation_os);
+    headers.insert(ACCEPT, HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,image/jxl,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"));
+    headers
+}
+
 pub fn header_initializer_chrome152(
     sec_ch_ua: &'static str,
     ua: &'static str,

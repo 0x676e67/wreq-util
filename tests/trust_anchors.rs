@@ -9,7 +9,12 @@ use wreq_util::Profile;
 #[tokio::test]
 async fn reused_native_emulation_retains_trust_anchors_on_new_connections() {
     let request_client = Client::builder().no_proxy().build().unwrap();
-    for profile in [Profile::Chrome152, Profile::Chrome153, Profile::Chrome154] {
+    for profile in [
+        Profile::Chrome152,
+        Profile::Chrome153,
+        Profile::Chrome154,
+        Profile::Chrome155,
+    ] {
         let native = profile.into_emulation();
         let expected = native
             .tls_options

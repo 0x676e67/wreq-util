@@ -247,6 +247,7 @@ mod tests {
             crate::Profile::Chrome152,
             crate::Profile::Chrome153,
             crate::Profile::Chrome154,
+            crate::Profile::Chrome155,
         ] {
             let native = profile.into_emulation();
             let cloned = native.clone();
@@ -258,7 +259,10 @@ mod tests {
                 let decoded = decode_ids(&ids);
                 let mut expected = chromium_roots::trust_anchor_ids();
                 expected.sort_unstable();
-                if profile == crate::Profile::Chrome154 {
+                if matches!(
+                    profile,
+                    crate::Profile::Chrome154 | crate::Profile::Chrome155
+                ) {
                     assert_eq!(decoded, expected);
                 }
                 let mut actual = decoded;

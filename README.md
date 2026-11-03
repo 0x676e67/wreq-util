@@ -25,6 +25,8 @@ Anchor IDs and enable wreq's matching Chromium root store. A custom certificate
 store must trust the requested anchors. The bundled roots do not provide
 Chromium's complete certificate verification policy.
 
+The Chrome 155 profile currently targets Windows and shares Chrome 154's TLS/HTTP2 configuration.
+
 ## Example
 
 The following example uses the [Tokio](https://tokio.rs) runtime with optional features enabled by adding this to your `Cargo.toml`:
