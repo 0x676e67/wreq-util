@@ -53,10 +53,38 @@ jobs:
       - uses: taiki-e/install-action@v2.87.20
         with:
           tool: cargo-nextest
+      - name: Record diagnostic toolchain
+        run: |
+          set -euxo pipefail
+          {
+            git rev-parse HEAD
+            rustc -Vv
+            cargo -V
+            cargo nextest --version
+          } | tee safari261-toolchain.txt
       - name: Tests
         run: | 
           set -euxo pipefail
-          cargo nextest run --workspace
+          cargo nextest run --workspace --success-output immediate 2>&1 | tee safari261-nextest.log
+      - name: Record resolved diagnostic dependencies
+        if: always()
+        run: |
+          set -euxo pipefail
+          sha256sum Cargo.lock
+          cargo tree --locked --offline | tee safari261-dependencies.txt
+          cargo metadata --locked --format-version 1 --filter-platform x86_64-unknown-linux-gnu > safari261-metadata.json
+      - name: Upload Safari diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: safari261-diagnostic-${{ github.sha }}
+          retention-days: 7
+          path: |
+            Cargo.lock
+            safari261-toolchain.txt
+            safari261-nextest.log
+            safari261-dependencies.txt
+            safari261-metadata.json
 
   linux:
     name: Linux

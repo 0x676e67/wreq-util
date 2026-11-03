@@ -34,8 +34,31 @@ macro_rules! test_emulation {
                 .await
                 .unwrap();
 
+            let diagnostic = matches!(
+                stringify!($test_name),
+                "test_safari_18_5" | "test_safari_26_1"
+            );
+            if diagnostic {
+                println!(
+                    "SAFARI_DIAGNOSTIC {} status={} version={:?} remote_addr={:?} headers={:?}",
+                    stringify!($test_name),
+                    resp.status(),
+                    resp.version(),
+                    resp.remote_addr(),
+                    resp.headers()
+                );
+            }
+
             assert_eq!(resp.status(), wreq::StatusCode::OK);
             let content = resp.text().await.unwrap();
+            if diagnostic {
+                println!(
+                    "SAFARI_RESPONSE_BEGIN {}\n{}\nSAFARI_RESPONSE_END {}",
+                    stringify!($test_name),
+                    content,
+                    stringify!($test_name)
+                );
+            }
 
             let conditional = $ja4.iter().any(|&ja4| content.contains(ja4));
             if !conditional {
