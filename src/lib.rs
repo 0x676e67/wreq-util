@@ -12,4 +12,4 @@ mod rand;
 pub mod tower;
 
 #[cfg(feature = "emulation")]
-pub use self::emulate::{Emulation, Platform, Profile};
+pub use self::emulate::{Emulation, Platform, Profile, Strategy};
