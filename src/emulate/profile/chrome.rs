@@ -1963,22 +1963,33 @@ mod_generator!(
     ]
 );
 
-// Windows capture: Chrome for Testing 156.0.8078.73, with the observed
-// AddTLSServerHandshakePadding experiment enabled.
 mod_generator!(
     v156,
-    {
-        let mut options: TlsOptions = tls_options!(9, CURVES_3, sorted_trust_anchors());
-        options.server_padding = Some(0);
-        options
-    },
+    tls_options!(9, CURVES_3, sorted_trust_anchors()),
     http2_options!(3),
     header_initializer_chrome156,
-    [(
-        Windows,
-        r#""Not:A-Brand";v="8", "Chromium";v="156", "Google Chrome";v="156""#,
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
-    )]
+    [
+        (
+            MacOS,
+            r#""Not:A-Brand";v="8", "Chromium";v="156", "Google Chrome";v="156""#,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+        ),
+        (
+            Linux,
+            r#""Not:A-Brand";v="8", "Chromium";v="156", "Google Chrome";v="156""#,
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+        ),
+        (
+            Android,
+            r#""Not:A-Brand";v="8", "Chromium";v="156", "Google Chrome";v="156""#,
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36"
+        ),
+        (
+            Windows,
+            r#""Not:A-Brand";v="8", "Chromium";v="156", "Google Chrome";v="156""#,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+        )
+    ]
 );
 
 mod_generator!(
