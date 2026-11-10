@@ -5,7 +5,7 @@ repository = "https://github.com/0x676e67/wreq-util"
 documentation = "https://docs.rs/wreq-util"
 keywords = ["http", "client", "emulation", "ja3", "ja4"]
 authors = ["0x676e67 <gngppz@gmail.com>"]
-version = "0.2.0"
+version = "0.2.1"
 readme = "README.md"
 license = "Apache-2.0"
 edition = "2024"
@@ -42,7 +42,7 @@ pin-project-lite = { version = "0.2.17", optional = true }
 ## Compression algorithms
 brotli = { version = "8.0.2", optional = true }
 flate2 = { version = "1.1.9", optional = true }
-zstd = { version = "0.13.3", optional = true }
+zstd = { version = "0.14.3", optional = true }
 
 [dev-dependencies]
 wreq = "0.16.0"

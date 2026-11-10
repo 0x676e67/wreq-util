@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1](https://github.com/0x676e67/wreq-util/compare/v0.2.0...wreq-util-v0.2.1) - 2026-11-10
+
+### Security
+
+- Upgrade zstd to 0.14.3 to address the zstd and zstd-safe security advisories. This patch retains the 0.2.0 API.
+
 ## [0.2.0](https://github.com/0x676e67/wreq-util/compare/v0.1.0...v0.2.0) - 2026-08-22
 
 ### Fixed
