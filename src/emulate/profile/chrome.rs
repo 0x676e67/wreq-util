@@ -1964,6 +1964,22 @@ mod_generator!(
 );
 
 mod_generator!(
+    v157,
+    {
+        let mut config: wreq::tls::TlsOptions = tls_options!(9, CURVES_3, sorted_trust_anchors());
+        config.server_padding = Some(0);
+        config
+    },
+    http2_options!(3),
+    header_initializer_chrome157,
+    [(
+        Windows,
+        r#""Not-A.Brand";v="99", "Google Chrome";v="157", "Chromium";v="157""#,
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36"
+    )]
+);
+
+mod_generator!(
     edge143,
     v132::build_emulation,
     header_initializer_with_zstd_priority,
