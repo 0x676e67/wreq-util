@@ -97,5 +97,6 @@ required-features = ["tower-delay"]
 
 [patch.crates-io]
 wreq = { git = "https://github.com/0x676e67/wreq", rev = "f1fa91d65e1fe5b5dbada1b8f400cd51434344f9" }
-btls = { git = "https://github.com/0x676e67/btls", rev = "129887582a538b8f4dcf371d15c953335312ca37" }
-btls-sys = { git = "https://github.com/0x676e67/btls", rev = "129887582a538b8f4dcf371d15c953335312ca37" }
+btls = { git = "https://github.com/0x676e67/btls", rev = "0f5416d1f61eb4f64a9f2f4d8b867495305d61c1" }
+btls-sys = { git = "https://github.com/0x676e67/btls", rev = "0f5416d1f61eb4f64a9f2f4d8b867495305d61c1" }
+tokio-btls = { git = "https://github.com/0x676e67/btls", rev = "0f5416d1f61eb4f64a9f2f4d8b867495305d61c1" }
